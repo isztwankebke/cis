@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+
+body {
+	
+}
+
+.pesel label {
+	margin-right: 40px;
+}
+.pesel input {
+	width: 304px;
+
+}
+
+.imie label {
+	margin-right: 56px;
+}
+
+.imie input {
+	width: 304px;
+}
+
+.nazwisko label {
+	margin-right: 10px;
+}
+.nazwisko input {
+	width: 304px;
+}
+.nrTel label {
+	margin-right: 13px;
+}
+
+.nrTel input {
+	width: 304px;
+}
+.produkt label{
+	margin-right: 35px;
+}
+.produkt input {
+	width: 304px;
+	height: 26px;
+}
+.dataZawarcia input {
+	height: 26px;
+}
+.okresKredytu label {
+	margin-right: 35px;
+	
+}
+
+.okresKredytu input {
+	width: 304px;
+}
+.dataKoniec label{
+	margin-right: 15px;
+}
+.dataKoniec input {
+	width: 304px;
+	height: 26px;
+}
+
+.notatki textarea {
+	width: 400px;
+	display: -webkit-box;
+}
+.button {
+	margin-top: 10px;
+	margin-left: 270px;
+}
+
+.red-error {
+	color: red;
+}
+
+.raport a {
+	margin-left: 10px;
+	
+}
+
+.nazwisko1 label {
+	margin-right: 30px;
+}
+
+
