@@ -4,62 +4,86 @@
 
 /**
  *
-* class give address url
+* SuperController in library directory; Give decoded url divided by:
+* ControllerName
+* ActionName
+* ParameterName
+*
 *
 */
 class Request {
 
-	private $url;
-	//private $requestMethod;
+	protected  $url;
+	//protected $requestMethod;
 	
 
 	public function __construct($data) {
+		
+		//get url data from REQUEST_URI; there always will be= / if empty or / controller/action/param1/...paramN
+		
 		$this->url = $_SERVER['REQUEST_URI'];
 		//$this->requestMethod = $_SERVER['REQUEST_METHOD'];
 		
 		
 	}
 
-
-
+	
+	
 	/**
 	 * get controller name
+	 * @return string, null
 	 */
 	public function getControllerName () {
 		
-		if ($extractUrl = $this->DecodeURL()[0]) {
+		$controllerName = $this->DecodeURL("controller");
+		
+		if ($controllerName != null) {
 			
-			return $extractUrl;
+			return $controllerName;
 		}
-		return false;
+		else {
+			throw new Exception("no controller name");
+		}
+		
 	}
+	
+	
 	
 	/**
 	 * get action name
 	 */
 	public function getActionName() {
 		
-		if ($extractUrl = $this->DecodeURL()[1]) {
+		$actionName = $this->DecodeURL("action");
+		
+		if ($actionName != null) {
 			
-			return $extractUrl;
+			return $actionName;
 		}
-		return false;
+		//echo "12345";
+		
 	}
 	
+	
+	
 	/**
+	 * @param $foo string representing a value 
 	 * get parameters
+	 * @return array or null if no parameters delivered
 	 */
 	public function getParameters() {
+
+		$parameters = $this->DecodeURL("parameters");
 		
-		if ($extractUrl = $this->DecodeURL()[2]) {
+		if ($parameters != null) {
 			
-			return $extractUrl;
+			return $parameters;
 		}
-		return false;
-		
 		
 	}
 
+	
+	
 	/**
 	 * check is post
 	 */
@@ -72,6 +96,8 @@ class Request {
 		else return false;
 	}
 
+	
+	
 	/**
 	 * check is get
 	 */
@@ -81,97 +107,132 @@ class Request {
 				
 			return true;
 		}
-		else return false;
+		else {
+			return false;
+		}
 
 	}
+	
+	
 	
 	/**
 	 * method give a ['controller','action',and parameters]
 	 * @throws Exception
 	 * @return boolean|mixed|string
 	 */
-	public function DecodeURL(){
+	public function DecodeURL($name){
 		
-		$requestUri = null;
-		//var_dump($requestUri);
-		if (!empty($_SERVER['REQUEST_URI'])) { //check is REQUEST_URI exist
+		try {
+		
+			$requestUri = null;
 			
-			$requestUri = $_SERVER['REQUEST_URI'];
-		}
-		else {
-			throw new Exception("address is empty");
-		}
-		$requestUri = trim($requestUri, '/'); //remove / (slash) from end of path
-		//var_dump($requestUri);		
-		if (empty($requestUri)) { //path is empty
-			
-			return false;//var_dump($_GET);
-		}
-		
-		$array = explode('/',$requestUri); //divide path via /
-		$count = count($array);
-		//echo $count;
-		
-		//first and second element are model and action
-		$controllerName = $array[0];
-		$actionName = isset($array[1]) ? $array[1] : ''; //when some on won`t give action
-		
-		//next are parameter name and parameter value and they are change for 2
-		if ($count > 2) {
-			for ($i = 2; $i < $count; $i += 2) {
-							
-				$parameterName = $array[$i]; //parameter name
-				$parameterValue = isset($array[$i+1]) ? $array[$i+1] : ''; //parameter value
-				$parameter[$parameterName] = $parameterValue;
+			/*check is REQUEST_URI exist*/
+			if ($this->isUriDataExist($this->url, "url")) {
+				
+				$requestUri = $this->url;
 			}
-		}
-		else {
 			
-			$parameter = null;
-		}
-		return [$controllerName, $actionName,$parameter];
-		
-	}
-	
-	
-	
-	/*
-	
-	
-	public function Url($path = null) {
-		
-		if (empty($path)) { //pusta ścieżka
 			
-			$pars = array();
-		}
-			else {	
+			/*remove / (slash) from end of path*/
+			$requestUri = trim($requestUri, '/'); 
 			
-				$pars = explode('&', $path);
+			/*path is empty*/
+			if (empty($requestUri)) { 
+				
+				return null;
 			}
-			$params = array();
-			foreach ($pars as $_param){
-					$_arP = explode('=',$_param,2); //par=war dzielimy na par i war
-					$params[$_arP[0]] = isset($_arP[1]) ? $_arP[1] : '';
+			
+			/*divide path via / (slash)*/
+			$uriArray = explode('/',$requestUri);
+			
+			/*check how many elements is in array*/
+			$countUriArray = count($uriArray);
+			
+			
+			/*at this checkpoint is at least 1 element - it`s ControllerName*/
+			if ($name == "controller") {
+				
+				if ($this->isUriDataExist($uriArray[0], $name)) {
+					
+					$controllerName = $uriArray[0];
+					return $controllerName;
 				}
-				$strRet = '';
-				if (!empty($params)){
-					if ($params['model'] == $_GET['model'] && $params['action'] == $_GET['action']){ //moduł news akcja show zamienimy na link .html
-						return $this->url.$params['name'].','.$params['id'].'.php';
-					} else { //każdy inny moduł leci standardowo modul/akcja/parametr/wartosc
-						foreach ($params as $_key => $_val){
-							if ($_key == 'model' || $_key == 'action')
-								$_key = '';
-								else
-									$_key.='/';
-									$strRet.="$_key$_val/";
-						}
+				
+			}
+			
+			/*second element in uri is action name, check is exist and return value*/
+			elseif ($name == "action") {
+				
+				$uriArray[1] = isset($uriArray[1]) ? $uriArray[1] : null; //if some not set action
+				
+				
+				if ($this->isUriDataExist($uriArray[1], $name)) {
+					
+					$actionName = $uriArray[1];
+					return $actionName;
+				}
+			}
+			
+			/*next are parameter name and parameter value and they change for 2*/
+			
+			elseif ($name == "parameters") {
+				
+				if ($countUriArray > 2) {
+					
+					$j = 0;
+					for ($i = 2; $i < $countUriArray; $i += 2) {
+					
+						$parameterName[$j] = isset($uriArray[$i]) ? $uriArray[$i] : null; //parameter name
+						$parameterValue[$j] = isset($uriArray[$i+1]) ? $uriArray[$i+1] : null; //parameter value
+						//$parameter[$parameterName] = $parameterValue;
+						$j++;
+						
 					}
+					
+					/*check is each parameters name has a value*/
+					if (!in_array(null, $parameterValue, true) && !in_array(null, $parameterName, true)) {
+						$parameters = array_combine($parameterName, $parameterValue);
+						return $parameters;
+					}
+					else {
+						throw new Exception("no Valid Parameters");
+						return null;
+					}
+					
 				}
-				return $this->url.htmlspecialchars($strRet);
+				return null;
+				
+			}
+		}
+	
+		catch (Exception $e) {
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+			die;
+		}
 	}
 	
-	*/
-}
+	
+	
+	/**
+	 * 
+	 * @param unknown $uriArrayElement
+	 * @param unknown $dataName
+	 * @throws Exception
+	 */
+	private function isUriDataExist ($uriArrayElement, $dataName) {
+		
+		if ($uriArrayElement === null) {
+			
+			throw new Exception("name or value in address is incorrect");
+			return null;
+		}
+		else {
+			return true;
+		}
+		
+	}
+	
+	
 
 
 
@@ -182,5 +243,5 @@ class Request {
 
 
 
-
+			}
 
