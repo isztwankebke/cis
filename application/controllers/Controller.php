@@ -2,10 +2,22 @@
 class Controller {
 	
 	
+	/**
+	 * 
+	 * @var Request
+	 */
+	protected $request = null;
 	
-	function __construct($user) {
+	
+	protected $session = null;
+	
+	/**
+	 * 
+	 * @param Request $request
+	 */
+	function __construct(Request $request) {
 		
-		
+		$this->request = $request;
 	}
 	
 	

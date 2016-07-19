@@ -41,7 +41,8 @@ function __autoload($name) {
 		
 		if (!file_exists($path)) {
 				
-			throw new Exception("bad method name");
+			throw new Exception("bad method name", 400);
+			
 		}
 		// laduj z library, gdy sie nie uda- rzuc wyjatkiem albo wyskocz przez okno...
 	
@@ -61,22 +62,22 @@ try {
 	
 	$controllerName = $request->getControllerName();
 	
-	//echo "<br>nazwa kontrolera=", $controllerName, "<br>";
+	
+	echo "<br>nazwa kontrolera=", $controllerName, "<br>";
 	
 	$actionName = $request->getActionName();
 	
-	//echo "<br>nazwa akcji=", $actionName, "<br>";
+	echo "<br>nazwa akcji=", $actionName, "<br>";
 	
-	$parameters = !null ? $request->getParameters() : "";
+	
+	$parameters =$request->getParameters();
 	
 	//var_dump($parameters);
 	
-	if ($controllerName && $actionName) {
-		
-		$controller = new $controllerName($request);
+	$controller = new $controllerName($request);
 		//var_dump($controller);
-		$controller->$actionName($parameters);
-	}
+	$controller->$actionName($parameters);
+	
 	
 	
 	

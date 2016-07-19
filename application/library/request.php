@@ -14,7 +14,7 @@
 class Request {
 
 	protected  $url;
-	//protected $requestMethod;
+	protected $requestMethod;
 	
 
 	public function __construct($data) {
@@ -22,10 +22,12 @@ class Request {
 		//get url data from REQUEST_URI; there always will be= / if empty or / controller/action/param1/...paramN
 		
 		$this->url = $_SERVER['REQUEST_URI'];
-		//$this->requestMethod = $_SERVER['REQUEST_METHOD'];
+		$this->requestMethod = $_SERVER['REQUEST_METHOD'];
 		
 		
 	}
+	
+	
 
 	
 	
@@ -93,22 +95,24 @@ class Request {
 				
 			return true;
 		}
-		else return false;
+		else{
+			return null;
+		}
 	}
-
+	
 	
 	
 	/**
 	 * check is get
 	 */
 	public function isGet() {
-
+		
 		if ($this->requestMethod === 'GET') {
 				
 			return true;
 		}
 		else {
-			return false;
+			return null;
 		}
 
 	}

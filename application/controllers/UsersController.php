@@ -43,22 +43,48 @@ class UsersController extends Controller {
 	
 	
 	
+	
 	public function addClient ($parameters) {
-		
-		$pesel;
-		$name;
-		$surname;
-		$phoneNumber;
-		$productName;
-		$initDate;
-		$productName;
-		$period;
-		$endDate;
-		$extraInfo;
-		
-		
-		
-		
+		try {
+			
+			if ($this->request->isGet()) { //replace Get with POST 
+				
+				$clientModel = new ClientModel();
+				$dataModel = new DataModel();
+				
+				if ($clientModel->checkClientData($parameters) && $dataModel->checkExpectedData($arrayExpect, $arrayGiven)) {
+					
+					$sql = "INSERT INTO `clients`
+							(`pesel`, `name`, `surname`, `phone_nr`, `extra_info`)
+							VALUES 
+							('{$pesel}','{$name}','{$surname}','{$phoneNumber}','{$extraInfo}')";
+					
+					/*echo "Dane klienta:";
+					extract($parameters);
+					echo "<br>Imię: ", $name,
+					"<br>Nazwisko: ", $surname,
+					"<br>Pesel: ", $pesel,
+					"<br>Nr telefonu: ", $phoneNumber,
+					"<br>Dodatkowe Informacje: ", $extraInfo;*/
+				}
+				else {
+					
+					//stop transaction
+				}
+				
+				
+			}
+			else {
+				throw new Exception("method not used", 400);
+			}
+			
+			
+			
+			
+			}
+		catch (Exception $e) {
+			echo "Caught exception: ", $e->getMessage();
+		}
 	}
 	
 	
