@@ -16,6 +16,9 @@ class Request {
 	protected  $url;
 	protected $requestMethod;
 	
+	private $requestedControllerName = null;
+	private $requestedActionName = null;
+	private $params = ['get' => [], 'post' => []];
 
 	public function __construct($data) {
 		
@@ -24,6 +27,29 @@ class Request {
 		$this->url = $_SERVER['REQUEST_URI'];
 		$this->requestMethod = $_SERVER['REQUEST_METHOD'];
 		
+		
+		$this->decodeURL2();
+		
+	}
+	
+	
+	private function decodeURL2() {
+		
+		$explodedURL = explode('/', $this->url);
+		array_shift($explodedURL);
+		
+		if (count($explodedURL)) {
+			if (isset($explodedURL[0])) {
+				$this->requestedControllerName = "{$explodedURL[0]}Controller";
+			}
+			if (isset($explodedURL[1])) {
+				$this->requestedActionName = $explodedURL[1];
+			}
+			
+			if (count($explodedURL) > 2) {
+				$this->params['get'] = array_slice($explodedURL, 2);
+			}
+		}
 		
 	}
 	
@@ -37,6 +63,8 @@ class Request {
 	 */
 	public function getControllerName () {
 		
+		
+		return $this->requestedControllerName;
 		$controllerName = $this->DecodeURL("controller");
 		
 		if ($controllerName != null) {
@@ -56,6 +84,7 @@ class Request {
 	 */
 	public function getActionName() {
 		
+		return $this->requestedActionName;
 		$actionName = $this->DecodeURL("action");
 		
 		if ($actionName != null) {
@@ -73,8 +102,9 @@ class Request {
 	 * get parameters
 	 * @return array or null if no parameters delivered
 	 */
-	public function getParameters() {
+	public function getParameters($type = 'get') {
 
+		return $this->params[$type];
 		$parameters = $this->DecodeURL("parameters");
 		
 		if ($parameters != null) {

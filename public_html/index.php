@@ -76,8 +76,12 @@ try {
 	
 	$controller = new $controllerName($request);
 		//var_dump($controller);
-	$controller->$actionName($parameters);
+		
+	//$method = new ReflectionMethod($controllerName, $actionName);
+	//print_r($method->getParameters());
+	//$controller->$actionName($parameters);
 	
+	call_user_func_array(array($controller, $actionName), $request->getParameters('get'));
 	
 	
 	
