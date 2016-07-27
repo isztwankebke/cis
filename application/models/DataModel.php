@@ -9,28 +9,35 @@ class DataModel {
 	
 	
 	/**
-	 * method to check data expected and given
-	 * @param unknown $arrayExpect
-	 * @param unknown $arrayGiven
-	 * @return boolean|NULL
+	 * 
+	 * @param unknown $parametersToCheck
+	 * @param unknown $recivedData
+	 * @throws Exception
 	 */
-	public function checkExpectedData ($arrayExpect, $arrayGiven) {
-	
-		/*replace value with keys in expect array*/
-		$arrayExpect = array_flip($arrayExpect);
-	
-		/*compare keys in array expect and given*/
-		$keysGiven = array_intersect_key($arrayExpect, $arrayGiven);
-	
-		if (count($keysGiven) === count($arrayExpect) ) {
-				
+	public function validateRecivedData ($parametersToCheck, $recivedData) {
+		
+		$j = 0;
+		
+		for ($i = 0; $i < count($parametersToCheck); $i++) {
+			if (isset($recivedData[$parametersToCheck[$i]])) {
+				$j++;
+			}
+			
+		}
+		
+		if ($j != 0) {
+			
 			return true;
 		}
 		else {
-				
-			return null;
+			throw new Exception("recived data not consistent");
 		}
+		
 	}
+	
+	
+	
+	
 	
 	
 }
