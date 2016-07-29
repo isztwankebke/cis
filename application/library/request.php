@@ -105,13 +105,6 @@ class Request {
 	public function getParameters($type = 'get') {
 
 		return $this->params[$type];
-		$parameters = $this->DecodeURL("parameters");
-		
-		if ($parameters != null) {
-			
-			return $parameters;
-		}
-		
 	}
 
 	
