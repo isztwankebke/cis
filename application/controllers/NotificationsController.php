@@ -1,5 +1,5 @@
 <?php
-class TransactionsController extends Controller {
+class NotificationsController extends Controller {
 
 
 

@@ -59,9 +59,10 @@ function __autoload($name) {
 try {
 	// domena/kontroler/akcja/param1/.../paramn
 	$request = new Request($_SERVER);
-	
+	var_dump($request);
 	$controllerName = $request->getControllerName();
 	
+	var_dump($controllerName);
 	
 	echo "<br>nazwa kontrolera=", $controllerName, "<br>";
 	

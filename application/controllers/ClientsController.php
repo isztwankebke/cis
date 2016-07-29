@@ -1,5 +1,5 @@
 <?php
-class TransactionsController extends Controller {
+class ClientsController extends Controller {
 
 
 
@@ -40,6 +40,9 @@ class TransactionsController extends Controller {
 		return $client->getClientData();
 	}
 	
+	public function addClient($parameters) {
+		
+	}
 
 
 
