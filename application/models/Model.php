@@ -44,6 +44,35 @@ class Model extends mysqli {
 	}
 	
 	
+	public function read($tableName) {
+		
+		$sql = "SELECT *
+		FROM
+		`{$tableName}`
+		WHERE 1";
+		
+		
+		$result = $this->query($sql);
+		
+		if (empty($result)) {
+			return false;
+		}
+		var_dump($result);
+		return $result;
+	}
+	
+	
+	
+	public function create($tableName) {
+		
+		$sql = "INSERT 
+		INTO 
+		`{$tableName}`
+		(`pesel`, `name`, `surname`, `phone_nr`, `extra_info`) 
+		VALUES 
+		([value-1],[value-2],[value-3],[value-4],[value-5],[value-6])";
+		
+	}
 	
 	
 	

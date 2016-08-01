@@ -12,9 +12,14 @@ class ClientsController extends Controller {
 		parent::__construct($request);
 
 	}
-	
-	
-	
+	/*
+	public function read($tableName = 'clients') {
+		
+		$clients = new ClientModel();
+		$clients->read($tableName);
+		
+	}
+	*/
 	/**
 	 * GET CLIENT
 	 * @param unknown $parameters
@@ -40,8 +45,39 @@ class ClientsController extends Controller {
 		return $client->getClientData();
 	}
 	
-	public function addClient($parameters) {
+	public function addClient() {
+		if ($this->request->isPost()) {
+			$client = new ClientModel();
+			
+			$clientData = $this->request->getPostData();
+			var_dump($clientData);
+			$client->addClient($clientData);
+		}
 		
+	}
+	public function search() {
+		if ($this->request->isGet()){
+			$parameters = $this->request->getParameters('get');
+			$clients = new ClientModel();
+			var_dump($clients->search($parameters));
+			
+			
+		}
+		
+		
+		
+	}
+	
+	public function read() {
+		
+		$tableName = "clients";
+		
+		
+		if ($this->request->isGet()) {
+			$client = new ClientModel();
+			var_dump($client->read($tableName));
+			
+		}
 	}
 
 

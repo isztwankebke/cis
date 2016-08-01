@@ -19,6 +19,7 @@ class Request {
 	private $requestedControllerName = null;
 	private $requestedActionName = null;
 	private $params = ['get' => [], 'post' => []];
+	private $postData = null;
 
 	public function __construct($data) {
 		
@@ -26,12 +27,16 @@ class Request {
 		
 		$this->url = $_SERVER['REQUEST_URI'];
 		$this->requestMethod = $_SERVER['REQUEST_METHOD'];
-		
+		$this->postData = $_POST;
 		
 		$this->decodeURL2();
 		
 	}
 	
+	public function getPostData() {
+		return $this->postData;
+		
+	}
 	
 	private function decodeURL2() {
 		
@@ -126,20 +131,3 @@ class Request {
 }
 	
 	
-	
-		
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-			
-

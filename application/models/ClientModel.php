@@ -18,151 +18,23 @@ class ClientModel extends Model {
 		
 	}
 	
-	
-	
-	/**
-	 * 
-	 * @param unknown $pesel
-	 */
-	private  function setPesel ($pesel) {
-		$this->pesel = $pesel;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $name
-	 */
-	private function setName ($name) {
-		$this->name = $name;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $surname
-	 */
-	private function setSurname ($surname) {
-		$this->surname = $surname;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $phoneNumber
-	 */
-	private function setPhoneNumber ($phoneNumber) {
-		$this->phoneNumber = $phoneNumber;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $extraInfo
-	 */
-	private function setExtraInfo ($extraInfo) {
-		$this->extraInfo = $extraInfo;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $clientID
-	 */
-	private function setClientID ($clientID) {
-		$this->clientID = $clientID;
-	}
-	
-	
-	
 	/**
 	 * 
 	 * @return ClientModel
 	 */
 	private function setClientData () {
 		$this->clientData = array(
-				"id"		 => $this->getClientId(),
-				"pesel"		 => $this->getPesel(),
-				"name"		 => $this->getName(),
-				"surname"	 => $this->getSurname(),
-				"phone_nr"	 => $this->getPhoneNumber(),
-				"extra_info" => $this->getExtraInfo()
+				"id"		 => $this->clientID,
+				"pesel"		 => $this->pesel,
+				"name"		 => $this->name,
+				"surname"	 => $this->surname,
+				"phone_nr"	 => $this->phoneNumber,
+				"extra_info" => $this->extraInfo
 				
 		);
 		return $this;
 		
 	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown
-	 */
-	private function getPesel() {
-		return $this->pesel;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown
-	 */
-	private function getName() {
-		return $this->name;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown
-	 */
-	private function getSurname() {
-		return $this->surname;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown
-	 */
-	private function getPhoneNumber() {
-		return $this->phoneNumber;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown
-	 */
-	private function getExtraInfo() {
-		return $this->extraInfo;
-	}
-	
-	
-	
-	/**
-	 * 
-	 * @return unknown|boolean
-	 */
-	private function getClientId() {
-		return $this->clientID;
-	}
-	
 	
 	
 	/**
@@ -174,62 +46,90 @@ class ClientModel extends Model {
 	
 	
 	
+	public function read($tableName) {
+		
+		$sql = "SELECT *
+		FROM
+		`{$tableName}`
+		WHERE 1";
+		
+		$result = parent::query($sql);
+		
+		if (empty($result)) {
+			return false;
+		}
+		
+		return $result;
+		
+		
+	}
+	
+	public function search($parameters) {
+		$this->pesel = $parameters[1];
+		
+		if (!$this->validatePesel($this->pesel)) {
+			throw new Exception("pesel not valid");
+		}
+		
+		$sql = "SELECT *
+		FROM
+		`clients`
+		WHERE 
+		`pesel` = '{$this->pesel}'";
+		
+		$result = parent::query($sql);
+		
+		if (empty($result)) {
+			return false;
+		}
+		
+		return $result;
+		
+	}
+	
+	
 	/**
 	 * 
 	 * @param unknown $parameters
 	 * @throws Exception
 	 */
-	public function getClient ($parameters) {
-		
-		/*validate recived data*/
-		$dataToCheck = [
-				'name',
-				'surname',
-				'phoneNumber',
-				'pesel'
-		];
-		
-		$checkData = new DataModel();
-		
-		$dataValidate = $checkData->validateRecivedData($dataToCheck, $parameters);
-		
-		/*validate name, surname, phone number, pesel, and extra info*/
-		if ($dataValidate) {
-			
-			$name = $parameters['name'];
-			$surname = $parameters['surname'];
-			$phoneNumber = $parameters['phoneNumber'];
-			$pesel = $parameters['pesel'];
-			
-			if (array_key_exists('extraInfo', $parameters)) {
-				$extraInfo = $parameters['extraInfo'];
-			}
-			
-			if ($this->validateName($name) &&
-				$this->validateSurname($surname) &&
-				$this->validatePhoneNumber($phoneNumber) &&
-				$this->validatePesel($pesel) &&
-				$this->validateExtraInfo($extraInfo)) {
+	private function checkClientData ($clientData) {
+		echo "sprawdzam dane klienta";
+		if (
+			isset( //check is data in post exist
+				$clientData['pesel'], 
+				$clientData['name'], 
+				$clientData['surname'],
+				$clientData['phoneNumber'],
+				$clientData['extraInfo'])) {
 					
-					/*if validate is ok set client parameters*/
-					$this->setName($name);
-					$this->setSurname($surname);
-					$this->setPhoneNumber($phoneNumber);
-					$this->setPesel($pesel);
-					$this->setExtraInfo($extraInfo);
+					echo "dane sa isset";
+					$name = $clientData['name'];
+					$surname = $clientData['surname'];
+					$phoneNumber = $clientData['phoneNumber'];
+					$pesel = $clientData['pesel'];
+					$extraInfo = $clientData['extraInfo'];
 					
-					/*check if client exist in db*/
 					
-					if (!$this->checkClientExist()) {
-						
-						return $this->addClient();
-						
-					}
-					else {
-						return $this->getClientData();
-					}
-					
-				}
+					//validate client data
+					if ($this->validateName($name) &&
+						$this->validateSurname($surname) &&
+						$this->validatePhoneNumber($phoneNumber) &&
+						$this->validatePesel($pesel) &&
+						$this->validateExtraInfo($extraInfo)) {
+									
+							echo "dane validate";
+								/*if validate is ok set client parameters*/
+								$this->name = $name;
+								$this->surname = $surname;
+								$this->phoneNumber = $phoneNumber;
+								$this->pesel = $pesel;
+								$this->extraInfo = $extraInfo;
+								return true;
+						}
+						else {
+							throw new Exception("Client Data not Valid");
+						}
 			
 		}
 		else {
@@ -253,7 +153,7 @@ class ClientModel extends Model {
 		$sql = "SELECT * 
 		FROM 
 		`clients` 
-		WHERE `pesel` = '{$this->getPesel()}'";
+		WHERE `pesel` = '{$this->pesel}'";
 		
 		$result = parent::query($sql);
 		
@@ -262,21 +162,12 @@ class ClientModel extends Model {
 		}
 		
 		//setting client id, pesel, name, surname, phoneNr, extra info
-		$clientID = $result[0]['id'];
-		$pesel = $result[0]['pesel'];
-		$name = $result[0]['name'];
-		$surname = $result[0]['surname'];
-		$phoneNumber = $result[0]['phone_nr'];
-		$extraInfo = $result[0]['extra_info'];
-		
-		$this->setClientID($clientID);
-		$this->setPesel($pesel);
-		$this->setName($name);
-		$this->setSurname($surname);
-		$this->setPhoneNumber($phoneNumber);
-		$this->setExtraInfo($extraInfo);
-		
-		//setting clientData
+		$this->clientID 	= $result[0]['id'];
+		$this->pesel 		= $result[0]['pesel'];
+		$this->name 		= $result[0]['name'];
+		$this->surname 		= $result[0]['surname'];
+		$this->phoneNumber 	= $result[0]['phone_nr'];
+		$this->extraInfo 	= $result[0]['extra_info'];
 		
 		$this->setClientData();
 		
@@ -291,14 +182,22 @@ class ClientModel extends Model {
 	 * @param unknown $parameters
 	 * @throws Exception
 	 */
-	public function addClient () {
+	public function addClient ($clientData) {
+		echo "jestem w add client";
+		if (!$this->checkClientData($clientData)) {
+			throw new Exception("unable to add client - client data is missing");
+		}
+		echo "client data - ok";
+		if ($this->checkClientExist()) {
+			throw new Exception("client already exist");	
+		}
 		
 		$sql = "INSERT 
 		INTO 
 		`clients`
 		(`pesel`, `name`, `surname`, `phone_nr`, `extra_info`) 
 		VALUES 
-		('{$this->getPesel()}', '{$this->getName()}', '{$this->getSurname()}', '{$this->getPhoneNumber()}', '{$this->getExtraInfo()}')";
+		('{$this->pesel}', '{$this->name}', '{$this->surname}', '{$this->phoneNumber}', '{$this->extraInfo}')";
 				
 		$result = parent::query($sql);
 		
@@ -308,9 +207,9 @@ class ClientModel extends Model {
 			
 		}
 		
-		$clientID = $this->insert_id;
-		$this->setClientID($clientID);
+		$this->clientID = $this->insert_id;
 		//setting client data
+		var_dump($result);
 		$this->setClientData();
 		return true;
 		
@@ -436,7 +335,7 @@ class ClientModel extends Model {
 		//validate checksum and control digit
 		
 		if ($arrayPesel[10] == $checksum) {
-			
+			echo "pesel ok";
 			return true;
 		}
 		else {

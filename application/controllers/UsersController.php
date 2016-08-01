@@ -9,6 +9,20 @@
 
 class UsersController extends Controller {
 	
+	private $userId = NULL;
+	private $userName = NULL;
+	private $userPassword = NULL;
+	private $userEmail = NULL;
+	private $created = NULL;
+	private $modified = NULL;
+	private $lastLogin = NULL;
+	private $name = NULL;
+	private $surname = NULL;
+	private $grantAccess = NULL;
+	private $UserData = NULL;
+	
+
+	
 	/**
 	 * 
 	 * @param Request $request
@@ -19,6 +33,12 @@ class UsersController extends Controller {
 		
 	}
 	
+	
+	
+	
+	public function read($data) {
+		
+	}
 	
 	
 	/**
