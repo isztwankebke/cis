@@ -11,17 +11,17 @@
 
 
 function __autoload($name) {
-	
+
 	//echo $name, "<br>";
 
 	// testuj czy plik, ktory chcesz includowac istnieje ZANIM zaczniesz includowac
-	
+
 	// name == nameController
 	// name == nameModel
 	// name == nameView....
-	
+
 	try {
-		if (preg_match('/Controller$/', $name)) {
+		if (preg_match('/controller$/i', $name)) {
 			$folder = "controllers";
 		}
 		elseif (preg_match('/Model$/', $name)) {
@@ -33,19 +33,19 @@ function __autoload($name) {
 		else {
 			$folder = "library";
 		}
-		
+
 		$path = '../application/'.$folder.'/';
-		$path .= strtolower($name);
+		$path .= $name;
 		$path .= '.php';
-		
-		
+
+
 		if (!file_exists($path)) {
-				
+
 			throw new Exception("bad controller name", 400);
-			
+
 		}
 		// laduj z library, gdy sie nie uda- rzuc wyjatkiem albo wyskocz przez okno...
-	
+
 	}
 	catch (Exception $e) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
@@ -61,34 +61,34 @@ try {
 	$request = new Request($_SERVER);
 	var_dump($request);
 	$controllerName = $request->getControllerName();
-	
+
 	var_dump($controllerName);
-	
+
 	echo "<br>nazwa kontrolera=", $controllerName, "<br>";
-	
+
 	$actionName = $request->getActionName();
-	
+
 	echo "<br>nazwa akcji=", $actionName, "<br>";
-	
-	
-	$parameters =$request->getParameters();
-	
+
+
+	$parameters = $request->getParameters();
+
 	//var_dump($parameters);
-	
+
 	$controller = new $controllerName($request);
 		//var_dump($controller);
-		
+
 	//$method = new ReflectionMethod($controllerName, $actionName);
 	//print_r($method->getParameters());
 	//$controller->$actionName($parameters);
-	
+
 	call_user_func_array(array($controller, $actionName), $request->getParameters('get'));
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	//public function nazwa(param1, param2, param3);
 }
 catch (Exception $e) {
@@ -164,7 +164,7 @@ die;
 $user = new User();
 $sql = "SELECT `id` FROM `clients` WHERE 1";
 
-$result = $user->query("SELECT name 
+$result = $user->query("SELECT name
 		FROM `users`
 		 WHERE `password` = 'blabla'");
 
@@ -189,7 +189,7 @@ if ($result) {
 //$result['User.id'] = 1;
 //$result['User']['id'] = 1
 
-die; 
+die;
 
 
 include '/view/header.php';
@@ -239,6 +239,6 @@ include '/view/header.php';
           </div>
         </div>
 
-   <?php 
+   <?php
   include '/view/footer.php';
   ?>
