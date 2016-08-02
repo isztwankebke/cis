@@ -41,7 +41,7 @@ function __autoload($name) {
 		
 		if (!file_exists($path)) {
 				
-			throw new Exception("bad method name", 400);
+			throw new Exception("bad controller name", 400);
 			
 		}
 		// laduj z library, gdy sie nie uda- rzuc wyjatkiem albo wyskocz przez okno...
