@@ -12,70 +12,68 @@ class ClientsController extends Controller {
 		parent::__construct($request);
 
 	}
-	/*
-	public function read($tableName = 'clients') {
 		
-		$clients = new ClientModel();
-		$clients->read($tableName);
-		
-	}
-	*/
-	/**
-	 * GET CLIENT
-	 * @param unknown $parameters
-	 */
-	public function getClient($parameters) {
-		$client = new ClientModel();
-		$client->getClient($parameters);
-		return $client->getClientData();
-	
-	}
-	
-	
 	
 
 	/**
 	 * EDIT CLIENT
 	 * @param unknown $parameters
 	 */
-	public function editClient($parameters) {
+	public function edit() {
 	
-		$client = new ClientModel();
-		$client->editClient($parameters);
-		return $client->getClientData();
+		if ($this->request->isPost()) {
+			$dataToChange = $this->request->getPostData();
+			$parameters = $this->request->getParameters('get');
+			
+			$client = new ClientModel();
+			$client->edit($dataToChange, $parameters);
+			$client->getClientData();
+		}
+		
 	}
 	
+	
+	
+	/**
+	 * 
+	 */
 	public function addClient() {
 		if ($this->request->isPost()) {
-			$client = new ClientModel();
 			
+			$client = new ClientModel();
 			$clientData = $this->request->getPostData();
-			var_dump($clientData);
 			$client->addClient($clientData);
 		}
 		
 	}
+	
+	
+	
+	/**
+	 * 
+	 */
 	public function search() {
-		if ($this->request->isGet()){
-			$parameters = $this->request->getParameters('get');
-			$clients = new ClientModel();
-			var_dump($clients->search($parameters));
+		if ($this->request->isPost()){
 			
+			$client = new ClientModel();
+			$searchData = $this->request->getPostData();
+			var_dump($client->search($searchData));
 			
 		}
 		
-		
-		
 	}
 	
+	
+	
+	/**
+	 * 
+	 */
 	public function read() {
 		
-		$tableName = "clients";
-		
-		
 		if ($this->request->isGet()) {
+			
 			$client = new ClientModel();
-			var_dump($client->read($tableName));
+			var_dump($client->read());
 			
 		}
 	}

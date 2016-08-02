@@ -27,15 +27,19 @@ class Model extends mysqli {
 		
 		$result = parent::query($sql);
 		
-		
 		if (empty($result)) {
 			
 			return false;
 		}
 	    //while add something to db return id
-		if (preg_match('/(INSERT|UPDATE)/', $sql)) {
+		if (preg_match('/INSERT/', $sql)) {
 			
 			return $this->insert_id;
+		}
+		
+		if (preg_match('/UPDATE/', $sql)) {
+			
+			return $this->affected_rows;
 		}
 		
 		return  $result->fetch_all(MYSQLI_ASSOC);
@@ -44,37 +48,7 @@ class Model extends mysqli {
 	}
 	
 	
-	public function read($tableName) {
 		
-		$sql = "SELECT *
-		FROM
-		`{$tableName}`
-		WHERE 1";
-		
-		
-		$result = $this->query($sql);
-		
-		if (empty($result)) {
-			return false;
-		}
-		var_dump($result);
-		return $result;
-	}
-	
-	
-	
-	public function create($tableName) {
-		
-		$sql = "INSERT 
-		INTO 
-		`{$tableName}`
-		(`pesel`, `name`, `surname`, `phone_nr`, `extra_info`) 
-		VALUES 
-		([value-1],[value-2],[value-3],[value-4],[value-5],[value-6])";
-		
-	}
-	
-	
 	
 	
 	

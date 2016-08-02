@@ -46,42 +46,33 @@ class ClientModel extends Model {
 	
 	
 	
-	public function read($tableName) {
+	public function read() {
 		
 		$sql = "SELECT *
 		FROM
-		`{$tableName}`
+		`clients`
 		WHERE 1";
 		
 		$result = parent::query($sql);
-		
-		if (empty($result)) {
-			return false;
-		}
 		
 		return $result;
 		
 		
 	}
 	
-	public function search($parameters) {
-		$this->pesel = $parameters[1];
+	public function search($searchData) {
 		
-		if (!$this->validatePesel($this->pesel)) {
-			throw new Exception("pesel not valid");
-		}
+		$key = key($searchData);
+		$value = trim($searchData[$key]);
+		
 		
 		$sql = "SELECT *
 		FROM
 		`clients`
 		WHERE 
-		`pesel` = '{$this->pesel}'";
+		`{$key}` LIKE '%{$value}%'";
 		
 		$result = parent::query($sql);
-		
-		if (empty($result)) {
-			return false;
-		}
 		
 		return $result;
 		
@@ -209,7 +200,7 @@ class ClientModel extends Model {
 		
 		$this->clientID = $this->insert_id;
 		//setting client data
-		var_dump($result);
+		
 		$this->setClientData();
 		return true;
 		
@@ -217,81 +208,58 @@ class ClientModel extends Model {
 	
 	
 	
-	public function editClient ($parameters) {
+	public function edit($dataToChange, $parameters) {
 		/*validate recived data*/
-		$dataToCheck = [
-				'name',
-				'surname',
-				'phoneNumber',
-				'pesel',
-				'extraInfo'
-		];
 		
-		$checkData = new DataModel();
+		if (!isset($dataToChange['pesel'], 
+				$dataToChange['name'], 
+				$dataToChange['surname'],
+				$dataToChange['phoneNumber'],
+				$dataToChange['extraInfo'])) {
+				
+					throw new Exception("Recived data not set");
+				}
+					
+		$newPesel = $dataToChange['pesel'];
+		$newName = $dataToChange['name'];
+		$newSurname = $dataToChange['surname'];
+		$newPhoneNumber = $dataToChange['phoneNumber'];
+		$newExtraInfo = $dataToChange['extraInfo'];
 		
-		$dataValidate = $checkData->validateRecivedData($dataToCheck, $parameters);
-		
-		if ($dataValidate) {
+		if (!$this->validatePesel($newPesel) ||
+			!$this->validateName($newName) ||
+			!$this->validateSurname($newSurname) ||
+			!$this->validatePhoneNumber($newPhoneNumber) ||
+			!$this->validateExtraInfo($newExtraInfo)) {
+								
+				throw new Exception("new data not Valid");
+								
+			}
 			
-			$name = $parameters['name'];
-			$surname = $parameters['surname'];
-			$phoneNumber = $parameters['phoneNumber'];
-			$pesel = $parameters['pesel'];
-			$extraInfo = $parameters['extraInfo'];
-			
+		$this->pesel = $newPesel;
+		$this->name = $newName;
+		$this->surname = $newSurname;
+		$this->phoneNumber = $newPhoneNumber;
+		$this->extraInfo = $newExtraInfo;
 		
-			//recived data is valid
-			//validate data as pesel, name, surname, phone nr, extra info
-			
-			if ($this->validateName($name) &&
-					$this->validateSurname($surname) &&
-					$this->validatePhoneNumber($phoneNumber) &&
-					$this->validatePesel($pesel) &&
-					$this->validateExtraInfo($extraInfo)) {
-						$this->setName($name);
-						$this->setSurname($surname);
-						$this->setPhoneNumber($phoneNumber);
-						$this->setPesel($pesel);
-						$this->setExtraInfo($extraInfo);
-						//check is client exist
-						if (!$this->checkClientExist()) {
-							throw new Exception("client does not exist in Db");
-							return false;
-						}
-						
-						//check if data is different
-						if ($name != $this->getName() ||
-							$surname != $this->getSurname() ||
-							$phoneNumber != $this->getPhoneNumber() ||
-							$extraInfo != $this->getExtraInfo()) {
+		//$key = key($parameters);
+		$this->clientID = $parameters[1];
+		
+		
+		$sql = "UPDATE `clients` 
+		SET 
+		`pesel` = '{$this->pesel}', `name` = '{$this->name}', `surname` = '{$this->surname}', 
+		`phone_nr` = '{$this->phoneNumber}', `extra_info` = '{$this->extraInfo}' 
+		WHERE `id` = '{$this->clientID}'";
 								
-								$sql = "UPDATE 
-										`clients` 
-										SET 
-										`name` = '{$name}', `surname` = '{$surname}', `phone_nr` = '{$phoneNumber}', `extra_info` = '{$extraInfo}' 
-										WHERE `pesel` = '{$pesel}'";
-								
-								$result = parent::query($sql);
-								
-								if (!$this->affected_rows) {
-									throw new Exception("error during update db");
-									return false;
-								}
-								
-								$this->setName($name);
-								$this->setSurname($surname);
-								$this->setPhoneNumber($phoneNumber);
-								$this->setExtraInfo($extraInfo);
-								$this->setClientData();
-								
-								return true;
-							}
-						//klient jest w bazie
-						//dane obiektu to dane z bazy, dane do zmiany to zmienne
-						//porównamy, ktore dane sie zmieniły i je zupdatujemy, 
-						//po czym zwrócimy client data z updatewanymi zmianami
-					}
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			throw new Exception("Error during update database");
 		}
+		
+		return $this->getClientData();
+		
 	}
 	
 	
@@ -335,7 +303,7 @@ class ClientModel extends Model {
 		//validate checksum and control digit
 		
 		if ($arrayPesel[10] == $checksum) {
-			echo "pesel ok";
+			
 			return true;
 		}
 		else {

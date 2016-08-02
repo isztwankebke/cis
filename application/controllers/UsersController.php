@@ -34,13 +34,6 @@ class UsersController extends Controller {
 	}
 	
 	
-	
-	
-	public function read($data) {
-		
-	}
-	
-	
 	/**
 	 * 
 	 */public function test($parameters) {
