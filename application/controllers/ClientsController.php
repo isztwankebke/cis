@@ -1,7 +1,7 @@
 <?php
 class ClientsController extends Controller {
 
-
+	public $clients = null;
 
 	/**
 	 *
@@ -62,7 +62,10 @@ class ClientsController extends Controller {
 		}
 		
 	}
-	
+	public function renderView($parameters) {
+		$clients = $parameters;
+		include '../application/views/Layouts/default.php';
+	}
 	
 	
 	/**
@@ -73,8 +76,12 @@ class ClientsController extends Controller {
 		if ($this->request->isGet()) {
 			
 			$client = new ClientModel();
-			var_dump($client->read());
+			$clients = $client->read();
+			//$this->clients = $clients;
+			$this->renderView($clients);
 			
+			// jak do layoutu przekazac nazwe widoku i jego parametry?
+			// include 'default layout';
 		}
 	}
 

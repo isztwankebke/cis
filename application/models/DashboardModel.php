@@ -1,6 +1,6 @@
 <?php
 
-class NotificationModel extends Model {
+class DashboardModel extends Model {
 	
 	private $alertId;
 	private $productId;

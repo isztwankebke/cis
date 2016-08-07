@@ -1,8 +1,13 @@
+<?php
+
+$scriptName = basename($_SERVER['SCRIPT_NAME'], '.php');
+//echo $scriptName;
+?>
 
  <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
@@ -16,16 +21,16 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../application/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../../application/css/dashboard.css" rel="stylesheet">
-    <link href="../../application/css/mystyle.css" rel="stylesheet">
+    <link href="/css/dashboard.css" rel="stylesheet">
+    <link href="/css/mystyle.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../application/js/ie-emulation-modes-warning.js"></script>
-    <script src="../../application/js/obliczanie-daty-konca.js"></script>
+    <script src="/js/ie-emulation-modes-warning.js"></script>
+    <script src="/js/obliczanie-daty-konca.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -45,7 +50,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.php">Customer Information System</a>
+          <a class="navbar-brand" href="default.php">żółćCustomer Information System</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -64,14 +69,14 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="<?php echo $scriptName == "index" ? 'active' : ''; ?>"><a href="index.php">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "dodajKlienta" ? 'active' : ''; ?>"><a href="view/dodajKlienta.php">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "szukajKlienta" ? 'active' : ''; ?>"><a href="szukajKlienta.php">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "edytujKlienta" ? 'active' : ''; ?>"><a href="../view/edytujKlienta.php">Edytuj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "raporty" ? 'active' : ''; ?>"><a href="../view/raporty.php">Raporty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "index" ? 'active' : ''; ?>"><a href="/clients/read">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "addClient" ? 'active' : ''; ?>"><a href="/clients/addClient">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "search" ? 'active' : ''; ?>"><a href="/user/clients">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "edit" ? 'active' : ''; ?>"><a href="/user/transactions">Edytuj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="user/reports">Raporty<span class="sr-only">(current)</span></a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="../view/admin.php">Administrator</a></li>
+            <li><a href="/admin/index">Administrator</a></li>
             <li><a href=""></a></li>
             <li><a href=""></a></li>
             <li><a href=""></a></li>
@@ -88,7 +93,8 @@
     </div>
     
     <div class="content">
-    	<?php echo $contentForLayout; ?>
+    
+    	<?php include '../application/views/Clients/read.php';//$pathToView;//echo $contentForLayout; ?>
     
     </div>
     
@@ -100,12 +106,12 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="../../application/js/vendor/jquery.min.js"><\/script>')</script>
-<script src="../../application/js/bootstrap.min.js"></script>
+<script>window.jQuery || document.write('<script src="/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="/js/bootstrap.min.js"></script>
 <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../application/js/vendor/holder.min.js"></script>
+    <script src="/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../application/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>
 

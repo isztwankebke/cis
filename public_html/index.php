@@ -83,7 +83,7 @@ try {
 	//$controller->$actionName($parameters);
 
 	call_user_func_array(array($controller, $actionName), $request->getParameters('get'));
-
+	//include '../application/views/Layouts/default.php';
 
 
 

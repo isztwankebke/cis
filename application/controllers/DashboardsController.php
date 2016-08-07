@@ -1,5 +1,5 @@
 <?php
-class NotificationsController extends Controller {
+class DashboardsController extends Controller {
 
 
 
@@ -18,7 +18,7 @@ class NotificationsController extends Controller {
 	public function addAlertRule($parameters) {
 		try {
 				
-			$alert = new AlertModel();
+			$alert = new DashboardModel();
 				
 				
 		}
