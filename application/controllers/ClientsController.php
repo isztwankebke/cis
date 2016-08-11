@@ -62,8 +62,16 @@ class ClientsController extends Controller {
 		}
 		
 	}
-	public function renderView($parameters) {
+	public function renderView($viewName, $parameters) {
+		
 		$clients = $parameters;
+		// $parameters['clients'];
+		extract($parameters);
+		
+		
+		///$clients
+		// nazwa widoku, ktory zainclugowac
+		// parametry widoku
 		include '../application/views/Layouts/default.php';
 	}
 	
@@ -74,12 +82,27 @@ class ClientsController extends Controller {
 	public function read() {
 		
 		if ($this->request->isGet()) {
-			
+			$this->autoRender = false;
 			$client = new ClientModel();
-			$clients = $client->read();
-			//$this->clients = $clients;
-			$this->renderView($clients);
 			
+			$clients = $client->read();
+			$view = new View();
+			$view->set('Clients/read', $clients);
+			$view->render();
+			
+			/*$path = preg_split('/Controller::/', __METHOD__);
+			$this->view = '../application/views/'. $path[0] . '/' . $path[1]. '.php';
+			
+			//$this->clients = $clients;
+			$viewName = $this->view;
+			var_dump($this->view);
+			
+			var_dump(ClientsController::setView());
+			
+			//$this->view->set('clients', $clients);
+			//$this->renderView('Clients/read', ['clients' => $clients]);
+			*/
+			//$this->renderView($viewName, $clients);
 			// jak do layoutu przekazac nazwe widoku i jego parametry?
 			// include 'default layout';
 		}

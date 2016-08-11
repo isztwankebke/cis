@@ -10,15 +10,29 @@ class Controller {
 	
 	
 	protected $session = null;
+	//protected $view = null;
+	
+	protected $autoRender = true;
 	
 	/**
 	 * 
 	 * @param Request $request
 	 */
-	function __construct(Request $request) {
+	public function __construct(Request $request) {
 		
 		$this->request = $request;
 	}
+	
+	/*
+	public function render() {
+		
+		if ($this->autoRender) {
+			include View::getPath;
+			
+			// renderuj widok
+			
+		}
+	}*/
 	
 	
 	

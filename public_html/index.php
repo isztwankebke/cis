@@ -41,7 +41,7 @@ function __autoload($name) {
 
 		if (!file_exists($path)) {
 
-			throw new Exception("bad controller name", 400);
+			throw new Exception("bad controller, model or view name", 400);
 
 		}
 		// laduj z library, gdy sie nie uda- rzuc wyjatkiem albo wyskocz przez okno...
@@ -51,7 +51,7 @@ function __autoload($name) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
 	}
 	include_once $path;
-	echo "<br>ładuje ścieżkę: " . $path. "<br>";
+	//echo "<br>ładuje ścieżkę: " . $path. "<br>";
 }
 //var_dump($GLOBALS);
 
@@ -59,16 +59,16 @@ function __autoload($name) {
 try {
 	// domena/kontroler/akcja/param1/.../paramn
 	$request = new Request($_SERVER);
-	var_dump($request);
+	//var_dump($request);
 	$controllerName = $request->getControllerName();
 
-	var_dump($controllerName);
+	//var_dump($controllerName);
 
-	echo "<br>nazwa kontrolera=", $controllerName, "<br>";
+	//echo "<br>nazwa kontrolera=", $controllerName, "<br>";
 
 	$actionName = $request->getActionName();
 
-	echo "<br>nazwa akcji=", $actionName, "<br>";
+	//echo "<br>nazwa akcji=", $actionName, "<br>";
 
 
 	$parameters = $request->getParameters();
@@ -85,6 +85,7 @@ try {
 	call_user_func_array(array($controller, $actionName), $request->getParameters('get'));
 	//include '../application/views/Layouts/default.php';
 
+	//$controller->render();
 
 
 

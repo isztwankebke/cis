@@ -94,7 +94,7 @@ $scriptName = basename($_SERVER['SCRIPT_NAME'], '.php');
     
     <div class="content">
     
-    	<?php include '../application/views/Clients/read.php';//$pathToView;//echo $contentForLayout; ?>
+    	<?php include $this->contentForLayout; ?>
     
     </div>
     

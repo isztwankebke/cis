@@ -8,7 +8,8 @@ class Model extends mysqli {
 	public function __construct() {
 
 		parent::__construct('localhost', 'alojzy', 'blabla1@', 'cis_db');
-
+		parent::set_charset('utf8');
+		
 		if (mysqli_connect_error()) {
 			throw new Exception('Connect Error ('.mysqli_connect_errno().')'.mysqli_connect_errno());
 		}

@@ -17,7 +17,8 @@
 				
 					<?php 
 					//header('Content-type: text/html; charset=utf-8');
-					foreach ($clients as $client) {
+					//echo $name;
+					foreach ($this->data as $client) {
 						echo "<tr>";
 						echo "<td>", $client['id'], "</td>";
 						echo "<td>", $client['name'], "</td>";
@@ -38,14 +39,8 @@
 					 * 
 					 * }
 					 * 
-					 *
-					//foreach
-					echo'<td>'1'</td>'
-					<td>Produkt A</td>
-					<td>Jan</td>
-					<td>Kowalski</td>
-					<td>601100100</td>
-					<td>6rat</td> */
+					 */
+					
 				?>
 			</tbody>
 		</table>
