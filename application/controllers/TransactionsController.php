@@ -65,4 +65,42 @@ class TransactionsController extends Controller {
 	}
 	
 	
+	public function index() {
+		
+		if ($this->request->isGet()) {
+			$view = new View();
+			$view->set('transactions/index');
+			$view->render();	
+		}
+		
+	}
+	public function search() {
+		
+		if ($this->request->isPost()){
+			
+			$transaction = new TransactionModel();
+			$searchData = $this->request->getPostData();
+			
+			if (debug) {
+			var_dump($_POST);
+			var_dump($searchData);
+			}
+			
+			$data = $transaction->search($searchData);
+			
+			//var_dump($client->search($searchData));
+			
+			$view = new View();
+			$view->set('transactions/search', $data);
+			$view->render();
+			
+			//$transaction = new TransactionModel();
+			//$transactionData = $this->request->getPostData();
+			//var_dump($transaction->search($searchData));
+				
+		}
+		
+	}
+	
+	
 }

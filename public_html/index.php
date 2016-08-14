@@ -1,4 +1,6 @@
 <?php
+define('debug', true);
+
 //echo "plik index.php";
 //var_dump($_SERVER);
 //die;

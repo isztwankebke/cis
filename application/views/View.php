@@ -4,7 +4,7 @@ class View extends Controller {
 	private   $layout =  null;
 	private   $path = null;
 	private   $data = null;
-	public    $contentForLayout = null;
+	private   $contentForLayout = null;
 	
 	public function __construct(){
 		
@@ -20,10 +20,14 @@ class View extends Controller {
 		$this->path = '../application/views/Layouts/'. $this->layout;
 		$this->data = $dataToDisplay;
 		$this->contentForLayout = '../application/views/'. $dataToPath. '.php';
-		var_dump($this->layout);
-		var_dump($this->path);
-		//var_dump($this->data);
-		var_dump($this->contentForLayout);
+		if (debug) {
+			var_dump($this->layout);
+			var_dump($this->path);
+			//var_dump($this->data);
+			var_dump($this->contentForLayout);
+			var_dump($_SERVER['REQUEST_URI']);
+		}
+		
 		//$path = preg_split('/Controller::/', __METHOD__);
 		//var_dump($path1 = preg_split('/Controller/', __CLASS__));
 		//var_dump($pat2 = __FUNCTION__);
@@ -39,5 +43,6 @@ class View extends Controller {
 		include $this->getPath();
 		$contentForLayout = $this->contentForLayout;
 		$data = $this->data;
+		
 	}
 }

@@ -22,6 +22,100 @@ class TransactionModel extends Model {
 	
 	
 	
+	
+	public function search($searchData) {
+		
+		//check is recived data is set
+		if (!isset($searchData)) {
+			throw new Exception("data to search not set");
+		}
+		//$client = new ClientModel();
+		//check is client exist via pesel and phone numner
+		if (is_numeric($searchData['clientData'])) {
+			//setting new client model and check is pesel or phone number
+			$sql ="SELECT 
+						clients.id 
+					FROM 
+						clients 
+					WHERE 
+						clients.pesel = '{$searchData['clientData']}' 
+					OR 
+						clients.phone_nr = '{$searchData['clientData']}'";
+			
+			$result = parent::query($sql);
+			
+		}
+		//check is client exist via surname
+		elseif (is_string($searchData['clientData']) && !is_numeric($searchData['clientData'])) {
+			
+			$sql ="SELECT
+					clients.id
+				FROM
+					clients
+				WHERE
+					clients.surname = '{$searchData['clientData']}'";
+			
+			$result = parent::query($sql);
+		}
+		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
+		
+		
+		var_dump($result);
+		var_dump(count($result));
+		if (count($result) && $result) {
+			foreach ($result as $row) {
+				$clientsId[] = $row['id'];
+			}
+			
+			$clientsId = implode(',', $clientsId);
+			
+			//var_dump($clientsId);
+		}
+		elseif ($result) {
+			$clientsId = $result;
+		}
+		else {
+			echo "client not found";
+		}
+		var_dump($clientsId);
+		
+		
+		//$key = key($searchData);
+		//$value = trim($searchData[$key]);
+		
+		
+		$sql = "SELECT 
+					clients.name, 
+					clients.surname, 
+					clients.pesel, 
+					clients.phone_nr, 
+					products.product_name, 
+					transactions.init_date, 
+					transactions.period, 
+					clients.extra_info, 
+					transactions.id, 
+					clients.id, 
+					products.id 			
+				FROM 
+					transactions 
+				JOIN 
+					products 
+				ON 
+					transactions.product_id = products.id 
+				JOIN 
+			clients 
+			ON 
+			transactions.client_id = clients.id 
+			AND 
+			clients.id IN ({$clientsId})";
+		var_dump($sql);
+		
+		$result = parent::query($sql);
+		
+		return $result;
+	}
+	
+	
 	/**
 	 * 
 	 * @param unknown $transactionID

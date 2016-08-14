@@ -87,7 +87,7 @@ class ClientsController extends Controller {
 			
 			$clients = $client->read();
 			$view = new View();
-			$view->set('Clients/read', $clients);
+			$view->set('Clients/read', $clients, 'default');
 			$view->render();
 			
 			/*$path = preg_split('/Controller::/', __METHOD__);

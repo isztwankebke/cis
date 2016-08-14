@@ -1,6 +1,6 @@
 <?php
-
-$scriptName = basename($_SERVER['SCRIPT_NAME'], '.php');
+$scriptName = $_SERVER['REQUEST_URI'];
+//$scriptName = basename($_SERVER['REQUEST_URI']);
 //echo $scriptName;
 ?>
 
@@ -50,7 +50,7 @@ $scriptName = basename($_SERVER['SCRIPT_NAME'], '.php');
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="default.php">żółćCustomer Information System</a>
+          <a class="navbar-brand" href="default.php">Customer Information System</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -69,14 +69,13 @@ $scriptName = basename($_SERVER['SCRIPT_NAME'], '.php');
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="<?php echo $scriptName == "index" ? 'active' : ''; ?>"><a href="/clients/read">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/clients/read" ? 'active' : ''; ?>"><a href="/clients/read">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "addClient" ? 'active' : ''; ?>"><a href="/clients/addClient">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "search" ? 'active' : ''; ?>"><a href="/user/clients">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "edit" ? 'active' : ''; ?>"><a href="/user/transactions">Edytuj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="user/reports">Raporty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == '/transactions/index' || $scriptName == '/transactions/search' ? 'active' : ''; ?>"><a href="/transactions/index">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="dashboards/index">Raporty<span class="sr-only">(current)</span></a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="/admin/index">Administrator</a></li>
+            <li><a href="/admins/index">Administrator</a></li>
             <li><a href=""></a></li>
             <li><a href=""></a></li>
             <li><a href=""></a></li>

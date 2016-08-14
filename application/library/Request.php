@@ -28,6 +28,8 @@ class Request {
 		$this->url = $_SERVER['REQUEST_URI'];
 		$this->requestMethod = $_SERVER['REQUEST_METHOD'];
 		$this->postData = $_POST;
+		//var_dump($_POST);
+		
 
 		$this->decodeURL2();
 
