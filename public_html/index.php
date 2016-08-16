@@ -1,5 +1,5 @@
 <?php
-define('debug', true);
+define('debug', false);
 
 //echo "plik index.php";
 //var_dump($_SERVER);

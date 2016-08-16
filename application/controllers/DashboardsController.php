@@ -29,6 +29,25 @@ class DashboardsController extends Controller {
 	
 	
 	
+	/**
+	 * 
+	 */
+	public function index() {
+		$view = new View();
+		$view->set('Dashboards/index');
+		$view->render();
+	}
+	
+	public function read() {
+		$alert = new DashboardModel();
+		$alerts = $alert->read();
+		
+		$view = new View();
+		$view->set('Dashboards/read', $alerts, 'admin');
+		$view->render();
+	}
+	
+	
 	
 	
 	

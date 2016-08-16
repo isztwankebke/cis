@@ -1,8 +1,8 @@
 
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	<h1 class="page-header">Dzisiejsze alerty</h1>
+	<h1 class="page-header">Zarządzanie klientami</h1>
 	<div class="table-responsive">
-		<table class="table table-striped">
+		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th>#</th>
@@ -11,6 +11,7 @@
 					<th>Pesel</th>
 					<th>Nr telefonu</th>
 					<th>extra Info</th>
+					<th>Akcja</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -26,6 +27,7 @@
 						echo "<td>", $client['pesel'], "</td>";
 						echo "<td>", $client['phone_nr'], "</td>";
 						echo "<td>", $client['extra_info'], "</td>";
+						echo "<td>Edytuj Usuń</td>";
 						echo "</tr>";
 					}
 					/**

@@ -29,6 +29,8 @@ class ProductsController extends Controller {
 		}
 	}
 	
+
+	
 	
 	
 	/**
@@ -38,7 +40,27 @@ class ProductsController extends Controller {
 	public function getProduct($parameters) {
 		$product = new ProductModel();
 		$product->getProduct($parameters);
-		return $product->getProductData();
+		$data = $product->getProductData();
+		$view = new View();
+		$view->set('/products/getProduct', $data, 'admin');
+		$view->render();
+	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function read() {
+		if ($this->request->isGet()) {
+			$this->autoRender = false;
+			$product = new ProductModel();
+				
+			$products = $product->read();
+			$view = new View();
+			$view->set('Products/index', $products, 'admin');
+			$view->render();
+		}
 	}
 	
 	

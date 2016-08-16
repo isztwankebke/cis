@@ -19,8 +19,12 @@ class TransactionsController extends Controller {
 	 *
 	 * @param unknown $parameters
 	 */
-	public function addTransaction($parameters) {
-	
+	public function addTransaction() {
+		
+		$view = new View();
+		$view->set('transactions/addTransaction');
+		$view->render();
+	/*
 		try {
 				
 			if ($this->request->isGet()) { //replace Get with POST
@@ -39,7 +43,7 @@ class TransactionsController extends Controller {
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
-		}
+		}*/
 	}
 	
 	
@@ -82,12 +86,15 @@ class TransactionsController extends Controller {
 			$searchData = $this->request->getPostData();
 			
 			if (debug) {
-			var_dump($_POST);
-			var_dump($searchData);
+				var_dump($_POST);
+				var_dump($searchData);
 			}
 			
 			$data = $transaction->search($searchData);
 			
+			if (debug) {
+				var_dump($data);
+			}
 			//var_dump($client->search($searchData));
 			
 			$view = new View();

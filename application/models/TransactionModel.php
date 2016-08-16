@@ -24,10 +24,12 @@ class TransactionModel extends Model {
 	
 	
 	public function search($searchData) {
-		
+		if (debug) {
+			var_dump($searchData);
+		}
 		//check is recived data is set
-		if (!isset($searchData)) {
-			throw new Exception("data to search not set");
+		if (empty($searchData['clientData'])) {
+			return $a = 'nie wpisano danych';
 		}
 		//$client = new ClientModel();
 		//check is client exist via pesel and phone numner
@@ -38,9 +40,9 @@ class TransactionModel extends Model {
 					FROM 
 						clients 
 					WHERE 
-						clients.pesel = '{$searchData['clientData']}' 
+						clients.pesel LIKE '%{$searchData['clientData']}%' 
 					OR 
-						clients.phone_nr = '{$searchData['clientData']}'";
+						clients.phone_nr LIKE '%{$searchData['clientData']}%'";
 			
 			$result = parent::query($sql);
 			
@@ -53,16 +55,17 @@ class TransactionModel extends Model {
 				FROM
 					clients
 				WHERE
-					clients.surname = '{$searchData['clientData']}'";
+					clients.surname LIKE '%{$searchData['clientData']}%'";
 			
 			$result = parent::query($sql);
 		}
 		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
 		
-		
-		var_dump($result);
-		var_dump(count($result));
-		if (count($result) && $result) {
+		if (debug) {
+			var_dump($result);
+			var_dump(count($result));
+		}
+		if ($result) {
 			foreach ($result as $row) {
 				$clientsId[] = $row['id'];
 			}
@@ -71,20 +74,12 @@ class TransactionModel extends Model {
 			
 			//var_dump($clientsId);
 		}
-		elseif ($result) {
-			$clientsId = $result;
-		}
 		else {
-			echo "client not found";
+			return false;
 		}
-		var_dump($clientsId);
 		
-		
-		//$key = key($searchData);
-		//$value = trim($searchData[$key]);
-		
-		
-		$sql = "SELECT 
+		$sql = "SELECT
+					transactions.id,
 					clients.name, 
 					clients.surname, 
 					clients.pesel, 
@@ -92,24 +87,23 @@ class TransactionModel extends Model {
 					products.product_name, 
 					transactions.init_date, 
 					transactions.period, 
-					clients.extra_info, 
-					transactions.id, 
-					clients.id, 
-					products.id 			
+					clients.extra_info						
 				FROM 
-					transactions 
-				JOIN 
-					products 
+					transactions
+				JOIN
+					clients
 				ON 
-					transactions.product_id = products.id 
-				JOIN 
-			clients 
-			ON 
-			transactions.client_id = clients.id 
-			AND 
-			clients.id IN ({$clientsId})";
-		var_dump($sql);
-		
+					transactions.client_id = clients.id
+				JOIN
+					products
+				ON
+					products.id = transactions.product_id
+				WHERE 
+					clients.id IN ({$clientsId})";
+			//AND 
+			//clients.id IN 
+		//var_dump($sql);
+		//`{$key}` LIKE '%{$value}%'";
 		$result = parent::query($sql);
 		
 		return $result;

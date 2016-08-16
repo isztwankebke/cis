@@ -268,5 +268,22 @@ class ProductModel  extends Model{
 	
 	
 	
+	/**
+	 * 
+	 */
+	public function read() {
+		$sql = "SELECT *
+				FROM `products`
+				WHERE 1";
+		
+		$result = parent::query($sql);
+		
+		return $result;
+		
+		
+	}
+	
+	
+	
 		
 }

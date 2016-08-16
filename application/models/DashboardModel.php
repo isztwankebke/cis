@@ -126,6 +126,23 @@ class DashboardModel extends Model {
 		//add alert
 		$dataToCheck = array();
 	}
+	
+	public function read() {
+		$sql = "SELECT 
+				alerts.*, products.product_name 
+				FROM 
+				alerts 
+				JOIN 
+				products 
+				ON 
+				alerts.product_id = products.id ";
+		
+		$result = parent::query($sql);
+		
+		return $result;
+		
+		
+	}
 
 
 

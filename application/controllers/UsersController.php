@@ -36,7 +36,8 @@ class UsersController extends Controller {
 	
 	/**
 	 * 
-	 */public function test($parameters) {
+	 */
+	 public function test($parameters) {
 		
 		$this->session->read('User');
 		if ($this->request->isGet()) {
@@ -52,6 +53,21 @@ class UsersController extends Controller {
 		echo "<br>Dane klienta do dodania:<br>";
 		var_dump($parameters);
 	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function admin_index() {
+		
+		if ($this->request->isGet()) {
+			$view = new View();
+			$view->set('users/admin_index',null ,'admin');
+			$view->render();
+		}
+	}
+	
 	
 	
 	
