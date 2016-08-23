@@ -1,11 +1,14 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 	<h1 class="page-header">Dodaj Klienta:</h1>
-	<form class="form-horizontal" method="post" action="addTransaction.php">
+	<?php if (debug) {
+		var_dump($this->data);
+	}?>
+	<form class="form-horizontal" method="post" action="confirmation">
 	  <div class="form-group">
 	    <label for="inputPesel" class="col-sm-2 control-label">Pesel</label>
 	    <div class="col-sm-4">
 	      <input 
-	      type="number"
+	      type="text"
 	      maxlength="11"
 	      
 	      class="form-control" 
@@ -68,11 +71,12 @@
 	      autofocus="autofocus"
 	      id="inputProduct"
 	      name="product_name">
-  			<option>1</option>
-  			<option>2</option>
-  			<option>3</option>
-  			<option>4</option>
-  			<option>5</option>
+  			<?php 
+  			foreach ($this->data as $poduct) {
+  				echo "<option>".$poduct['product_name']."</option>";
+  			}
+  			?>
+  			
 		  </select>
 	    </div>
 	  </div>

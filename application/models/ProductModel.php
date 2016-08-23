@@ -1,5 +1,4 @@
 <?php
-include_once 'DataModel.php';
 class ProductModel  extends Model{
 	
 	private $productData;

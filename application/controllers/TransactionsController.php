@@ -20,10 +20,37 @@ class TransactionsController extends Controller {
 	 * @param unknown $parameters
 	 */
 	public function addTransaction() {
+		try {
+			//prepare view for both Request Method
+			
+			$view = new View();
 		
-		$view = new View();
-		$view->set('transactions/addTransaction');
+			if ($this->request->isGet()) {
+				
+				$product = new ProductModel();
+				$products = $product->read();
+				$view->set('Transactions/addTransaction',$products);
+				
+			}
+			elseif ($this->request->isPost()) {
+				
+				$transactionData = $this->request->getPostData();
+				$transaction = new TransactionModel();
+				$result = $transaction->addTransaction($transactionData);
+				$view->set('Transactions/confirmation', $result);
+				if (debug) {
+					var_dump($transactionData);
+				}
+			}
+			
+		
+		
+		}
+		catch (Exception $e) {
+			echo "Caught exception: ", $e->getMessage();
+		}
 		$view->render();
+		
 	/*
 		try {
 				
@@ -44,6 +71,34 @@ class TransactionsController extends Controller {
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
 		}*/
+	}
+	
+	public function confirmation() {
+		try {
+			
+		
+		if ($this->request->isPost()) {
+			$view = new View();
+			
+			$product = new ProductModel();
+			$products = $product->read();
+				
+			$transactionData = $this->request->getPostData();
+			$transaction = new TransactionModel();
+			$result = $transaction->addTransaction($transactionData);
+			//$transactionData = array_merge($transactionData, $products);
+			
+			//$view->set('transactions/addTransaction', $transactionData);
+			$view->set('Transactions/confirmation', $transactionData);
+			
+		}
+		}
+		
+		catch (Exception $e) {
+			echo "Caught exception: ", $e->getMessage();
+		}
+		$view->render();
+		
 	}
 	
 	
@@ -73,7 +128,7 @@ class TransactionsController extends Controller {
 		
 		if ($this->request->isGet()) {
 			$view = new View();
-			$view->set('transactions/index');
+			$view->set('Transactions/index');
 			$view->render();	
 		}
 		
@@ -98,7 +153,7 @@ class TransactionsController extends Controller {
 			//var_dump($client->search($searchData));
 			
 			$view = new View();
-			$view->set('transactions/search', $data);
+			$view->set('Transactions/search', $data);
 			$view->render();
 			
 			//$transaction = new TransactionModel();

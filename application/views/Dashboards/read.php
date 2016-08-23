@@ -1,5 +1,5 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	<?php var_dump($this->data);?>
+	<?php if (debug) var_dump($this->data);?>
 	<h1 class="page-header">Zarządzanie alertami</h1>
 	<div class="table-responsive">
 		
@@ -9,14 +9,14 @@
 					<th>#</th>
 					<th>Nazwa produktu</th>
 					<th>połowa rat</th>
-					<th>po ilu ratach informować</th>
+					<th>po ilu spłaconych ratach informować</th>
 					<th>ile tygodni wcześniej</th>
 					<th>powiadomienie o spłaconej ostatniej racie</th>
-					<th>po ilu kolejnych ratach</th>
-					<th>powiadomienie o spłaconej ostatniej racie</th>
+					<th>po ilu kolejnych ratach</th>					
 					<th>powiadamiaj jeśli klient posiada już ten produkt</th>
 					<th>po ilu kolejnych ratach jeśli już posiada produkt</th>
 					<th>Akcja</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -35,7 +35,7 @@
 						echo "<td>", $alerts['period_next'], "</td>";
 						echo "<td>", $alerts['has_product'], "</td>";
 						echo "<td>", $alerts['period_info2'], "</td>";
-						echo "<td>Edytuj Usuń</td>";
+						echo "<td> Edytuj Usuń</td>";
 						echo "</tr>";
 					}
 					

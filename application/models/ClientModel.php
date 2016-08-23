@@ -1,7 +1,4 @@
 <?php
-
-include_once 'DataModel.php';
-
 class ClientModel extends Model {
 	
 	protected $clientData;

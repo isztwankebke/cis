@@ -33,8 +33,11 @@ class DashboardsController extends Controller {
 	 * 
 	 */
 	public function index() {
+		
+		$dashboard = new DashboardModel();
+		$alerts = $dashboard->index();
 		$view = new View();
-		$view->set('Dashboards/index');
+		$view->set('Dashboards/index', $alerts);
 		$view->render();
 	}
 	

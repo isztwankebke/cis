@@ -70,12 +70,12 @@ $scriptName = $_SERVER['REQUEST_URI'];
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="<?php echo $scriptName == "/Dashboards/index" ? 'active' : ''; ?>"><a href="/Dashboards/index">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/transactions/addTransaction" ? 'active' : ''; ?>"><a href="/transactions/addTransaction">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == '/transactions/index' || $scriptName == '/transactions/search' ? 'active' : ''; ?>"><a href="/transactions/index">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="dashboards/index">Raporty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Transactions/addTransaction" ? 'active' : ''; ?>"><a href="/Transactions/addTransaction">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == '/Transactions/index' || $scriptName == '/Transactions/search' ? 'active' : ''; ?>"><a href="/transactions/index">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Reports/index" ? 'active' : ''; ?>"><a href="/Reports/index">Raporty<span class="sr-only">(current)</span></a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li class="<?php echo $scriptName == "/users/admin_index" ? 'active' : ''; ?>"><a href="/users/admin_index">Administrator<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Users/admin_index" ? 'active' : ''; ?>"><a href="/Users/admin_index">Administrator<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "adminZmienHaslo" ? 'active' : ''; ?>"><a href="adminZmienHaslo.php">Zmień hasło<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "zarzadzajUzytkownikami" ? 'active' : ''; ?>"><a href="zarzadzajUzytkownikami.php">Zarzadząnie użytkownikami<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "Products/read" ? 'active' : ''; ?>"><a href="/Products/read">Zarządzanie produktami<span class="sr-only">(current)</span></a></li>

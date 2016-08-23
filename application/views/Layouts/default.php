@@ -70,21 +70,21 @@ $scriptName = $_SERVER['REQUEST_URI'];
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="<?php echo $scriptName == "/Dashboards/index" ? 'active' : ''; ?>"><a href="/Dashboards/index">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/transactions/addTransaction" ? 'active' : ''; ?>"><a href="/transactions/addTransaction">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == '/transactions/index' || $scriptName == '/transactions/search' ? 'active' : ''; ?>"><a href="/transactions/index">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="dashboards/index">Raporty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Transactions/addTransaction" ? 'active' : ''; ?>"><a href="/Transactions/addTransaction">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == '/Transactions/index' || $scriptName == '/Transactions/search' ? 'active' : ''; ?>"><a href="/transactions/index">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Reports/index" ? 'active' : ''; ?>"><a href="/Reports/index">Raporty<span class="sr-only">(current)</span></a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li class="<?php echo $scriptName == "/users/admin_index" ? 'active' : ''; ?>"><a href="/users/admin_index">Administrator<span class="sr-only">(current)</span></a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="">Wyloguj</a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
+            <li></li>
+            <li></li>
           </ul>
         </div>
         
