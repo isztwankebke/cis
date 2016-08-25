@@ -41,14 +41,29 @@ class DashboardsController extends Controller {
 		$view->render();
 	}
 	
+	
+	
+	/**
+	 * 
+	 */
 	public function read() {
 		$alert = new DashboardModel();
 		$alerts = $alert->read();
 		
 		$view = new View();
-		$view->set('Dashboards/read', $alerts, 'admin');
+		if ($_SESSION['grant'] == 1) {
+			$view->set('Dashboards/read', $alerts, 'admin');
+		}
+		else {
+			$view->set('Users/admin_fault');
+		}
+		
 		$view->render();
 	}
+	
+	
+	
+	
 	
 	
 	

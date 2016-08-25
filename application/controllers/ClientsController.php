@@ -87,7 +87,13 @@ class ClientsController extends Controller {
 			
 			$clients = $client->read();
 			$view = new View();
-			$view->set('Clients/read', $clients, 'admin');
+			if ($_SESSION['grant'] == 1) {
+				
+				$view->set('Clients/read', $clients, 'admin');
+			}
+			else {
+				$view->set('Users/admin_fault');
+			}
 			$view->render();
 			
 			/*$path = preg_split('/Controller::/', __METHOD__);

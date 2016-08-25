@@ -58,7 +58,14 @@ class ProductsController extends Controller {
 				
 			$products = $product->read();
 			$view = new View();
-			$view->set('Products/index', $products, 'admin');
+			
+			if ($_SESSION['grant'] == 1) {
+				
+				$view->set('Products/index', $products, 'admin');
+			}
+			else {
+				$view->set('Users/admin_fault');
+			}
 			$view->render();
 		}
 	}

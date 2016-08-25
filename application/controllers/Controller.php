@@ -21,18 +21,19 @@ class Controller {
 	public function __construct(Request $request) {
 		
 		$this->request = $request;
+		session_start();
+		
+		
 	}
 	
-	/*
-	public function render() {
-		
-		if ($this->autoRender) {
-			include View::getPath;
-			
-			// renderuj widok
-			
+	public function isLogged() {
+		if (!isset($_SESSION['id'])) {
+			$view = new View();
+			$view->set('Users\login');
+			$view->render();
 		}
-	}*/
+	}
+	
 	
 	
 	

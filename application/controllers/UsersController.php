@@ -62,16 +62,91 @@ class UsersController extends Controller {
 	public function admin_index() {
 		
 		if ($this->request->isGet()) {
+			
 			$view = new View();
-			$view->set('users/admin_index',null ,'admin');
+			
+			if ($_SESSION['grant'] == 1) {
+				$view->set('Users/admin_index',null ,'admin');
+			}
+			else {
+				$view->set('Users/admin_fault');
+			}
+			
+			
 			$view->render();
 		}
 	}
 	
 	
 	
+	public function read() {
+		
+		$user = new UserModel();
+		$users = $user->read();
+		
+		$view = new View();
+		
+		if ($_SESSION['grant'] == 1) {
+			$view->set('Users/read', $users, 'admin');
+		}
+		else {
+			$view->set('Users/admin_fault');
+		}
+		
+		$view->render();
+	}
 	
 	
+	
+	/**
+	 * 
+	 */
+	public function index() {
+		$view = new View();
+		$view->set('Users/index');
+		$view->render();
+		
+	}
+	
+	public function login() {
+		
+		$view = new View();
+		
+		if ($this->request->isPost()) {
+		
+			$loginData = $this->request->getPostData();
+			$user = new UserModel();
+			$loging = $user->login($loginData);
+			
+			if (!$loging) {
+				$fault = 'Wrong name or password. Please try again.';
+				$view->set('Users/login', $fault, 'login');	
+			}
+			else {
+				$view->set('Users/index');
+			}
+		}
+		elseif ($this->request->isGet()) {
+			
+			$view->set('Users/login', null, 'login');
+		}
+			$view->render();
+			
+		
+	}
+	
+	
+	public function logout() {
+		
+		if ($this->request->isGet()) {
+			
+			$user = new UserModel();
+			$user->logout();
+			$view = new View();
+			$view->set('Users/login', null, 'login');
+			$view->render();
+		}
+	}
 	
 	
 	

@@ -1,6 +1,6 @@
 <?php
 
-class View extends Controller {
+class View {
 	private   $layout =  null;
 	private   $path = null;
 	private   $data = null;
