@@ -43,7 +43,7 @@ class ClientModel extends Model {
 	
 	
 	
-	public function read() {
+	public function admin_read() {
 		
 		$sql = "SELECT *
 		FROM

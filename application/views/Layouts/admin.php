@@ -74,10 +74,10 @@ $scriptName = $_SERVER['REQUEST_URI'];
           </ul>
           <ul class="nav nav-sidebar">
             <li class="<?php echo $scriptName == "/Users/admin_index" ? 'active' : ''; ?>"><a href="/Users/admin_index">Administrator<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/Users/read" ? 'active' : ''; ?>"><a href="/Users/read">Zarzadząnie użytkownikami<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/Products/read" ? 'active' : ''; ?>"><a href="/Products/read">Zarządzanie produktami<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/Clients/read" ? 'active' : ''; ?>" ><a href="/Clients/read">Zarządzanie Klientami<span class="sr-only">(current)</span></a></li>
-            <li class="<?php echo $scriptName == "/Dashboards/read" ? 'active' : ''; ?>" ><a href="/Dashboards/read">Zarządzanie Alertami<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Users/admin_read" ? 'active' : ''; ?>"><a href="/Users/admin_read">Zarzadząnie użytkownikami<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Products/admin_read" ? 'active' : ''; ?>"><a href="/Products/admin_read">Zarządzanie produktami<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Clients/admin_read" ? 'active' : ''; ?>" ><a href="/Clients/admin_read">Zarządzanie Klientami<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Dashboards/admin_read" ? 'active' : ''; ?>" ><a href="/Dashboards/admin_read">Zarządzanie Alertami<span class="sr-only">(current)</span></a></li>
             </ul>
           <ul class="nav nav-sidebar">
             <li><a href="/Users/logout">Wyloguj</a></li>

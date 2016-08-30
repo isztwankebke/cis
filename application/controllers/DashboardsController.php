@@ -10,7 +10,9 @@ class DashboardsController extends Controller {
 	function __construct(Request $request) {
 
 		parent::__construct($request);
-
+		parent::sessionTimeout();
+		parent::isLogged();
+		
 	}
 	
 	
@@ -46,13 +48,13 @@ class DashboardsController extends Controller {
 	/**
 	 * 
 	 */
-	public function read() {
+	public function admin_read() {
 		$alert = new DashboardModel();
-		$alerts = $alert->read();
+		$alerts = $alert->admin_read();
 		
 		$view = new View();
 		if ($_SESSION['grant'] == 1) {
-			$view->set('Dashboards/read', $alerts, 'admin');
+			$view->set('Dashboards/admin_read', $alerts, 'admin');
 		}
 		else {
 			$view->set('Users/admin_fault');

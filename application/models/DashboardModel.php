@@ -22,7 +22,7 @@ class DashboardModel extends Model {
 	/**
 	 * 
 	 */
-	public function read() {
+	public function admin_read() {
 		$sql = "SELECT 
 				alerts.*, products.product_name 
 				FROM 

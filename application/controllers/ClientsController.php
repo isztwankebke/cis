@@ -10,7 +10,9 @@ class ClientsController extends Controller {
 	function __construct(Request $request) {
 
 		parent::__construct($request);
-
+		parent::sessionTimeout();
+		parent::isLogged();
+		
 	}
 		
 	
@@ -79,17 +81,17 @@ class ClientsController extends Controller {
 	/**
 	 * 
 	 */
-	public function read() {
+	public function admin_read() {
 		
 		if ($this->request->isGet()) {
 			$this->autoRender = false;
 			$client = new ClientModel();
 			
-			$clients = $client->read();
+			$clients = $client->admin_read();
 			$view = new View();
 			if ($_SESSION['grant'] == 1) {
 				
-				$view->set('Clients/read', $clients, 'admin');
+				$view->set('Clients/admin_read', $clients, 'admin');
 			}
 			else {
 				$view->set('Users/admin_fault');

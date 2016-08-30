@@ -22,40 +22,19 @@ class ProductModel  extends Model{
 	//add product
 	//edit Product
 	
-	
-	
 	/**
-	 * 
-	 * @param unknown $productId
+	 *
 	 */
-	private function setProdductId ($productId) {
-		$this->productId = $productId;
-		return $this;
-	}
+	public function admin_read() {
+		$sql = "SELECT *
+				FROM `products`
+				WHERE 1";
+	
+		$result = parent::query($sql);
+	
+		return $result;
 	
 	
-	
-	/**
-	 * 
-	 * @param unknown $productName
-	 */
-	private function setProductName ($productName) {
-		$this->productName = $productName;
-		return $this;
-	}
-	
-	
-	
-	/**
-	 * 
-	 */
-	private function setProductData() {
-		$this->productData = array(
-				"id"			=> $this->getProductId(),
-				"product_name" 	=> $this->getProductName()
-		);
-		return $this;
-		
 	}
 	
 	
@@ -92,31 +71,20 @@ class ProductModel  extends Model{
 	 * @param unknown $parameters
 	 * @throws Exception
 	 */
-	public function getProduct ($parameters) {
+	public function getProduct($parameters) {
 		
-		$dataToCheck = ['productName'];
+		$sql = "SELECT
+				* 
+				FROM 
+				products 
+				WHERE 
+				id = '{$parameters[0]}' ";
 		
-		$checkData = new DataModel();
-		
-		$validateData = $checkData->validateRecivedData($dataToCheck, $parameters);
-		
-		if ($validateData) {
-			
-			//variable with product name to check is exist in db
-			$productName = $parameters['productName'];
-			
-			$productId = $this->isProductExist($productName, $id = null);
-			
-			if ($productId) {
-				
-				return true;
-			}
-			else {
-				//throw new Exception("Product not Exist");
-				
-				return false;
-			}
+		$result = parent::query($sql);
+		if (!$result) {
+			return false;
 		}
+		return $result;
 		
 	}
 	
@@ -124,14 +92,17 @@ class ProductModel  extends Model{
 	
 	/**
 	 * 
-	 * @param unknown $productName
+	 * @param $productName or $id
+	 * return true  if product exist or false if product not exist
 	 */
 	public function isProductExist ($productName, $id) {
 		
-		$sql = "SELECT * 
+		$sql = "SELECT 
+				* 
 				FROM 
-				`products` 
-				WHERE `product_name` = '{$productName}' OR `id` = '{$id}'";
+				products 
+				WHERE 
+				products.product_name = '{$productName}' OR `id` = '{$id}'";
 		
 		$result = parent::query($sql);
 		
@@ -139,13 +110,125 @@ class ProductModel  extends Model{
 			return false;
 		}
 		
-		$productId = $result[0]['id'];
-		$productName = $result[0]['product_name'];
-		
 		//setting product id and name
-		$this->setProdductId($productId);
-		$this->setProductName($productName);
-		$this->setProductData();
+		$this->productName = $result[0]['product_name'];
+		$this->productId = $result[0]['id'];
+		
+		
+		return true;
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param $productData
+	 * @throws Exception
+	 */
+	public function addProduct($productData) {
+		
+		
+		//first check recived data: is not empty
+		//is valid name
+		//is product exist
+		//if everything above is ok
+		//add product to db
+		//return true
+		if (!$this->checkProductData($productData)) {
+			return false;
+		}
+		$productName = $productData['product_name'];
+		
+		if ($this->isProductExist($productName, null)) {
+			throw new Exception('Product already exist, change name of given Product Name');
+			return false;
+		}
+		
+		$sql = "INSERT
+				INTO 
+				products
+		(`product_name`)
+		VALUES ('{$productName}')";
+			
+		$result = parent::query($sql);
+			
+		if (empty($result)) {
+					
+			return false;
+		}
+			
+		$productId = $this->insert_id;
+		
+		return true;
+		
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param $parameters
+	 * @throws Exception
+	 * @return false if something wrong or true if update is ok
+	 */
+	public function editProduct($parameters) {
+		//validate recived data
+		if (!$this->checkProductData($parameters)) {
+			return false;
+		}
+		$productName = $parameters['product_name'];
+		
+		if ($this->isProductExist($productName, null)) {
+			throw new Exception('Product already exist, change name of given Product Name');
+			return false;
+		}
+		
+		$sql = "UPDATE
+				products
+				SET
+				products.product_name='{$productName}' 
+				WHERE 
+				products.id='{$parameters['id']}'";
+				
+		$result = parent::query($sql);
+				
+		if (empty($this->affected_rows)) {
+			
+			throw new Exception("erroraaaaa during update db");
+			return false;
+		}
+		
+		return $result;
+			
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param $productData
+	 * @throws Exception
+	 * return true if everything is ok with sended data via POST
+	 * else return false
+	 */
+	public function checkProductData($productData) {
+		
+		//check is input is not empty
+		if (!isset($productData['product_name'])) {
+			
+			throw new Exception("Product Value not valid");
+			return false;
+		}
+		
+		//check is input value is alphanumeric
+		if (!ctype_alnum($productData['product_name'])) {
+			
+			throw new Exception('Product Name is not in valid format (only alphanumeric signs)');
+			return false;
+			
+		}
 		
 		return true;
 		
@@ -154,133 +237,6 @@ class ProductModel  extends Model{
 	
 	
 	
-	/**
-	 * 
-	 * @param unknown $parameters
-	 * @throws Exception
-	 */
-	public function addProduct($parameters) {
-		
-		$dataToCheck = ['productName'];
-		
-		$checkData = new DataModel();
-		
-		$validateData = $checkData->validateRecivedData($dataToCheck, $parameters);
-		
-		if ($validateData) {
-			
-			//variable with product name to check is exist in db
-			$productName = $parameters['productName'];
-				
-			$productExist = $this->isProductExist($productName, $id = null);
-				
-			if ($productExist) {
-		
-				throw new Exception("product already exist");
-				return false;
-			}
-			
-			$this->setProductName($productName);
-			
-			$sql = "INSERT
-			INTO `products`
-			(`product_name`)
-			VALUES ('{$this->getProductName()}')";
-			
-			$result = parent::query($sql);
-			
-			if (empty($result)) {
-					
-				return false;
-			}
-			//setting product id
-			$productId = $this->insert_id;
-			$this->setProdductId($productId);
-			
-			//setting product data
-			
-			$this->setProductData();
-			
-			return true;
-		}
-	}
-	
-	
-	
-	
-	/**
-	 * 
-	 * @param unknown $parameters
-	 * @throws Exception
-	 * @return unknown[]
-	 */
-	public function editProduct($parameters) {
-		//validate recived data
-		$dataToCheck = [
-		'productID',
-		'productName'
-		];
-		
-		$dataModel = new DataModel();
-		$validateData = $dataModel->validateRecivedData($dataToCheck, $parameters);
-		
-		if ($validateData) {
-			
-			$productId = $parameters['productID'];
-			
-			$productExist = $this->isProductExist($productName = null, $productId);
-			
-			$productName = $parameters['productName'];
-			
-			if ($productExist) {
-				
-				$oldProductName = $this->getProductName();
-				
-				if ($productName == $oldProductName) {
-					throw new Exception("Nothing change - product name the same");
-					return false;
-				}
-				
-				$this->setProductName($productName);
-				
-				$sql = "UPDATE
-					`products`
-					SET
-					`product_name`='{$this->getProductName()}' WHERE `id`='{$this->getProductId()}'";
-				
-				$result = parent::query($sql);
-				
-				if (empty($this->affected_rows)) {
-					throw new Exception("erroraaaaa during update db");
-				}
-				
-				$this->setProductData();
-				
-				return true;
-				
-			}
-			throw new Exception('Product not found');
-		}
-		
-		
-	}
-	
-	
-	
-	/**
-	 * 
-	 */
-	public function read() {
-		$sql = "SELECT *
-				FROM `products`
-				WHERE 1";
-		
-		$result = parent::query($sql);
-		
-		return $result;
-		
-		
-	}
 	
 	
 	

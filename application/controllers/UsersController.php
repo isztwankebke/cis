@@ -30,6 +30,8 @@ class UsersController extends Controller {
 	function __construct(Request $request) {
 		
 		parent::__construct($request);
+		parent::sessionTimeout();
+		
 		
 	}
 	
@@ -60,7 +62,7 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_index() {
-		
+		parent::isLogged();
 		if ($this->request->isGet()) {
 			
 			$view = new View();
@@ -79,15 +81,15 @@ class UsersController extends Controller {
 	
 	
 	
-	public function read() {
-		
+	public function admin_read() {
+		parent::isLogged();
 		$user = new UserModel();
-		$users = $user->read();
+		$users = $user->admin_read();
 		
 		$view = new View();
 		
 		if ($_SESSION['grant'] == 1) {
-			$view->set('Users/read', $users, 'admin');
+			$view->set('Users/admin_read', $users, 'admin');
 		}
 		else {
 			$view->set('Users/admin_fault');
@@ -102,6 +104,7 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function index() {
+		parent::isLogged();
 		$view = new View();
 		$view->set('Users/index');
 		$view->render();
@@ -117,7 +120,7 @@ class UsersController extends Controller {
 			$loginData = $this->request->getPostData();
 			$user = new UserModel();
 			$loging = $user->login($loginData);
-			
+			var_dump($loging);
 			if (!$loging) {
 				$fault = 'Wrong name or password. Please try again.';
 				$view->set('Users/login', $fault, 'login');	
@@ -141,10 +144,7 @@ class UsersController extends Controller {
 		if ($this->request->isGet()) {
 			
 			$user = new UserModel();
-			$user->logout();
-			$view = new View();
-			$view->set('Users/login', null, 'login');
-			$view->render();
+			$user->logout();$this->login();
 		}
 	}
 	

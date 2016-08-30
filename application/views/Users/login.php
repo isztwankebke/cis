@@ -31,7 +31,7 @@
 
     <div class="container">
 
-      <form class="form-signin" action="login" method="post">
+      <form class="form-signin" action="../Users/login" method="post">
         <h2 class="form-signin-heading">Proszę się zalogować</h2>
         <label for="inputName" class="sr-only">Nazwa użytkownika</label>
         <input type="text" name="username" id="inputName" class="form-control" placeholder="nazwa użytkownika" required autofocus>
@@ -43,6 +43,7 @@
     </div> <!-- /container -->
      <?php if ($this->data):?> 
     <div class="alert"> <p align="center"><?php echo $this->data; endif;?></p></div>
+    <?php var_dump($_SERVER);?>
 
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

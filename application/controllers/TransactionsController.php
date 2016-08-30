@@ -10,7 +10,9 @@ class TransactionsController extends Controller {
 	function __construct(Request $request) {
 
 		parent::__construct($request);
-
+		parent::sessionTimeout();
+		parent::isLogged();
+		
 	}
 	
 	
@@ -28,7 +30,7 @@ class TransactionsController extends Controller {
 			if ($this->request->isGet()) {
 				
 				$product = new ProductModel();
-				$products = $product->read();
+				$products = $product->admin_read();
 				$view->set('Transactions/addTransaction',$products);
 				
 			}

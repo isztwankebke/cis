@@ -8,7 +8,9 @@ class ReportsController extends Controller {
 	function __construct(Request $request) {
 
 		parent::__construct($request);
-
+		parent::sessionTimeout();
+		parent::isLogged();
+		
 	}
 	
 	

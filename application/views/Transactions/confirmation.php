@@ -10,15 +10,7 @@
 			var_dump($this->data);
 			}?>
 	</h1>
-	<form class="form-horizontal" action="/transactions/addTransaction" method="post">
-  		<div class="form-group">
-	    	<div class="col-sm-offset-2 col-sm-4">
-	      	<button 
-	      	type="submit" 
-	      	class="btn btn-default"
-	      	tabindex="1"
-	      	autofocus="autofocus">OK</button>
-	    	</div>
-	  	</div>  		
-	</form>
+	<div>
+		<a class="btn btn-default" href="../Transactions/addTransaction" role="button">OK</a>
+	</div>
 </div>

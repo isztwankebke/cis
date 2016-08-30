@@ -30,7 +30,6 @@ class Request {
 		$this->postData = $_POST;
 		//var_dump($_POST);
 		
-
 		$this->decodeURL2();
 
 	}
@@ -69,7 +68,7 @@ class Request {
 	 * @return string, null
 	 */
 	public function getControllerName () {
-
+		
 		return $this->requestedControllerName;
 
 	}
@@ -80,7 +79,13 @@ class Request {
 	 * get action name
 	 */
 	public function getActionName() {
-
+		if (debug) {
+			var_dump($this->getControllerName());
+			var_dump(class_exists($this->getControllerName()));
+		}
+		
+		//var_dump(method_exists($this->getControllerName(), $this->getActionName()));
+		
 		return $this->requestedActionName;
 
 	}
