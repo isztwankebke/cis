@@ -81,6 +81,9 @@ class UsersController extends Controller {
 	
 	
 	
+	/**
+	 * 
+	 */
 	public function admin_read() {
 		parent::isLogged();
 		$user = new UserModel();
@@ -111,6 +114,11 @@ class UsersController extends Controller {
 		
 	}
 	
+	
+	
+	/**
+	 * 
+	 */
 	public function login() {
 		
 		$view = new View();
@@ -120,7 +128,9 @@ class UsersController extends Controller {
 			$loginData = $this->request->getPostData();
 			$user = new UserModel();
 			$loging = $user->login($loginData);
-			var_dump($loging);
+			if (debug) {
+				var_dump($loging);
+			}
 			if (!$loging) {
 				$fault = 'Wrong name or password. Please try again.';
 				$view->set('Users/login', $fault, 'login');	
@@ -139,12 +149,137 @@ class UsersController extends Controller {
 	}
 	
 	
+	
+	/**
+	 * 
+	 */
 	public function logout() {
 		
 		if ($this->request->isGet()) {
 			
 			$user = new UserModel();
 			$user->logout();$this->login();
+		}
+	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function admin_addUser() {
+		try {
+			$view = new View();
+		
+			if ($this->request->isGet()) {
+				$view->set('Users/admin_addUser', null, 'admin');
+				
+				
+			}
+			elseif ($this->request->isPost()) {
+				$user = new UserModel();
+				$userData = $this->request->getPostData();
+				$result = $user->admin_addUser($userData);
+				$view->set('Users/confirmation', $result, 'admin');
+				
+			}
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function admin_passwordChange() {
+		try {
+			
+			$view = new View();
+			$user = new UserModel();
+			
+			if ($this->request->isGet()) {
+				
+				$parameters = $this->request->getParameters();
+				$userData = $user->getUser($parameters);
+				$view->set('Users/admin_passwordChange', $userData, 'admin');
+			}
+			
+			elseif ($this->request->isPost()) {
+				
+				$parameters = $this->request->getPostData();
+				$result = $user->passwordChange($parameters);
+				$view->set('Users/confirmation', $result, 'admin');
+			}
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function admin_deleteUser() {
+		try {
+			
+			$view = new View();
+			$user = new UserModel();
+			
+			if ($this->request->isGet()) {
+				
+				$parameters = $this->request->getParameters();
+				$userData = $user->getUser($parameters);
+				$view->set('Users/admin_deleteUser', $userData, 'admin');
+			}
+			
+			elseif ($this->request->isPost()) {
+			
+				$parameters = $this->request->getPostData();
+				$result = $user->deleteUser($parameters);
+				$view->set('Users/delete_confirmation', $result, 'admin');
+			}
+			
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+	}
+	
+	
+	
+	public function admin_editUser() {
+		try {
+				
+			$view = new View();
+			$user = new UserModel();
+				
+			if ($this->request->isGet()) {
+		
+				$parameters = $this->request->getParameters();
+				$userData = $user->getUser($parameters);
+				$view->set('Users/admin_editUser', $userData, 'admin');
+			}
+				
+			elseif ($this->request->isPost()) {
+					
+				$parameters = $this->request->getPostData();
+				$result = $user->editUser($parameters);
+				$view->set('Users/confirmation', $result, 'admin');
+			}
+				
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
 		}
 	}
 	

@@ -45,13 +45,13 @@ class TransactionsController extends Controller {
 				}
 			}
 			
-		
+			$view->render();
 		
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
 		}
-		$view->render();
+		
 		
 	/*
 		try {
@@ -74,7 +74,7 @@ class TransactionsController extends Controller {
 			echo "Caught exception: ", $e->getMessage();
 		}*/
 	}
-	
+	/*
 	public function confirmation() {
 		try {
 			
@@ -102,7 +102,7 @@ class TransactionsController extends Controller {
 		$view->render();
 		
 	}
-	
+	*/
 	
 	
 	/**

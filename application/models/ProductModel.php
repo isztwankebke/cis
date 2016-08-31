@@ -41,6 +41,23 @@ class ProductModel  extends Model{
 	
 	/**
 	 * 
+	 * @return boolean
+	 * the same as admin_read - temporary for use to addTransaction
+	 */
+	public function productRead() {
+		$sql = "SELECT *
+				FROM `products`
+				WHERE 1";
+		
+		$result = parent::query($sql);
+		
+		return $result;
+		
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public function getProductId() {
 		return $this->productId;

@@ -43,7 +43,9 @@
     </div> <!-- /container -->
      <?php if ($this->data):?> 
     <div class="alert"> <p align="center"><?php echo $this->data; endif;?></p></div>
-    <?php var_dump($_SERVER);?>
+    <?php if (debug) {
+    	var_dump($_SERVER);
+    }?>
 
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

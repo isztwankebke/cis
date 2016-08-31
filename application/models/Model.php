@@ -43,6 +43,11 @@ class Model extends mysqli {
 			return $this->affected_rows;
 		}
 		
+		if (preg_match('/DELETE/', $sql)) {
+				
+			return $this->affected_rows;
+		}
+		
 		return  $result->fetch_all(MYSQLI_ASSOC);
 		
 

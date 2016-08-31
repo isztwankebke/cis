@@ -3,14 +3,15 @@
 	<?php if (debug) {
 		var_dump($this->data);
 	}?>
-	<form class="form-horizontal" method="post" action="confirmation">
+	<form class="form-horizontal" method="post" action="../Transactions/addTransaction">
 	  <div class="form-group">
 	    <label for="inputPesel" class="col-sm-2 control-label">Pesel</label>
 	    <div class="col-sm-4">
 	      <input 
 	      type="text"
 	      maxlength="11"
-	      
+	      min="0"
+	      max="99999999999"
 	      class="form-control" 
 	      id="inputPesel" 
 	      name="pesel" 
@@ -31,7 +32,8 @@
 	      name="name" 
 	      placeholder="Imię"
 	      tabindex="2"
-	      autofocus="autofocus">
+	      autofocus="autofocus"
+	      required="required">
 	    </div>
 	  </div>
 	  <div class="form-group">
@@ -45,7 +47,8 @@
 	      name="surname" 
 	      placeholder="Nazwisko"
 	      tabindex="3"
-	      autofocus="autofocus">
+	      autofocus="autofocus"
+	      required="required">
 	    </div>
 	  </div>
 	  <div class="form-group">
@@ -59,7 +62,8 @@
 	      name="phone_nr" 
 	      placeholder="123456789"
 	      tabindex="4"
-	      autofocus="autofocus">
+	      autofocus="autofocus"
+	      required="required">
 	    </div>
 	  </div>
 	  <div class="form-group">
@@ -90,7 +94,8 @@
 	      name="init_date" 
 	      placeholder=""
 	      tabindex="6"
-	      autofocus="autofocus">
+	      autofocus="autofocus"
+	      required="required">
 	    </div>
 	  </div>
 	  <div class="form-group">
@@ -99,13 +104,15 @@
 	      <input 
 	      type="number"
 	      maxlength="3"
-	       
+	      min="1"
+	      max="120" 
 	      class="form-control" 
 	      id="inputPeriod" 
 	      name="period" 
 	      placeholder="12"
 	      tabindex="7"
-	      autofocus="autofocus">
+	      autofocus="autofocus"
+	      required="required">
 	    </div>
 	  </div>
 	  <div class="form-group">

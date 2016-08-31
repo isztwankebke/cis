@@ -143,14 +143,6 @@ class ProductsController extends Controller {
 			
 			$view->render();
 			
-			
-			
-			
-			/*
-			if ($this->request->isPost()) {
-				$this->admin_addProduct();
-			}
-	*/
 		}
 		catch (Exception $e) {
 			echo "Exception: ", $e->getMessage();

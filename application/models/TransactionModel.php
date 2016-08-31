@@ -13,7 +13,7 @@ class TransactionModel extends Model {
 	private $clientPhone;
 	private $clientExtraInfo;
 	private $clientDataDifference = FALSE;
-	
+	private $halfPeriod;
 	
 	
 	/**
@@ -166,7 +166,7 @@ class TransactionModel extends Model {
 		//that need to change data in database
 		//6. if client not exist check name and surname, phone number and extra info
 		//7.if everything is ok, prepare data to begin transaction
-		
+		//7a.propare halfperiod date
 		//8.check product name - if is ok prepare to transaction
 		
 		//9.check initial_date and period - if is ok - prepare to transaction
@@ -183,18 +183,58 @@ class TransactionModel extends Model {
 		//15.if something wrong rollback and return false
 		
 		
-		//.3
-		try {
-			
 		
+		//try {
+			//.1
+			if (!isset($transactionData['pesel'],
+					$transactionData['name'],
+					$transactionData['surname'],
+					$transactionData['phone_nr'],
+					$transactionData['product_name'],
+					$transactionData['init_date'],
+					$transactionData['period'])) {
+						
+						throw new Exception("Recived data not consistent - fill properly data in input");
+						return false;
+					}
+			//.2
+			if (!ctype_alpha(str_replace(' ','',$transactionData['name']))) {
+				
+				throw new Exception("Name is not valid");
+				return false;
+			}
+			if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń]$/',$transactionData['surname'])) {
+				
+				throw new Exception("Surname is not valid");
+				return false;
+			}
+			if (!is_numeric(str_replace(' ','',$transactionData['phone_nr']))) {
+				
+				throw new Exception("Phone nr is not valid");
+				return false;
+			}
+			
+			if (!$this->checkDate($transactionData['init_date'])) {
+				
+				throw new Exception("Date initialization not valid");
+				return false;
+			}
+			if (!is_numeric($transactionData['period'])) {
+				
+				throw new Exception("Period time is not valid");
+				return false;
+			}
+			
+			
 		$client = new ClientModel();
 		
 		if (!$client->validatePesel($transactionData['pesel'])) {
 			//.4
 			throw new Exception("pesel not valid");
 			return false;
-			
 		}
+		
+		
 		$sql = "SELECT *
 		FROM clients
 		WHERE clients.pesel = '{$transactionData['pesel']}'";
@@ -210,17 +250,14 @@ class TransactionModel extends Model {
 			$this->clientExtraInfo = $result[0]['extra_info'];
 			
 			//.5
-			$this->checkDifference($transactionData);
+			if (!$this->checkDifference($transactionData)) {
+				
+				throw new Exception("Client data in db not the same as in form - check data, edit client data first, then add client and transaction");
+				return false;
+			}
 			
-		} //.6
-		elseif (!$client->validateName($transactionData['name']) ||
-				!$client->validateSurname($transactionData['surname']) ||
-				!$client->validatePhoneNumber($transactionData['phone_nr']) ||
-				!$client->validateExtraInfo($transactionData['extra_info'])) {
-					
-					throw new Exception("client data not valid");
-					return false;
-				}
+		} 
+		
 		
 		//.7
 		if (!$this->clientID) { //client not exist - prepare sql to add client
@@ -233,8 +270,15 @@ class TransactionModel extends Model {
 					('{$transactionData['pesel']}', '{$transactionData['name']}', '{$transactionData['surname']}', 
 					'{$transactionData['phone_nr']}', '{$transactionData['extra_info']}')";
 			$result = parent::query($sqlClient);
+			var_dump($result);
 			$this->clientID = $result;
 			
+		}
+		//.7a
+		if (!$this->halfPeriodDate($transactionData['period'], $transactionData['init_date'])) {
+			
+			throw new Exception("half period date abnormal");
+			return false;
 		}
 		//.8
 		$sqlProduct = "SELECT products.id 
@@ -250,7 +294,7 @@ class TransactionModel extends Model {
 		$this->productID = $result[0]['id'];
 		
 		//.9
-		if (!$this->validateDate($transactionData['init_date']) ||
+		if (!$this->checkDate($transactionData['init_date']) ||
 				!$this->vaidatePeriod($transactionData['period'])) {
 					
 					throw new Exception("data not valid");
@@ -260,26 +304,27 @@ class TransactionModel extends Model {
 		$this->initialDate = $transactionData['init_date'];
 		$this->period = $transactionData['period'];
 		$this->endDate($transactionData['init_date'], $transactionData['period']);
-		
+		var_dump($this->clientID, $this->productID, $this->initialDate, $this->period, $this->endDate);
+		var_dump($this->halfPeriod);
 		$sql = "INSERT 
 				INTO transactions
-				(`client_id`, `product_id`, `init_date`, `period`, `end_date`) 
+				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`) 
 				VALUES 
 				('{$this->clientID}', '{$this->productID}', '{$this->initialDate}',
-				'{$this->period}', '{$this->endDate}')";
+				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}')";
 		
 		//.13
 		$result = parent::query($sql);
-		
+		var_dump($result);
 		if ($result) {
 			return true;
 		}
 		throw new Exception("error during update db");
-		}
+		/*}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
 		}
-		
+		*/
 			
 		
 		
@@ -335,12 +380,12 @@ class TransactionModel extends Model {
 		
 		if ($this->clientName != $transactionData['name'] ||
 			$this->clientSurname != $transactionData['surname'] ||
-			$this->clientPhone != $transactionData['phone_number'] ||
+			$this->clientPhone != $transactionData['phone_nr'] ||
 			$this->clientExtraInfo != $transactionData['extra_info']) {
 				
 				$this->clientDataDifference = true;
 			}
-			
+			return false;
 	}
 	
 	
@@ -350,25 +395,10 @@ class TransactionModel extends Model {
 	 * @param unknown $date
 	 * @throws Exception
 	 */
-	public function validateDate ($date) {
+	public function checkDate($date) {
 		
-		
-		$today = date('Y-m-d', time());
-		
-		if (preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date)) {
-			
-			if (strtotime($today) >= strtotime($date)) {
-				return true;
-			}
-			else {
-				throw new Exception("initial date can not be in future");
-				return false;
-			}
-			
-		}
-		throw new Exception("recived date format is incorrect");
-		return false;
-		
+		list($y, $m, $d) = array_pad(explode('-', $date, 3), 3, 0);
+		return ctype_digit("$y$m$d") && checkdate($m, $d, $y);
 	}
 	
 	
@@ -378,7 +408,7 @@ class TransactionModel extends Model {
 	 * @param unknown $period
 	 * @throws Exception
 	 */
-	public function vaidatePeriod ($period) {
+	public function vaidatePeriod($period) {
 		
 		if (is_numeric($period)) {
 			return true;
@@ -398,13 +428,25 @@ class TransactionModel extends Model {
 	 * @param unknown $initialDate
 	 * @param unknown $period
 	 */
-	public function endDate ($initialDate, $period) {
+	public function endDate($initialDate, $period) {
 	
 		
 		$endDate = date('Y-m-d', strtotime($initialDate. " + $period month"));
 		$this->endDate = $endDate;
 		return true;
 	
+	}
+	
+	
+	
+	public function halfPeriodDate($period, $initDate) {
+		$halfPeriod = intval($period / 2);
+		var_dump($period);
+		var_dump($halfPeriod);
+		$halfPeriodDate = date('Y-m-d', strtotime($initDate."+ $halfPeriod month"));
+		$this->halfPeriod = $halfPeriodDate;
+		return true;
+		
 	}
 	
 	

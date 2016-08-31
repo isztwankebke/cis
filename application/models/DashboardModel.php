@@ -39,6 +39,10 @@ class DashboardModel extends Model {
 		
 	}
 	
+	public function getAlert($parameters) {
+		//pobrac dane nt jednego alerta
+	}
+	
 	
 	
 	/**
@@ -155,7 +159,88 @@ class DashboardModel extends Model {
 		
 		
 	}
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $alertData
+	 * @throws Exception
+	 * @return boolean
+	 */
+	public function addAlert($alertData) {
+		//check is data is consistent
+		//check is alert exist
+		//add alert
+		if (!isset($alertData['period_info1'])) {
+			
+			throw new Exception("Period Info is necessary");
+			return false;
+		}
+		if (isset($alertData['half_period'])) {
+			
+			$halfPeriod = 'tak';
+		}
+		
+		else {
+			
+			$halfPeriod = 'nie';
+		}
+		
+		if (isset($alertData['last'])) {
+			
+			$last = 'tak';
+		}
+		
+		else {
+			$last = 'nie';
+		}
+		
+		if (isset($alertData['has_product'])) {
+			
+			$hasProduct = 'tak';
+		}
+		
+		else {
+			
+			$hasProduct = 'nie';
+		}
+		
+		$sql = "INSERT 
+				INTO 
+				alerts 
+				(`product_id`, `half_period`, `period_info1`, `week_info`, `last`, `period_next`, `has_product`, `period_info2`) 
+				VALUES 
+				('{$alertData['product_name']}', '{$halfPeriod}', '{$alertData['period_info1']}',
+				'{$alertData['week_info']}', '{$last}', '{$alertData['period_next']}', 
+				'{$hasProduct}', '{$alertData['period_info2']}')";
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			
+			return false;
+		}
+		
+		return $result;
+		
+	}
 
+	
+	public function deleteAlert($parameters) {
+		
+		$sql = "DELETE 
+				FROM 
+				`alerts` 
+				WHERE 
+				alerts.id = '{$parameters['id']}' ";
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			
+			return false;
+		}
+		return $result;
+	}
 
 
 
