@@ -171,11 +171,12 @@ class ClientModel extends Model {
 	 * @throws Exception
 	 */
 	public function addClient ($clientData) {
-		echo "jestem w add client";
+		
 		if (!$this->checkClientData($clientData)) {
 			throw new Exception("unable to add client - client data is missing");
+			return false;
 		}
-		echo "client data - ok";
+		
 		if ($this->checkClientExist()) {
 			throw new Exception("client already exist");	
 		}
@@ -215,6 +216,7 @@ class ClientModel extends Model {
 				$dataToChange['extraInfo'])) {
 				
 					throw new Exception("Recived data not set");
+					return false;
 				}
 					
 		$newPesel = $dataToChange['pesel'];
@@ -230,12 +232,13 @@ class ClientModel extends Model {
 			!$this->validateExtraInfo($newExtraInfo)) {
 								
 				throw new Exception("new data not Valid");
+				return false;
 								
 			}
 			
 		$this->pesel = $newPesel;
-		$this->name = $newName;
-		$this->surname = $newSurname;
+		$this->name = parent::setFirstLetterUppercase($newName);
+		$this->surname = parent::setFirstLetterUppercase($newSurname);
 		$this->phoneNumber = $newPhoneNumber;
 		$this->extraInfo = $newExtraInfo;
 		
@@ -253,6 +256,7 @@ class ClientModel extends Model {
 		
 		if (!$result) {
 			throw new Exception("Error during update database");
+			return false;
 		}
 		
 		return $this->getClientData();
@@ -277,11 +281,11 @@ class ClientModel extends Model {
 		//check month and year mistake and length of pesel (must be 11)
 		if (intval(substr($pesel, 4, 2)) > 31) {
 			throw new Exception("Error in Pesel - Year is changed with day!");
-			return null;
+			return false;
 		}
 		elseif (count($arrayPesel) != 11) {
 			throw new Exception("Error in Pesel - wrong length - Pesel must be 11 digit lenght");
-			return null;
+			return false;
 		}
 		
 		
@@ -305,7 +309,7 @@ class ClientModel extends Model {
 		}
 		else {
 			throw new Exception("Pesel is not valid");
-			return null;
+			return false;
 		}
 	}
 	
@@ -325,7 +329,7 @@ class ClientModel extends Model {
 		}
 		else {
 			throw new Exception("Name incorrect");
-			return null;
+			return false;
 		}
 	}
 	
@@ -344,7 +348,7 @@ class ClientModel extends Model {
 		}
 		else {
 			throw new Exception("Surname incorrect");
-			return null;
+			return false;
 		}
 	}
 	
@@ -362,7 +366,7 @@ class ClientModel extends Model {
 			return true;
 		}
 		else throw new Exception("Phone number incorrect");
-		return null;
+		return false;
 	}
 	
 	
@@ -380,7 +384,7 @@ class ClientModel extends Model {
 		}
 		else {
 			throw new Exception("Bad data at Extra Info form");
-			return null;
+			return false;
 		}
 		
 	}

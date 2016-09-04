@@ -198,16 +198,22 @@ class TransactionModel extends Model {
 						return false;
 					}
 			//.2
-			if (!ctype_alpha(str_replace(' ','',$transactionData['name']))) {
+			if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń ]$/',$transactionData['name'])) {
 				
 				throw new Exception("Name is not valid");
 				return false;
 			}
-			if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń]$/',$transactionData['surname'])) {
+			//change first letter to uppercase, rest to lower of name
+			$name = parent::setFirstLetterUppercase($transactionData['name']);
+			
+			if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń ]$/',$transactionData['surname'])) {
 				
 				throw new Exception("Surname is not valid");
 				return false;
 			}
+			
+			$surname = parent::setFirstLetterUppercase($transactionData['surname']);
+			
 			if (!is_numeric(str_replace(' ','',$transactionData['phone_nr']))) {
 				
 				throw new Exception("Phone nr is not valid");
@@ -240,7 +246,12 @@ class TransactionModel extends Model {
 		WHERE clients.pesel = '{$transactionData['pesel']}'";
 		
 		$result = parent::query($sql);
-		var_dump($result);
+		
+		if (debug) {
+			
+			var_dump($result);
+		}
+		
 		if ($result) { //client exist
 			
 			$this->clientID = $result[0]['id'];
@@ -267,10 +278,15 @@ class TransactionModel extends Model {
 					INTO clients 
 					(`pesel`, `name`, `surname`, `phone_nr`, `extra_info`) 
 					VALUES 
-					('{$transactionData['pesel']}', '{$transactionData['name']}', '{$transactionData['surname']}', 
+					('{$transactionData['pesel']}', '{$name}', '{$surname}', 
 					'{$transactionData['phone_nr']}', '{$transactionData['extra_info']}')";
 			$result = parent::query($sqlClient);
-			var_dump($result);
+			
+			if (debug) {
+				
+				var_dump($result);
+			}
+			
 			$this->clientID = $result;
 			
 		}
@@ -290,7 +306,12 @@ class TransactionModel extends Model {
 			throw new Exception("product data not valid");
 			return false;
 		}
-		var_dump($result);
+		
+		if (debug) {
+			
+			var_dump($result);
+		}
+		
 		$this->productID = $result[0]['id'];
 		
 		//.9
@@ -304,8 +325,13 @@ class TransactionModel extends Model {
 		$this->initialDate = $transactionData['init_date'];
 		$this->period = $transactionData['period'];
 		$this->endDate($transactionData['init_date'], $transactionData['period']);
-		var_dump($this->clientID, $this->productID, $this->initialDate, $this->period, $this->endDate);
-		var_dump($this->halfPeriod);
+		
+		if (debug) {
+			
+			var_dump($this->clientID, $this->productID, $this->initialDate, $this->period, $this->endDate);
+			var_dump($this->halfPeriod);
+		}
+		
 		$sql = "INSERT 
 				INTO transactions
 				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`) 
@@ -315,7 +341,11 @@ class TransactionModel extends Model {
 		
 		//.13
 		$result = parent::query($sql);
-		var_dump($result);
+		
+		if (debug) {
+			
+			var_dump($result);
+		}
 		if ($result) {
 			return true;
 		}
@@ -378,8 +408,8 @@ class TransactionModel extends Model {
 		
 		//check recived data is the same than db
 		
-		if ($this->clientName != $transactionData['name'] ||
-			$this->clientSurname != $transactionData['surname'] ||
+		if (strtolower($this->clientName) != strtolower($transactionData['name']) ||
+			strtolower($this->clientSurname) != strtolower($transactionData['surname']) ||
 			$this->clientPhone != $transactionData['phone_nr'] ||
 			$this->clientExtraInfo != $transactionData['extra_info']) {
 				
@@ -441,8 +471,12 @@ class TransactionModel extends Model {
 	
 	public function halfPeriodDate($period, $initDate) {
 		$halfPeriod = intval($period / 2);
-		var_dump($period);
-		var_dump($halfPeriod);
+		
+		if (debug) {
+			
+			var_dump($period);
+			var_dump($halfPeriod);
+		}
 		$halfPeriodDate = date('Y-m-d', strtotime($initDate."+ $halfPeriod month"));
 		$this->halfPeriod = $halfPeriodDate;
 		return true;

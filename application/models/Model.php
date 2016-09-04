@@ -54,6 +54,21 @@ class Model extends mysqli {
 	}
 	
 	
+	
+	/**
+	 * 
+	 * @param unknown $string
+	 * @return string
+	 * function change first letter to Capital, rest lowercase, after space set Capital letter
+	 */
+	public function setFirstLetterUppercase($string) {
+		
+		$FirstLetterCapital = ucwords(strtolower($string));
+		
+		return $FirstLetterCapital;
+	}
+	
+	
 		
 	
 	

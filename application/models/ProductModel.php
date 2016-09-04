@@ -128,7 +128,7 @@ class ProductModel  extends Model{
 		}
 		
 		//setting product id and name
-		$this->productName = $result[0]['product_name'];
+		$this->productName = parent::setFirstLetterUppercase($result[0]['product_name']);
 		$this->productId = $result[0]['id'];
 		
 		
@@ -155,9 +155,10 @@ class ProductModel  extends Model{
 		if (!$this->checkProductData($productData)) {
 			return false;
 		}
-		$productName = $productData['product_name'];
+		$productName = parent::setFirstLetterUppercase($productData['product_name']);
 		
 		if ($this->isProductExist($productName, null)) {
+			
 			throw new Exception('Product already exist, change name of given Product Name');
 			return false;
 		}
@@ -195,7 +196,7 @@ class ProductModel  extends Model{
 		if (!$this->checkProductData($parameters)) {
 			return false;
 		}
-		$productName = $parameters['product_name'];
+		$productName = parent::setFirstLetterUppercase($parameters['product_name']);
 		
 		if ($this->isProductExist($productName, null)) {
 			throw new Exception('Product already exist, change name of given Product Name');
@@ -240,7 +241,7 @@ class ProductModel  extends Model{
 		}
 		
 		//check is input value is alphanumeric
-		if (!ctype_alnum($productData['product_name'])) {
+		if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń ]$/', $productData['product_name'])) {
 			
 			throw new Exception('Product Name is not in valid format (only alphanumeric signs)');
 			return false;
