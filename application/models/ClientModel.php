@@ -41,8 +41,31 @@ class ClientModel extends Model {
 		return $this->clientData;
 	}
 	
+	public function readClient($parameters) {
+		if (debug) {
+			var_dump($parameters);
+		}
+		$sql = "SELECT *
+				FROM
+				clients
+				WHERE 
+				clients.id = '{$parameters[0]}'";
+		
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			return false;
+		}
+		
+		return $result;
+				
+	}
 	
 	
+	
+	/**
+	 * 
+	 */
 	public function admin_read() {
 		
 		$sql = "SELECT *
@@ -57,6 +80,66 @@ class ClientModel extends Model {
 		
 	}
 	
+	
+	
+	/**
+	 * 
+	 * @param unknown $parameters
+	 * @throws Exception
+	 * @return boolean
+	 */
+	public function editClient($parameters) {
+		//check recived data is consistent
+		if (!$this->checkClientData($parameters)) {
+			throw new Exception("New client data not consistent");
+			return false;
+		}
+		
+		$name = parent::setFirstLetterUppercase($parameters['name']);
+		$surname = parent::setFirstLetterUppercase($parameters['surname']);
+		
+		$sql = "UPDATE
+				clients 
+				SET 
+				`name`='{$name}',`surname`='{$surname}',
+				`phone_nr`='{$parameters['phoneNumber']}',`extra_info`='{$parameters['extraInfo']}' 
+				WHERE clients.id = '{$parameters['id']}'";
+		
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			throw new Exception("Failure during edit client data");
+			return false;
+		}
+		
+		return $result;
+	}
+	
+	
+	
+	
+	public function deleteClient($parameters) {
+		//get client data
+		$clientData = $this->readClient($parameters);
+		//get client transactions
+		$transaction = new TransactionModel();
+		$transactionData = $transaction->search($clientData['pesel']);
+		
+		if ($transactionData) {
+			return $transactionData;
+		}
+		
+		
+		//check if client has a transactions
+		//show transactions first
+		//delete user 
+	}
+	
+	
+	/**
+	 * 
+	 * @param unknown $searchData
+	 */
 	public function search($searchData) {
 		
 		$key = key($searchData);
@@ -82,48 +165,51 @@ class ClientModel extends Model {
 	 * @throws Exception
 	 */
 	private function checkClientData ($clientData) {
-		echo "sprawdzam dane klienta";
-		if (
-			isset( //check is data in post exist
-				$clientData['pesel'], 
-				$clientData['name'], 
-				$clientData['surname'],
-				$clientData['phoneNumber'],
-				$clientData['extraInfo'])) {
-					
-					echo "dane sa isset";
-					$name = $clientData['name'];
-					$surname = $clientData['surname'];
-					$phoneNumber = $clientData['phoneNumber'];
-					$pesel = $clientData['pesel'];
-					$extraInfo = $clientData['extraInfo'];
-					
-					
-					//validate client data
-					if ($this->validateName($name) &&
-						$this->validateSurname($surname) &&
-						$this->validatePhoneNumber($phoneNumber) &&
-						$this->validatePesel($pesel) &&
-						$this->validateExtraInfo($extraInfo)) {
-									
-							echo "dane validate";
-								/*if validate is ok set client parameters*/
-								$this->name = $name;
-								$this->surname = $surname;
-								$this->phoneNumber = $phoneNumber;
-								$this->pesel = $pesel;
-								$this->extraInfo = $extraInfo;
-								return true;
-						}
-						else {
-							throw new Exception("Client Data not Valid");
-						}
-			
-		}
-		else {
-			throw new Exception("excepted client data not valid");
+		
+		if (!isset($clientData['pesel'])) {
+			throw new Exception("Pesel value is empty");
 			return false;
 		}
+		if (!isset($clientData['name'])) {
+			throw new Exception("Name value is empty");
+			return false;
+		}
+		if (!isset($clientData['surname'])) {
+			throw new Exception("Surname value is empty");
+			return false;
+		}
+		if (!isset($clientData['phoneNumber'])) {
+			throw new Exception("Phone number is empty");
+			return false;
+		}
+		
+		$name = $clientData['name'];
+		$surname = $clientData['surname'];
+		$phoneNumber = $clientData['phoneNumber'];
+		$pesel = $clientData['pesel'];
+		$extraInfo = $clientData['extraInfo'];
+		
+		//validate client data
+		if ($this->validateName($name) &&
+			$this->validateSurname($surname) &&
+			$this->validatePhoneNumber($phoneNumber) &&
+			$this->validatePesel($pesel) &&
+			$this->validateExtraInfo($extraInfo)) {
+				/*if validate is ok set client parameters*/
+				$this->name = $name;
+				$this->surname = $surname;
+				$this->phoneNumber = $phoneNumber;
+				$this->pesel = $pesel;
+				$this->extraInfo = $extraInfo;
+				return true;
+		}
+		else {
+			throw new Exception("Client Data not Valid");
+			return false;
+		}
+		
+		return false;
+		
 	}
 	
 	

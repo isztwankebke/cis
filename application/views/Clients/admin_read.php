@@ -13,6 +13,7 @@
 					<th>Nr telefonu</th>
 					<th>extra Info</th>
 					<th>Akcja</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,7 +29,8 @@
 						echo "<td>", $client['pesel'], "</td>";
 						echo "<td>", $client['phone_nr'], "</td>";
 						echo "<td>", $client['extra_info'], "</td>";
-						echo "<td>Edytuj Usuń</td>";
+						echo '<td><a class="btn btn-warning" role="button" href="/Clients/admin_editClient/'.$client['id'].'">Edytuj</a></td>';
+						echo '<td><a class="btn btn-danger" role="button" href="/Clients/admin_deleteClient/'.$client['id'].'">Usuń</a></td>';
 						echo "</tr>";
 					}
 					/**

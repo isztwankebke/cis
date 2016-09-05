@@ -115,7 +115,85 @@ class ClientsController extends Controller {
 			// include 'default layout';
 		}
 	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public function admin_editClient() {
+		
+		try {
+				
+			$view = new View();
+			$client = new ClientModel();
+				
+			if ($this->request->isGet()) {
+		
+				$parameters = $this->request->getParameters();
+				$result = $client->readClient($parameters);
+					
+				if (debug) {
+					var_dump($parameters);
+					var_dump($result);
+				}
+		
+				$view->set('Clients/admin_editClient', $result, 'admin');
+		
+			}
+			else if ($this->request->isPost()) {
+				$parameters = $this->request->getPostData();
+				$result = $client->editClient($parameters);
+				$view->set('Clients/confirmation', $result, 'admin');
+			}
+				
+			$view->render();
+				
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+		
+	}
 
+	
+	
+	public function admin_deleteClient() {
+	
+		try {
+	
+			$view = new View();
+			$client = new ClientModel();
+			$transaction = new TransactionModel();
+	
+			if ($this->request->isGet()) {
+	
+				$parameters = $this->request->getParameters();
+				$result = $client->readClient($parameters);
+				$transactions = $transaction->search($result[0]['pesel']);
+					
+				if (debug) {
+					var_dump($parameters);
+					var_dump($result);
+				}
+	
+				$view->set('Clients/admin_deleteClient', $transactions, 'admin');
+	
+			}
+			else if ($this->request->isPost()) {
+				$parameters = $this->request->getPostData();
+				$result = $client->deleteClient($parameters);
+				$view->set('Clients/delete_confirmation', $result, 'admin');
+			}
+	
+			$view->render();
+	
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+	
+	}
 
 
 
