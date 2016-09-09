@@ -126,15 +126,15 @@ class DashboardsController extends Controller {
 			if ($this->request->isGet()) {
 		
 				$parameters = $this->request->getParameters();
-				$alertData = $alert->
-				$view->set('Users/admin_editUser', $userData, 'admin');
+				$alertData = $alert->getAlert($parameters);
+				$view->set('Users/admin_editAlert', $alertData, 'admin');
 			}
 		
 			elseif ($this->request->isPost()) {
 					
 				$parameters = $this->request->getPostData();
-				$result = $user->editUser($parameters);
-				$view->set('Users/confirmation', $result, 'admin');
+				$result = $alert->editAlert($parameters);
+				$view->set('Dashboards/confirmation', $result, 'admin');
 			}
 		
 			$view->render();

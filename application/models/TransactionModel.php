@@ -164,6 +164,7 @@ class TransactionModel extends Model {
 		//4.if pesel is valid check is client exist
 		//5.if client exist check the name, surname and phone number is the same if not use old value, and give notification
 		//that need to change data in database
+		//5a. get extra_info and add new one on the end of old value
 		//6. if client not exist check name and surname, phone number and extra info
 		//7.if everything is ok, prepare data to begin transaction
 		//7a.propare halfperiod date
@@ -185,7 +186,9 @@ class TransactionModel extends Model {
 		
 		
 		//try {
-			//.1
+			//.1 check is post data is consistent
+			
+			
 			if (!isset($transactionData['pesel'],
 					$transactionData['name'],
 					$transactionData['surname'],
@@ -197,7 +200,7 @@ class TransactionModel extends Model {
 						throw new Exception("Recived data not consistent - fill properly data in input");
 						return false;
 					}
-			//.2
+			//.2 check is request data is valid
 			if (!preg_match('/[A-ZŹŻŁa-zęółśążźćń ]$/',$transactionData['name'])) {
 				
 				throw new Exception("Name is not valid");
@@ -234,8 +237,9 @@ class TransactionModel extends Model {
 			
 		$client = new ClientModel();
 		
+		//.4 check pesel is valid
 		if (!$client->validatePesel($transactionData['pesel'])) {
-			//.4
+		
 			throw new Exception("pesel not valid");
 			return false;
 		}
@@ -266,6 +270,30 @@ class TransactionModel extends Model {
 				throw new Exception("Client data in db not the same as in form - check data, edit client data first, then add client and transaction");
 				return false;
 			}
+			
+			//.5a client exist - add string to end of value in db next extra if extra_info from form is set
+			if (isset($transactionData['extra_info'])) {
+				
+				//$date = new DateTime();
+				$today = date("Y-m-d H:i");
+				$extra_info = "".$today.": ".$transactionData['extra_info'];
+				//var_dump($extra_info);
+				
+				$sql = "UPDATE 
+						clients 
+						SET 
+						clients.extra_info = CONCAT(clients.extra_info, ' ;{$extra_info}') 
+						WHERE 
+						clients.id = '{$this->clientID}'";
+				
+				$result = parent::query($sql);
+				
+				if (!$result) {
+					throw new Exception("failure during update db - extra info problem");
+					return false;
+				}
+			}
+			
 			
 		} 
 		
@@ -410,12 +438,11 @@ class TransactionModel extends Model {
 		
 		if (strtolower($this->clientName) != strtolower($transactionData['name']) ||
 			strtolower($this->clientSurname) != strtolower($transactionData['surname']) ||
-			$this->clientPhone != $transactionData['phone_nr'] ||
-			$this->clientExtraInfo != $transactionData['extra_info']) {
+			$this->clientPhone != $transactionData['phone_nr']) {
 				
-				$this->clientDataDifference = true;
+				return false;
 			}
-			return false;
+			return true;
 	}
 	
 	

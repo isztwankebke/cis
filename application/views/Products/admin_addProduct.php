@@ -10,7 +10,7 @@
 	    <div class="col-sm-4">
 	      <input 
 	      type="text"
-	      maxlength="11"
+	      maxlength="50"
 	      
 	      class="form-control" 
 	      id="inputProductName" 
