@@ -55,6 +55,7 @@ try {
 	$request = new Request($_SERVER);
 	//var_dump($request);
 	$controllerName = $request->getControllerName();
+	
 
 	//var_dump($controllerName);
 

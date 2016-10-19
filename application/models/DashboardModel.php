@@ -90,6 +90,13 @@ class DashboardModel extends Model {
 			$offsetperiodInfo1 = $this->periodInfo1;
 			$weekOffset = $this->weekInfo;
 			
+			if (debug) {
+				echo "offset period and week are:";
+				var_dump($offsetperiodInfo1);
+				var_dump($weekOffset);
+				
+			}
+			
 			$endDate = $end->sub(new DateInterval('P'.$offsetperiodInfo1.'M'));
 			$beginDate = $start->sub(new DateInterval('P'.$offsetperiodInfo1.'M'.$weekOffset.'W'));
 			

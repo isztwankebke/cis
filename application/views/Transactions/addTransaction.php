@@ -99,6 +99,23 @@
 	    </div>
 	  </div>
 	  <div class="form-group">
+	    <label for="inputCreditValue" class="col-sm-2 control-label">Kwota kredytu</label>
+	    <div class="col-sm-4">
+	      <input 
+	      type="number"
+	      maxlength="7"
+	      min="1"
+	      max="9999999" 
+	      class="form-control" 
+	      id="inputCreditValue" 
+	      name="credit_value" 
+	      placeholder="wartość kredytu"
+	      tabindex="7"
+	      autofocus="autofocus"
+	      required="required">
+	    </div>
+	  </div>
+	  <div class="form-group">
 	    <label for="inputPeriod" class="col-sm-2 control-label">Okres kredytu</label>
 	    <div class="col-sm-4">
 	      <input 
@@ -110,7 +127,7 @@
 	      id="inputPeriod" 
 	      name="period" 
 	      placeholder="12"
-	      tabindex="7"
+	      tabindex="8"
 	      autofocus="autofocus"
 	      required="required">
 	    </div>
@@ -124,7 +141,7 @@
 	      class="form-control" 
 	      rows="3"
 	      name="extra_info"
-	      tabindex="8"
+	      tabindex="9"
 	      autofocus="autofocus"
 	      placeholder="Zawsze dopisuję: kłamca. Możesz też dopisać: kutas albo przemiły człowiek, daje napiwki... Możesz też nic nie dopisywać." 
 	      ></textarea>
@@ -135,7 +152,7 @@
 	      <button 
 	      type="submit" 
 	      class="btn btn-default"
-	      tabindex="9"
+	      tabindex="10"
 	      autofocus="autofocus">Zapisz</button>
 	    </div>
 	  </div>

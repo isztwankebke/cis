@@ -14,6 +14,7 @@ class TransactionModel extends Model {
 	private $clientExtraInfo;
 	private $clientDataDifference = FALSE;
 	private $halfPeriod;
+	private $creditValue;
 	
 	
 	/**
@@ -171,7 +172,7 @@ class TransactionModel extends Model {
 		//8.check product name - if is ok prepare to transaction
 		
 		//9.check initial_date and period - if is ok - prepare to transaction
-		
+		//9a.check credit value - mast be >0 and numeric
 		//10.begin transaction:
 		//11.add client or read parameters to get client.id
 		//12.get product.id
@@ -195,6 +196,7 @@ class TransactionModel extends Model {
 					$transactionData['phone_nr'],
 					$transactionData['product_name'],
 					$transactionData['init_date'],
+					$transactionData['credit_value'],
 					$transactionData['period'])) {
 						
 						throw new Exception("Recived data not consistent - fill properly data in input");
@@ -233,7 +235,11 @@ class TransactionModel extends Model {
 				throw new Exception("Period time is not valid");
 				return false;
 			}
+			if (!is_numeric($transactionData['credit_value'])) {
 			
+				throw new Exception("Credit value is not valid");
+				return false;
+			}
 			
 		$client = new ClientModel();
 		
@@ -350,22 +356,32 @@ class TransactionModel extends Model {
 					return false;
 			
 		}
+		//.9a
+		if ($transactionData['credit_value'] <= 0 || 
+				!is_numeric($transactionData['credit_value']) ) {
+			
+					throw new Exception("credit value must be >0");
+					return false;
+		}
+		
 		$this->initialDate = $transactionData['init_date'];
 		$this->period = $transactionData['period'];
+		$this->creditValue = $transactionData['credit_value'];
 		$this->endDate($transactionData['init_date'], $transactionData['period']);
 		
 		if (debug) {
 			
 			var_dump($this->clientID, $this->productID, $this->initialDate, $this->period, $this->endDate);
 			var_dump($this->halfPeriod);
+			var_dump($this->creditValue);
 		}
 		
 		$sql = "INSERT 
 				INTO transactions
-				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`) 
+				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`, `credit_value`) 
 				VALUES 
 				('{$this->clientID}', '{$this->productID}', '{$this->initialDate}',
-				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}')";
+				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}', '{$this->creditValue}')";
 		
 		//.13
 		$result = parent::query($sql);

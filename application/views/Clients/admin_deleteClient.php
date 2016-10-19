@@ -1,7 +1,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 	<h1 class="page-header">Zarządzanie Klientami:</h1>
 	<h3>Usunięcie danych klienta o nr PESEL: <?php echo $this->data['pesel'];?></h3>
-	<?php if (debug) {
+	<?php if (!debug) {
 		var_dump($this->data);
 	}?>
 	<h3>Czy na pewno chcesz usunąć klienta i wszystkie jego transackcje?</h3>
