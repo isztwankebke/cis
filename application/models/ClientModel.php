@@ -98,6 +98,10 @@ class ClientModel extends Model {
 		$name = parent::setFirstLetterUppercase($parameters['name']);
 		$surname = parent::setFirstLetterUppercase($parameters['surname']);
 		
+		if (debug) {
+			var_dump($name, $surname);
+		}
+		
 		$sql = "UPDATE
 				clients 
 				SET 
@@ -107,7 +111,7 @@ class ClientModel extends Model {
 		
 		$result = parent::query($sql);
 		
-		if (!$result) {
+		if (empty($result)) {
 			throw new Exception("Failure during edit client data");
 			return false;
 		}
@@ -119,20 +123,20 @@ class ClientModel extends Model {
 	
 	
 	public function deleteClient($parameters) {
-		//get client data
-		$clientData = $this->readClient($parameters);
-		//get client transactions
-		$transaction = new TransactionModel();
-		$transactionData = $transaction->search($clientData['pesel']);
 		
-		if ($transactionData) {
-			return $transactionData;
+		//var_dump($parameters);
+		$sql = "DELETE 
+				FROM 
+					`clients` 
+				WHERE 
+					clients.pesel = '{$parameters['pesel']}'";
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			throw new Exception("error during delete client from db");
+			return false;
 		}
-		
-		
-		//check if client has a transactions
-		//show transactions first
-		//delete user 
+		return $result;
 	}
 	
 	
@@ -325,6 +329,8 @@ class ClientModel extends Model {
 		$this->pesel = $newPesel;
 		$this->name = parent::setFirstLetterUppercase($newName);
 		$this->surname = parent::setFirstLetterUppercase($newSurname);
+		var_dump($this->surname);
+		
 		$this->phoneNumber = $newPhoneNumber;
 		$this->extraInfo = $newExtraInfo;
 		

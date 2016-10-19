@@ -168,13 +168,14 @@ class ClientsController extends Controller {
 	
 			if ($this->request->isGet()) {
 	
-				$parameters = $this->request->getParameters();
-				$result = $client->readClient($parameters);
-				$transactions = $transaction->search($result[0]['pesel']);
+				$clientID = $this->request->getParameters();
+				//var_dump($clientID);
+				$transactions = $transaction->getClientTransaction($clientID[0]);
+				//var_dump($transactions);
 					
 				if (debug) {
-					var_dump($parameters);
-					var_dump($result);
+					var_dump($clientID);
+					var_dump($transactions);
 				}
 	
 				$view->set('Clients/admin_deleteClient', $transactions, 'admin');
@@ -182,6 +183,7 @@ class ClientsController extends Controller {
 			}
 			else if ($this->request->isPost()) {
 				$parameters = $this->request->getPostData();
+				//var_dump($parameters);
 				$result = $client->deleteClient($parameters);
 				$view->set('Clients/delete_confirmation', $result, 'admin');
 			}

@@ -94,7 +94,8 @@ class TransactionModel extends Model {
 					clients.phone_nr, 
 					products.product_name, 
 					transactions.init_date, 
-					transactions.period, 
+					transactions.period,
+					transactions.credit_value,
 					clients.extra_info						
 				FROM 
 					transactions
@@ -133,6 +134,7 @@ class TransactionModel extends Model {
 				"product_id" 	=> $this->getProductID(),
 				"init_date" 	=> $this->getInitialDate(),
 				"period" 		=> $this->getPeriod(),
+				"credit_value"  => $this->creditValue,
 				"end_date" 		=> $this->getEndDate()
 		);
 		
@@ -524,6 +526,41 @@ class TransactionModel extends Model {
 		$this->halfPeriod = $halfPeriodDate;
 		return true;
 		
+	}
+	
+	
+	
+	public function getClientTransaction($clientID) {
+		//var_dump($clientID);
+		$sql = "SELECT
+			transactions.id,
+			clients.name,
+			clients.surname,
+			clients.pesel,
+			products.product_name,
+			transactions.init_date,
+			transactions.period,
+			transactions.credit_value
+		FROM
+			transactions
+		JOIN
+			clients
+		ON
+			transactions.client_id = clients.id
+		JOIN
+			products
+		ON
+			products.id = transactions.product_id
+		WHERE
+		clients.id = '{$clientID}'";
+		//AND
+		//clients.id IN
+		//var_dump($sql);
+		//`{$key}` LIKE '%{$value}%'";
+		$result = parent::query($sql);
+		
+		return $result;
+			
 	}
 	
 	

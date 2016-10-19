@@ -126,6 +126,10 @@ class TransactionsController extends Controller {
 	}
 	
 	
+	
+	/**
+	 * 
+	 */
 	public function index() {
 		
 		if ($this->request->isGet()) {
@@ -135,6 +139,12 @@ class TransactionsController extends Controller {
 		}
 		
 	}
+	
+	
+	
+	/**
+	 * 
+	 */
 	public function search() {
 		
 		if ($this->request->isPost()){
@@ -166,5 +176,47 @@ class TransactionsController extends Controller {
 		
 	}
 	
+	
+	
+	public function admin_search() {
+		try {
+			//prepare view for both Request Method
+				
+			$view = new View();
+		
+			if ($this->request->isGet()) {
+				
+				$data = null;
+				$view->set('Transactions/admin_search', $data, 'admin');
+		
+			}
+			elseif ($this->request->isPost()) {
+				
+				$transaction = new TransactionModel();
+				$searchData = $this->request->getPostData();
+				$data = $transaction->search($searchData);
+				
+				//if data is not empy client matched - search transaction, 
+				//otherwise display warning
+				
+				if ($data) {
+					
+					$view->set('Transactions/admin_search', $data, 'admin');
+					
+				}
+				else {
+					$data = -1;
+					$view->set('Transactions/admin_search', $data, 'admin');
+				}
+				
+			}
+				
+			$view->render();
+		
+		}
+		catch (Exception $e) {
+			echo "Caught exception: ", $e->getMessage();
+		}
+	}
 	
 }

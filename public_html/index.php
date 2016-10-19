@@ -2,7 +2,7 @@
 
 //bootstrap
 
-define('debug', false);
+define('debug', true);
 //setting locale
 //setlocale(LC_CTYPE, "Polish_Poland.1250");
 
