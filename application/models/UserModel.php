@@ -244,7 +244,7 @@ class UserModel extends Model {
 		//validate password is match in both inputs
 		//validate password is correct
 		//change password
-		var_dump($parameters);
+		//var_dump($parameters);
 		if (!isset($parameters['password'], $parameters['reTypePassword'])) {
 			throw new Exception("Password field can not be empty");
 			return false;

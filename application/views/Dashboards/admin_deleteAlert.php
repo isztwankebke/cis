@@ -1,7 +1,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   	<h1 class="page-header">Zarządzanie Alertami:</h1>
   	<h3>Czy oby na pewno chcesz usunąć Alert <b><?php echo $this->data[0]['product_name'];?></b>? <br>
-  	Naciśniesz przycisk usuń i bezpowrotniu usuniesz alert z bazy! Zastanów się 3 razy:P
+  	Naciśniesz przycisk usuń i bezpowrotnie usuniesz alert z bazy! Zastanów się 3 razy:P
   	</h3>
 <?php if (debug) {
 		var_dump($this->data);

@@ -23,7 +23,8 @@ class ProductModel  extends Model{
 	//edit Product
 	
 	/**
-	 *
+	 * 
+	 * return list of products
 	 */
 	public function admin_read() {
 		$sql = "SELECT *

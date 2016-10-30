@@ -127,6 +127,48 @@ class TransactionsController extends Controller {
 	
 	
 	
+	
+	public function admin_editTransaction() {
+		try {
+			
+			$view = new View();
+			$transaction = new TransactionModel();
+			$product = new ProductModel();
+			
+			if ($this->request->isGet()) {
+				
+				$transactionId = $this->request->getParameters();
+				//var_dump($transactionId);
+				$transactionData = $transaction->getTransaction($transactionId[0]);
+				$products = $product->admin_read();
+				$dataToView = array($transactionData, $products);
+				//var_dump($dataToView);
+				$view->set('Transactions/admin_editTransaction', $dataToView, 'admin');
+				
+				
+			}
+			elseif ($this->request->isPost()) {
+				
+				$transactionData = $this->request->getPostData();
+				//var_dump($transactionData);
+				
+				$update = $transaction->updateTransaction($transactionData);
+				$view->set('Transactions/editTransactionConfirmation', $update, 'admin');
+				
+				
+			}
+			
+			$view->render();
+			
+		
+		}
+		catch (Exception$e) {
+			echo "caugh Exception: ", $e->getMessage();
+		}	
+	}
+	
+	
+	
 	/**
 	 * 
 	 */

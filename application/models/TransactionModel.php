@@ -170,7 +170,7 @@ class TransactionModel extends Model {
 		//5a. get extra_info and add new one on the end of old value
 		//6. if client not exist check name and surname, phone number and extra info
 		//7.if everything is ok, prepare data to begin transaction
-		//7a.propare halfperiod date
+		//7a.prepare halfperiod date
 		//8.check product name - if is ok prepare to transaction
 		
 		//9.check initial_date and period - if is ok - prepare to transaction
@@ -514,6 +514,11 @@ class TransactionModel extends Model {
 	
 	
 	
+	/**
+	 * 
+	 * @param unknown $period
+	 * @param unknown $initDate
+	 */
 	public function halfPeriodDate($period, $initDate) {
 		$halfPeriod = intval($period / 2);
 		
@@ -530,6 +535,10 @@ class TransactionModel extends Model {
 	
 	
 	
+	/**
+	 * 
+	 * @param unknown $clientID
+	 */
 	public function getClientTransaction($clientID) {
 		//var_dump($clientID);
 		$sql = "SELECT
@@ -563,5 +572,104 @@ class TransactionModel extends Model {
 			
 	}
 	
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $transactionID
+	 */
+	public function getTransaction($transactionID) {
+		$sql = "SELECT
+        	transactions.id,
+			clients.name,
+			clients.surname,
+			clients.pesel,
+			products.product_name,
+			transactions.init_date,
+			transactions.period,
+			transactions.credit_value
+		FROM
+			transactions
+		JOIN
+			clients
+		ON
+			transactions.client_id = clients.id
+		JOIN
+			products
+		ON
+			products.id = transactions.product_id
+		WHERE
+		transactions.id = '{$transactionID}'";
+		
+		$result = parent::query($sql);
+		//var_dump($result);
+		return $result;
+		
+	}
+	
+	
+	
+	public function updateTransaction($transactionData) {
+		
+		//check is given data is ok
+		if (!isset(
+				$transactionData['product_name'],
+				$transactionData['init_date'],
+				$transactionData['credit_value'],
+				$transactionData['period'])) {
+		
+					throw new Exception("Recived data not consistent - fill properly data in input");
+					return false;
+				}
+		
+		//check init_date, period and credit is ok
+		if (!$this->checkDate($transactionData['init_date'])) {
+				
+			throw new Exception("Date initialization not valid");
+			return false;
+			}
+		if (!is_numeric($transactionData['period'])) {
+				
+			throw new Exception("Period time is not valid");
+			return false;
+			}
+		if (!is_numeric($transactionData['credit_value'])) {
+						
+			throw new Exception("Credit value is not valid");
+			return false;
+			}
+		
+		//set end_date and half_period
+		
+		$this->endDate($transactionData['init_date'], $transactionData['period']);
+		$this->halfPeriodDate($transactionData['period'], $transactionData['init_date']);
+		
+		//prepare sql update set
+		
+		$sql = "UPDATE
+					transactions
+				SET
+				  transactions.product_id = '{$transactionData['product_name']}',
+				  transactions.init_date = '{$transactionData['init_date']}',
+				  transactions.credit_value = '{$transactionData['credit_value']}',
+				  transactions.period = '{$transactionData['period']}',
+				  transactions.end_date = '{$this->endDate}',
+				  transactions.half_period = '{$this->halfPeriod}'
+				WHERE
+					transactions.id = '{$transactionData['id']}'
+				";
+		
+		$result = parent::query($sql);
+		
+		if (empty($result)) {
+			throw new Exception("Failure during edit transaction data.");
+			return false;
+		}
+		
+		return $result;
+		
+		
+	}
 	
 }
