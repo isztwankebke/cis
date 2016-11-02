@@ -567,7 +567,7 @@ class TransactionModel extends Model {
 		//var_dump($sql);
 		//`{$key}` LIKE '%{$value}%'";
 		$result = parent::query($sql);
-		
+		//var_dump($result);
 		return $result;
 			
 	}

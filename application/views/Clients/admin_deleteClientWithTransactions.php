@@ -1,5 +1,6 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 	<h1 class="page-header">Zarządzanie Klientami:</h1>
+	<h3>Usunięcie danych klienta o nr PESEL: <?php echo $this->data[0]['pesel'];?></h3>
 	<?php if (debug) {
 		var_dump($this->data);
 	}?>
@@ -18,8 +19,11 @@ else : ?>
 					<th>Imię</th>
 					<th>Nazwisko</th>
 					<th>Pesel</th>
-					<th>nr telefonu</th>
-					</tr>
+					<th>Produkt</th>
+					<th>Data zawarcia</th>
+					<th>Okres</th>
+					<th>Wartość kredytu</th>
+				</tr>
 			</thead>
 			<tbody>
 				
@@ -33,7 +37,10 @@ else : ?>
 						echo "<td>", $data['name'], "</td>";
 						echo "<td>", $data['surname'], "</td>";
 						echo "<td>", $data['pesel'], "</td>";
-						echo "<td>", $data['phone_nr'], "</td>";
+						echo "<td>", $data['product_name'], "</td>";
+						echo "<td>", $data['init_date'], "</td>";
+						echo "<td>", $data['period'], "</td>";
+						echo "<td>", $data['credit_value'], "</td>";
 						echo "</tr>";
 					}
 					/**
@@ -66,8 +73,8 @@ endif;
 	      autofocus="autofocus">USUŃ</button>
 	    </div>
 	    <div>
-	    <input type="hidden" name="pesel" value="<?php echo $data['pesel'];?>">
-	    <input type="hidden" name="product" value="0"> 
+	    <input type="hidden" name="pesel" value="<?php echo $data['pesel'];?>"> 
+	    <input type="hidden" name="product" value="1">
 	    </div>
 	  </div>
 	</form>

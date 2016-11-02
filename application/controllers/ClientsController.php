@@ -169,16 +169,29 @@ class ClientsController extends Controller {
 			if ($this->request->isGet()) {
 	
 				$clientID = $this->request->getParameters();
-				//var_dump($clientID);
+				//var_dump($clientID[0]);
 				$transactions = $transaction->getClientTransaction($clientID[0]);
 				//var_dump($transactions);
+				
+				if (empty($transactions)) {
+					
+					$clientData = $client->readClient($clientID);
+					$view->set('Clients/admin_deleteClient', $clientData, 'admin');
+				}
+				else {
+					
+					$view->set('Clients/admin_deleteClientWithTransactions', $transactions, 'admin');
+				}
+					
+					
+				
 					
 				if (debug) {
 					var_dump($clientID);
 					var_dump($transactions);
 				}
 	
-				$view->set('Clients/admin_deleteClient', $transactions, 'admin');
+				
 	
 			}
 			else if ($this->request->isPost()) {
