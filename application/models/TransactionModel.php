@@ -610,6 +610,11 @@ class TransactionModel extends Model {
 	
 	
 	
+	/**
+	 * 
+	 * @param unknown $transactionData
+	 * @throws Exception
+	 */
 	public function updateTransaction($transactionData) {
 		
 		//check is given data is ok
@@ -668,8 +673,34 @@ class TransactionModel extends Model {
 		}
 		
 		return $result;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $transactionId
+	 * @throws Exception
+	 */
+	public function deleteTransaction($transactionId) {
 		
+		$sql = "DELETE 
+				FROM 
+				transactions WHERE 
+				transactions.id = '{$transactionId}'";
+		
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			
+			throw new Exception("Error during delete transaction from database");
+			return false;
+		}
+		
+		return $result;
 		
 	}
+	
+	
 	
 }

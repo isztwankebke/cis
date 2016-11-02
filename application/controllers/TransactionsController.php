@@ -127,7 +127,9 @@ class TransactionsController extends Controller {
 	
 	
 	
-	
+	/**
+	 * 
+	 */
 	public function admin_editTransaction() {
 		try {
 			
@@ -258,6 +260,43 @@ class TransactionsController extends Controller {
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
+		}
+	}
+	
+	
+	
+	public function admin_deleteTransaction() {
+		
+		try {
+				
+			$view = new View();
+			$transaction = new TransactionModel();
+			
+				
+			if ($this->request->isGet()) {
+		
+				$transactionId = $this->request->getParameters();
+				//var_dump($transactionId[0]);
+				$transactionData= $transaction->getTransaction($transactionId[0]);
+				$view->set('Transactions/deleteConfirmation', $transactionData, 'admin');
+				
+			}
+			elseif ($this->request->isPost()) {
+				
+				$transactionId = $this->request->getPostData();
+				
+				//var_dump($transactionId['transactionId']);
+				
+				$transactionData = $transaction->deleteTransaction($transactionId['transactionId']);
+				$view->set('Transactions/admin_deleteConfirmation', $transactionData, 'admin');
+			}
+				
+			$view->render();
+				
+		
+		}
+		catch (Exception$e) {
+			echo "caugh Exception: ", $e->getMessage();
 		}
 	}
 	
