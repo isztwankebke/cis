@@ -54,7 +54,12 @@ $scriptName = $_SERVER['REQUEST_URI'];
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/Users/logout">Wyloguj</a></li>
+            <li>
+            	<div class="btn-group" role="group">
+            		<span class="glyphicon glyphicon-user navbar-brand" aria-hidden="false"></span>
+            		<a class="navbar-brand" href="/Users/logout">Wyloguj</a>
+            	</div>
+			</li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -82,8 +87,20 @@ $scriptName = $_SERVER['REQUEST_URI'];
             </ul>
           <ul class="nav nav-sidebar">
             <li><a href="/Users/logout">Wyloguj</a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
+            <li><br></li>
+            <li><a></a></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            
+          </ul>
+          	
+          <ul>
+          	<li><a>2016</a></li>
           </ul>
         </div>
         

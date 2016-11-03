@@ -46,12 +46,16 @@ $scriptName = $_SERVER['REQUEST_URI'];
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="/Users/index">Customer Information System</a>
+          
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            
-            
-            <li><a href="/Users/logout">Wyloguj</a></li>
+            <li>
+            	<div class="btn-group" role="group">
+            		<span class="glyphicon glyphicon-user navbar-brand" aria-hidden="false"></span>
+            		<a class="navbar-brand" href="/Users/logout">Wyloguj</a>
+            	</div>
+            </li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
