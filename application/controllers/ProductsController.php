@@ -40,11 +40,14 @@ class ProductsController extends Controller {
 	 * @param unknown $parameters
 	 */
 	public function getProduct($parameters) {
+		
+		$layout = parent::isGrant();
+		
 		$product = new ProductModel();
 		$product->getProduct($parameters);
 		$data = $product->getProductData();
 		$view = new View();
-		$view->set('/products/getProduct', $data, 'admin');
+		$view->set('/products/getProduct', $data, $layout);
 		$view->render();
 	}
 	
@@ -54,31 +57,31 @@ class ProductsController extends Controller {
 	 * 
 	 */
 	public function admin_read() {
-		
-		$view = new View();
-		
-		
-		if ($this->request->isGet()) {
-			//$this->autoRender = false;
-			$product = new ProductModel();
-				
-			$products = $product->admin_read();
+		try {
+			
+			$layout = parent::isGrant();
+			
+			$view = new View();
 			
 			
-			if ($_SESSION['grant'] == 1) {
-				
-				$view->set('Products/admin_index', $products, 'admin');
+			if ($this->request->isGet()) {
+				//$this->autoRender = false;
+				$product = new ProductModel();
+			
+				$products = $product->admin_read();
+				$view->set('Products/admin_index', $products, $layout);
+					
 			}
-			else {
-				$view->set('Users/admin_fault');
+			elseif ($this->request->isPost()) {
+				$this->admin_addProduct();
 			}
 			
+			$view->render();
 		}
-		elseif ($this->request->isPost()) {
-			$this->admin_addProduct();
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage(); 
 		}
 		
-		$view->render();
 	}
 	
 	
@@ -88,24 +91,29 @@ class ProductsController extends Controller {
 	 */
 	public function admin_addProduct() {
 		try {
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			if ($this->request->isGet()) {
 				
-				$view->set('Products/admin_addProduct', null, 'admin');
+				$view->set('Products/admin_addProduct', null, $layout);
 			}
 			elseif ($this->request->isPost()) {
 			
 				$product = new ProductModel();
 				$productData = $this->request->getPostData();
 				$result = $product->addProduct($productData);
-				$view->set('Products/confirmation', $result, 'admin');
+				$view->set('Products/confirmation', $result, $layout);
 				
 			}
+			
+			$view->render();
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
 		}
-		$view->render();
+		
 		
 	}
 	
@@ -118,6 +126,8 @@ class ProductsController extends Controller {
 	 */
 	public function admin_editProduct() {
 		try {
+			
+			$layout = parent::isGrant();
 			
 			$view = new View();
 			$product = new ProductModel();
@@ -132,13 +142,13 @@ class ProductsController extends Controller {
 					var_dump($result);
 				}	
 				
-				$view->set('Products/admin_editProduct', $result, 'admin');
+				$view->set('Products/admin_editProduct', $result, $layout);
 				
 			}
 			else if ($this->request->isPost()) {
 				$parameters = $this->request->getPostData();
 				$result = $product->editProduct($parameters);
-				$view->set('Products/confirmation', $result, 'admin');
+				$view->set('Products/confirmation', $result, $layout);
 			}
 			
 			$view->render();

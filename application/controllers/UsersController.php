@@ -31,7 +31,7 @@ class UsersController extends Controller {
 		
 		parent::__construct($request);
 		parent::sessionTimeout();
-		
+		//can not use parrent:isLogged!!
 		
 	}
 	
@@ -62,21 +62,20 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_index() {
+		
 		parent::isLogged();
+		
+		$layout = parent::isGrant();
+		
 		if ($this->request->isGet()) {
 			
 			$view = new View();
+			$view->set('Users/admin_index', null, $layout);
 			
-			if ($_SESSION['grant'] == 1) {
-				$view->set('Users/admin_index',null ,'admin');
-			}
-			else {
-				$view->set('Users/admin_fault');
-			}
-			
-			
-			$view->render();
 		}
+		
+		$view->render();
+		
 	}
 	
 	
@@ -85,18 +84,17 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_read() {
+		
 		parent::isLogged();
+		
+		$layout = parent::isGrant();
+		
 		$user = new UserModel();
 		$users = $user->admin_read();
 		
 		$view = new View();
 		
-		if ($_SESSION['grant'] == 1) {
-			$view->set('Users/admin_read', $users, 'admin');
-		}
-		else {
-			$view->set('Users/admin_fault');
-		}
+		$view->set('Users/admin_read', $users, $layout);
 		
 		$view->render();
 	}
@@ -107,9 +105,13 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function index() {
+		
 		parent::isLogged();
+		
+		$layout = parent::isSupervisor();
+		//var_dump($layout);
 		$view = new View();
-		$view->set('Users/index');
+		$view->set('Users/index', null, $layout);
 		$view->render();
 		
 	}
@@ -136,7 +138,8 @@ class UsersController extends Controller {
 				$view->set('Users/login', $fault, 'login');	
 			}
 			else {
-				$view->set('Users/index');
+				$layout = parent::isSupervisor();
+				$view->set('Users/index', null, $layout);
 			}
 		}
 		elseif ($this->request->isGet()) {
@@ -158,7 +161,8 @@ class UsersController extends Controller {
 		if ($this->request->isGet()) {
 			
 			$user = new UserModel();
-			$user->logout();$this->login();
+			$user->logout();
+			$this->login();
 		}
 	}
 	
@@ -168,11 +172,18 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_addUser() {
+		
 		try {
+			parent::isLogged();
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
+			
+			//var_dump($layout);
 		
 			if ($this->request->isGet()) {
-				$view->set('Users/admin_addUser', null, 'admin');
+				$view->set('Users/admin_addUser', null, $layout);
 				
 				
 			}
@@ -180,7 +191,7 @@ class UsersController extends Controller {
 				$user = new UserModel();
 				$userData = $this->request->getPostData();
 				$result = $user->admin_addUser($userData);
-				$view->set('Users/confirmation', $result, 'admin');
+				$view->set('Users/confirmation', $result, $layout);
 				
 			}
 			$view->render();
@@ -197,7 +208,12 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_passwordChange() {
+		
 		try {
+			
+			parent::isLogged();
+			
+			$layout = parent::isGrant();
 			
 			$view = new View();
 			$user = new UserModel();
@@ -206,14 +222,14 @@ class UsersController extends Controller {
 				
 				$parameters = $this->request->getParameters();
 				$userData = $user->getUser($parameters);
-				$view->set('Users/admin_passwordChange', $userData, 'admin');
+				$view->set('Users/admin_passwordChange', $userData, $layout);
 			}
 			
 			elseif ($this->request->isPost()) {
 				
 				$parameters = $this->request->getPostData();
 				$result = $user->passwordChange($parameters);
-				$view->set('Users/confirmation', $result, 'admin');
+				$view->set('Users/confirmation', $result, $layout);
 			}
 			$view->render();
 		}
@@ -228,7 +244,11 @@ class UsersController extends Controller {
 	 * 
 	 */
 	public function admin_deleteUser() {
+		
 		try {
+			parent::isLogged();
+			
+			$layout = parent::isGrant();
 			
 			$view = new View();
 			$user = new UserModel();
@@ -237,14 +257,14 @@ class UsersController extends Controller {
 				
 				$parameters = $this->request->getParameters();
 				$userData = $user->getUser($parameters);
-				$view->set('Users/admin_deleteUser', $userData, 'admin');
+				$view->set('Users/admin_deleteUser', $userData, $layout);
 			}
 			
 			elseif ($this->request->isPost()) {
 			
 				$parameters = $this->request->getPostData();
 				$result = $user->deleteUser($parameters);
-				$view->set('Users/delete_confirmation', $result, 'admin');
+				$view->set('Users/delete_confirmation', $result, $layout);
 			}
 			
 			$view->render();
@@ -257,23 +277,28 @@ class UsersController extends Controller {
 	
 	
 	public function admin_editUser() {
+		
 		try {
-				
+			
+			parent::isLogged();
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			$user = new UserModel();
-				
+			
 			if ($this->request->isGet()) {
 		
 				$parameters = $this->request->getParameters();
 				$userData = $user->getUser($parameters);
-				$view->set('Users/admin_editUser', $userData, 'admin');
+				$view->set('Users/admin_editUser', $userData, $layout);
 			}
 				
 			elseif ($this->request->isPost()) {
 					
 				$parameters = $this->request->getPostData();
 				$result = $user->editUser($parameters);
-				$view->set('Users/confirmation', $result, 'admin');
+				$view->set('Users/confirmation', $result, $layout);
 			}
 				
 			$view->render();
@@ -283,6 +308,24 @@ class UsersController extends Controller {
 		}
 	}
 	
+	
+	
+	public function supervisor_ammountCredit() {
+		try {
+			
+			parent::isLogged();
+			
+			$layout = parent::isSupervisor();
+			
+			$view = new View();
+			$view->set('Users/supervisor_ammountCredit', null, $layout);
+			$view->render();
+		
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+	}
 	
 	
 }

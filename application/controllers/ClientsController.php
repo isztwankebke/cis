@@ -40,6 +40,7 @@ class ClientsController extends Controller {
 	 * 
 	 */
 	public function addClient() {
+		
 		if ($this->request->isPost()) {
 			
 			$client = new ClientModel();
@@ -55,6 +56,7 @@ class ClientsController extends Controller {
 	 * 
 	 */
 	public function search() {
+		
 		if ($this->request->isPost()){
 			
 			$client = new ClientModel();
@@ -83,36 +85,41 @@ class ClientsController extends Controller {
 	 */
 	public function admin_read() {
 		
-		if ($this->request->isGet()) {
-			$this->autoRender = false;
-			$client = new ClientModel();
+		try {
 			
-			$clients = $client->admin_read();
-			$view = new View();
-			if ($_SESSION['grant'] == 1) {
+			$layout = parent::isGrant();
+			
+			if ($this->request->isGet()) {
+				//$this->autoRender = false;
+				$client = new ClientModel();
 				
-				$view->set('Clients/admin_read', $clients, 'admin');
+				$clients = $client->admin_read();
+				
+				$view = new View();
+				
+				$view->set('Clients/admin_read', $clients, $layout);
+				
+				$view->render();
+				
+				/*$path = preg_split('/Controller::/', __METHOD__);
+				$this->view = '../application/views/'. $path[0] . '/' . $path[1]. '.php';
+				
+				//$this->clients = $clients;
+				$viewName = $this->view;
+				var_dump($this->view);
+				
+				var_dump(ClientsController::setView());
+				
+				//$this->view->set('clients', $clients);
+				//$this->renderView('Clients/read', ['clients' => $clients]);
+				*/
+				//$this->renderView($viewName, $clients);
+				// jak do layoutu przekazac nazwe widoku i jego parametry?
+				// include 'default layout';
 			}
-			else {
-				$view->set('Users/admin_fault');
-			}
-			$view->render();
-			
-			/*$path = preg_split('/Controller::/', __METHOD__);
-			$this->view = '../application/views/'. $path[0] . '/' . $path[1]. '.php';
-			
-			//$this->clients = $clients;
-			$viewName = $this->view;
-			var_dump($this->view);
-			
-			var_dump(ClientsController::setView());
-			
-			//$this->view->set('clients', $clients);
-			//$this->renderView('Clients/read', ['clients' => $clients]);
-			*/
-			//$this->renderView($viewName, $clients);
-			// jak do layoutu przekazac nazwe widoku i jego parametry?
-			// include 'default layout';
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
 		}
 	}
 	
@@ -124,7 +131,9 @@ class ClientsController extends Controller {
 	public function admin_editClient() {
 		
 		try {
-				
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			$client = new ClientModel();
 				
@@ -138,13 +147,13 @@ class ClientsController extends Controller {
 					var_dump($result);
 				}
 		
-				$view->set('Clients/admin_editClient', $result, 'admin');
+				$view->set('Clients/admin_editClient', $result, $layout);
 		
 			}
 			else if ($this->request->isPost()) {
 				$parameters = $this->request->getPostData();
 				$result = $client->editClient($parameters);
-				$view->set('Clients/confirmation', $result, 'admin');
+				$view->set('Clients/confirmation', $result, $layout);
 			}
 				
 			$view->render();
@@ -161,7 +170,9 @@ class ClientsController extends Controller {
 	public function admin_deleteClient() {
 	
 		try {
-	
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			$client = new ClientModel();
 			$transaction = new TransactionModel();
@@ -176,11 +187,11 @@ class ClientsController extends Controller {
 				if (empty($transactions)) {
 					
 					$clientData = $client->readClient($clientID);
-					$view->set('Clients/admin_deleteClient', $clientData, 'admin');
+					$view->set('Clients/admin_deleteClient', $clientData, $layout);
 				}
 				else {
 					
-					$view->set('Clients/admin_deleteClientWithTransactions', $transactions, 'admin');
+					$view->set('Clients/admin_deleteClientWithTransactions', $transactions, $layout);
 				}
 					
 					
@@ -198,15 +209,17 @@ class ClientsController extends Controller {
 				$parameters = $this->request->getPostData();
 				//var_dump($parameters);
 				$result = $client->deleteClient($parameters);
-				$view->set('Clients/delete_confirmation', $result, 'admin');
+				$view->set('Clients/delete_confirmation', $result, $layout);
 			}
-	
+			
 			$view->render();
 	
 		}
 		catch (Exception $e) {
 			echo "Exception: ", $e->getMessage();
 		}
+		
+		
 	
 	}
 

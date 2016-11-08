@@ -34,6 +34,7 @@ class UserModel extends Model {
 		}
 		$_SESSION['user_id'] = $result[0]['id'];
 		$_SESSION['grant'] = $result[0]['grant_access'];
+		$_SESSION['supervisor'] = $result[0]['supervisor'];
 		$date = new DateTime();
 		$date->setTimezone(new DateTimeZone('EUROPE/WARSAW'));
 		$lastLogin = $date->format('Y-m-d H:i:s');

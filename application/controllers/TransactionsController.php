@@ -24,6 +24,7 @@ class TransactionsController extends Controller {
 	public function addTransaction() {
 		try {
 			//prepare view for both Request Method
+			$layout = parent::isSupervisor();
 			
 			$view = new View();
 		
@@ -31,7 +32,7 @@ class TransactionsController extends Controller {
 				
 				$product = new ProductModel();
 				$products = $product->admin_read();
-				$view->set('Transactions/addTransaction',$products);
+				$view->set('Transactions/addTransaction',$products, $layout);
 				
 			}
 			elseif ($this->request->isPost()) {
@@ -39,7 +40,7 @@ class TransactionsController extends Controller {
 				$transactionData = $this->request->getPostData();
 				$transaction = new TransactionModel();
 				$result = $transaction->addTransaction($transactionData);
-				$view->set('Transactions/confirmation', $result);
+				$view->set('Transactions/confirmation', $result, $layout);
 				if (debug) {
 					var_dump($transactionData);
 				}
@@ -133,6 +134,8 @@ class TransactionsController extends Controller {
 	public function admin_editTransaction() {
 		try {
 			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			$transaction = new TransactionModel();
 			$product = new ProductModel();
@@ -145,7 +148,7 @@ class TransactionsController extends Controller {
 				$products = $product->admin_read();
 				$dataToView = array($transactionData, $products);
 				//var_dump($dataToView);
-				$view->set('Transactions/admin_editTransaction', $dataToView, 'admin');
+				$view->set('Transactions/admin_editTransaction', $dataToView, $layout);
 				
 				
 			}
@@ -155,7 +158,7 @@ class TransactionsController extends Controller {
 				//var_dump($transactionData);
 				
 				$update = $transaction->updateTransaction($transactionData);
-				$view->set('Transactions/editTransactionConfirmation', $update, 'admin');
+				$view->set('Transactions/editTransactionConfirmation', $update, $layout);
 				
 				
 			}
@@ -176,9 +179,11 @@ class TransactionsController extends Controller {
 	 */
 	public function index() {
 		
+		$layout = parent::isSupervisor();
+		
 		if ($this->request->isGet()) {
 			$view = new View();
-			$view->set('Transactions/index');
+			$view->set('Transactions/index', null, $layout);
 			$view->render();	
 		}
 		
@@ -191,6 +196,7 @@ class TransactionsController extends Controller {
 	 */
 	public function search() {
 		
+		$layout = parent::isSupervisor();
 		if ($this->request->isPost()){
 			
 			$transaction = new TransactionModel();
@@ -209,7 +215,7 @@ class TransactionsController extends Controller {
 			//var_dump($client->search($searchData));
 			
 			$view = new View();
-			$view->set('Transactions/search', $data);
+			$view->set('Transactions/search', $data, $layout);
 			$view->render();
 			
 			//$transaction = new TransactionModel();
@@ -225,13 +231,13 @@ class TransactionsController extends Controller {
 	public function admin_search() {
 		try {
 			//prepare view for both Request Method
-				
+			$layout = parent::isGrant();	
 			$view = new View();
 		
 			if ($this->request->isGet()) {
 				
 				$data = null;
-				$view->set('Transactions/admin_search', $data, 'admin');
+				$view->set('Transactions/admin_search', $data, $layout);
 		
 			}
 			elseif ($this->request->isPost()) {
@@ -245,12 +251,12 @@ class TransactionsController extends Controller {
 				
 				if ($data) {
 					
-					$view->set('Transactions/admin_search', $data, 'admin');
+					$view->set('Transactions/admin_search', $data, $layout);
 					
 				}
 				else {
 					$data = -1;
-					$view->set('Transactions/admin_search', $data, 'admin');
+					$view->set('Transactions/admin_search', $data, $layout);
 				}
 				
 			}
@@ -268,7 +274,9 @@ class TransactionsController extends Controller {
 	public function admin_deleteTransaction() {
 		
 		try {
-				
+			
+			$layout = parent::isGrant();
+			
 			$view = new View();
 			$transaction = new TransactionModel();
 			
@@ -278,7 +286,7 @@ class TransactionsController extends Controller {
 				$transactionId = $this->request->getParameters();
 				//var_dump($transactionId[0]);
 				$transactionData= $transaction->getTransaction($transactionId[0]);
-				$view->set('Transactions/deleteConfirmation', $transactionData, 'admin');
+				$view->set('Transactions/deleteConfirmation', $transactionData, $layout);
 				
 			}
 			elseif ($this->request->isPost()) {
@@ -288,7 +296,7 @@ class TransactionsController extends Controller {
 				//var_dump($transactionId['transactionId']);
 				
 				$transactionData = $transaction->deleteTransaction($transactionId['transactionId']);
-				$view->set('Transactions/admin_deleteConfirmation', $transactionData, 'admin');
+				$view->set('Transactions/admin_deleteConfirmation', $transactionData, $layout);
 			}
 				
 			$view->render();

@@ -20,8 +20,10 @@ class ReportsController extends Controller {
 	 */
 	public function index() {
 		
+		$layout = parent::isSupervisor();
+		
 		$view = new View();
-		$view->set('Reports/index');
+		$view->set('Reports/index', null, $layout);
 		$view->render();
 	}
 	

@@ -44,6 +44,10 @@ class Controller {
 	}
 	
 	
+	
+	
+	
+	
 	public function sessionTimeout() {
 		
 		if (isset($_SESSION['LAST_ACTIVITY'])) {
@@ -66,11 +70,65 @@ class Controller {
 	}
 	
 	
+	
+	/**
+	 * check if user has grant to access site with admin action
+	 * @return string with View layout name
+	 * supervisor & grant = 1 -> layout = 'supervisorAdmin'
+	 * supervisor = 0; grant = 1 -> layout = 'admin'
+	 * othercase layout = 'default'
+	 */
 	public function isGrant() {
+			
+		if ($_SESSION['supervisor'] == 1 && $_SESSION['grant'] == 1) {
+			
+			return 'supervisorAdmin';
+			
+		}
+		elseif ($_SESSION['supervisor'] == 0 && $_SESSION['grant'] == 1) {
+			
+			return 'admin';
+		}
 		
+		else {
+			
+			$this->noRightView();
+			
+		}
+
+	}
+	
+	
+	
+	/**
+	 * render message thath user has no right to see page
+	 */
+	public function noRightView() {
 		
+		$view = new View();
+		$view->set('Users/admin_fault');;
+		$view->render();
+		die;
 		
-		//check if user has grant to access site with admin action
+	}
+	
+	
+	/**
+	 * check if user has privilage to use a supervisor menu
+	 * return string with View layout name:
+	 * supervisor or default
+	 */
+	public function isSupervisor() {
+		
+		if ($_SESSION['supervisor'] == 1) {
+			
+			return 'supervisor';
+			
+		}
+		else {
+			
+			return 'default';
+		}
 	}
 	
 	

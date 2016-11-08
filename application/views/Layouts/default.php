@@ -50,9 +50,14 @@ $scriptName = $_SERVER['REQUEST_URI'];
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
+            <li class="navbar-brand">
+            	<div>
+            		<span class="glyphicon glyphicon-user" aria-hidden="false">
+            		</span>
+            	</div>
+            </li>
             <li>
             	<div class="btn-group" role="group">
-            		<span class="glyphicon glyphicon-user navbar-brand" aria-hidden="false"></span>
             		<a class="navbar-brand" href="/Users/logout">Wyloguj</a>
             	</div>
             </li>
