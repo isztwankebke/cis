@@ -46,6 +46,7 @@ else : ?>
 					<th>Produkt</th>
 					<th>Data zawarcia</th>
 					<th>Okres</th>
+					<th>Kwota kredytu</th>
 					<th>Extra info</th>
 				</tr>
 			</thead>
@@ -65,6 +66,7 @@ else : ?>
 						echo "<td>", $data['product_name'], "</td>";
 						echo "<td>", $data['init_date'], "</td>";
 						echo "<td>", $data['period'], "</td>";
+						echo "<td>", $data['credit_value'], "</td>";
 						echo "<td>", $data['extra_info'], "</td>";
 						echo "</tr>";
 					}

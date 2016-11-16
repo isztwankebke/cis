@@ -165,6 +165,8 @@ class TransactionModel extends Model {
 		//2.check is request data is valid
 		//3.check is client data is valid = pesel
 		//4.if pesel is valid check is client exist
+		//4a. if client exist check, is in database the same entry (date, credit value, product name, period).
+		//if entry exist - ask -> continue or cancel.
 		//5.if client exist check the name, surname and phone number is the same if not use old value, and give notification
 		//that need to change data in database
 		//5a. get extra_info and add new one on the end of old value
@@ -271,6 +273,9 @@ class TransactionModel extends Model {
 			$this->clientSurname = $result[0]['surname'];
 			$this->clientPhone = $result[0]['phone_nr'];
 			$this->clientExtraInfo = $result[0]['extra_info'];
+			
+			//.4a
+			$this->validateExistTransaction($transactionData);
 			
 			//.5
 			if (!$this->checkDifference($transactionData)) {
@@ -699,6 +704,17 @@ class TransactionModel extends Model {
 		
 		return $result;
 		
+	}
+	
+	
+	
+	public function validateExistTransaction ($pesel) {
+		
+		$sql = "SELECT * 
+				FROM 
+				transactions
+				WHERE
+				";
 	}
 	
 	
