@@ -275,7 +275,14 @@ class TransactionModel extends Model {
 			$this->clientExtraInfo = $result[0]['extra_info'];
 			
 			//.4a
-			$this->validateExistTransaction($transactionData);
+			//var_dump($transactionData);
+			
+			if ($transaction = $this->validateExistTransaction($transactionData)) {
+				return ['transaction exist',$transaction];
+			}
+				
+				
+			
 			
 			//.5
 			if (!$this->checkDifference($transactionData)) {
@@ -707,14 +714,72 @@ class TransactionModel extends Model {
 	}
 	
 	
-	
-	public function validateExistTransaction ($pesel) {
+	/**
+	 * 
+	 * @param unknown $transactionData
+	 */
+	public function validateExistTransaction ($transactionData) {
 		
 		$sql = "SELECT * 
 				FROM 
-				transactions
-				WHERE
+				transactions 
+				JOIN 
+				clients 
+				ON 
+				transactions.client_id = clients.id 
+				JOIN 
+				products 
+				ON 
+				transactions.product_id = products.id 
+				WHERE 
+				clients.pesel='{$transactionData['pesel']}' 
+				AND 
+				transactions.credit_value = '{$transactionData['credit_value']}'
+				AND
+				transactions.period = '{$transactionData['period']}'
+				AND
+				products.product_name = '{$transactionData['product_name']}'
+				AND
+				transactions.init_date = '{$transactionData['init_date']}'
 				";
+		
+		$result = parent::query($sql);
+		
+		//transactions with this parameters do not exist
+		if (!$result) {
+			
+			return false;
+		}
+		
+		//transactions with this parametes exist:
+		
+		return $result;
+		
+	}
+	
+	
+	
+	public function addDuplicateTransaction($insertValue) {
+		
+		$sql = "INSERT 
+				INTO `transactions`
+				(`client_id`, `product_id`, `init_date`, `credit_value`, `period`, `end_date`, `half_period`) 
+				VALUES 
+				('{$insertValue['client_id']}',
+				'{$insertValue['product_id']}',
+				'{$insertValue['init_date']}',
+				'{$insertValue['credit_value']}',
+				'{$insertValue['period']}',
+				'{$insertValue['end_date']}',
+				'{$insertValue['half_period']}')";
+		
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			throw new Exception("error during add duplicate entry to database");
+			return false;
+		}
+		return true;
 	}
 	
 	

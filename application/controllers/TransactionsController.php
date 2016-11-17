@@ -40,6 +40,15 @@ class TransactionsController extends Controller {
 				$transactionData = $this->request->getPostData();
 				$transaction = new TransactionModel();
 				$result = $transaction->addTransaction($transactionData);
+				
+				//var_dump($result[0]);
+				
+				//if transaction exist - ask if add the same transaction or cancel
+				if ($result[0] == 'transaction exist') {
+					
+					$this->duplicateEntry($result);
+					die;
+				}
 				$view->set('Transactions/confirmation', $result, $layout);
 				if (debug) {
 					var_dump($transactionData);
@@ -51,6 +60,7 @@ class TransactionsController extends Controller {
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
+			var_dump($e->getTrace());
 		}
 		
 		
@@ -66,7 +76,7 @@ class TransactionsController extends Controller {
 				$transaction->addTransaction($clientData, $productData, $parameters);
 				return $transaction->getTransactionData();
 	
-			}
+			
 			else {
 				return false;
 			}
@@ -303,7 +313,72 @@ class TransactionsController extends Controller {
 				
 		
 		}
-		catch (Exception$e) {
+		catch (Exception $e) {
+			echo "caugh Exception: ", $e->getMessage();
+		}
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $result
+	 * show duplicate entry and wait for user move - add the same or cancel
+	 */
+	public function duplicateEntry($result) {
+		
+		try {
+			
+			$layout = parent::isSupervisor();
+			$view = new View();
+			
+			if ($result[0] == 'transaction exist') {
+					
+				$view->set('Transactions/duplicateEntry', $result, $layout);
+			}
+			else {
+					throw new Exception("problem during choose add or cancel duplicate entry");
+				}
+			
+		}
+		catch (Exception $e) {
+			echo "caugh Exception: ", $e->getMessage();
+			//var_dump($e->getTrace());
+		}
+		$view->render();
+	}
+	
+	
+	
+	/**
+	 * confirm added duplicate entry
+	 * 
+	 */
+	public function confirmationDuplicate() {
+		
+		try {
+			
+			if ($this->request->isPost()) {
+					
+				$layout = parent::isSupervisor();
+				$view = new View();
+				$duplicate = new TransactionModel();
+					
+				$postData = $this->request->getPostData();
+				
+				if ($postData['ack'] == 'acknowledge') {
+						
+					$addDuplicate = $duplicate->addDuplicateTransaction($postData);
+					
+					if ($addDuplicate) {
+			
+						$view->set('Transactions/confirmationDuplicate', $addDuplicate, $layout);
+						$view->render();
+					}
+				}
+			}	
+		}
+		catch (Exception $e) {
 			echo "caugh Exception: ", $e->getMessage();
 		}
 	}
