@@ -276,6 +276,9 @@ class UsersController extends Controller {
 	
 	
 	
+	/**
+	 * 
+	 */
 	public function admin_editUser() {
 		
 		try {
@@ -310,6 +313,9 @@ class UsersController extends Controller {
 	
 	
 	
+	/**
+	 * 
+	 */
 	public function supervisor_ammountCredit() {
 		try {
 			
@@ -317,10 +323,28 @@ class UsersController extends Controller {
 			
 			$layout = parent::isSupervisor();
 			
+			$ammounts = new UserModel();
 			$view = new View();
-			$view->set('Users/supervisor_ammountCredit', null, $layout);
+			
+			
+			
+			
+			if ($this->request->isGet()) {
+				
+				$ammount = $ammounts->supervisor_ammountCredit();
+				
+				
+			}
+			
+			elseif ($this->request->isPost()) {
+				
+				$month = $this->request->getPostData();
+				$ammount = $ammounts->supervisor_ammountCredit($month);
+				
+				
+			}
+			$view->set('Users/supervisor_ammountCredit', $ammount, $layout);
 			$view->render();
-		
 		}
 		catch (Exception $e) {
 			echo "Exception: ", $e->getMessage();

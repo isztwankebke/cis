@@ -377,4 +377,33 @@ class UserModel extends Model {
 		
 		return $result;
 	}
+	
+	
+	
+	public function supervisor_ammountCredit($month = NULL) {
+		
+		if (!$month) {
+			
+			$today = new DateTime('now');
+			$month = $today->format('Y-m');
+				
+		}
+		else {
+			$month = $month['month'];
+			//var_dump($month);
+		}
+		
+		$sql = "SELECT
+		SUM(transactions.credit_value)
+		AS total
+		FROM
+		transactions
+		WHERE
+		transactions.init_date
+		LIKE ('{$month}-%')";
+			
+		$result = parent::query($sql);
+		return [$month,$result];
+		
+	}
 }
