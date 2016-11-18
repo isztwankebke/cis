@@ -394,13 +394,18 @@ class UserModel extends Model {
 		}
 		
 		$sql = "SELECT
-		SUM(transactions.credit_value)
-		AS total
-		FROM
-		transactions
-		WHERE
-		transactions.init_date
-		LIKE ('{$month}-%')";
+				IFNULL(product_name,'Total') AS product_name,
+   				SUM(transactions.credit_value) AS credit_value
+				FROM
+  				transactions
+				JOIN
+  				products
+				ON
+  				transactions.product_id = products.id
+				WHERE
+  				transactions.init_date LIKE '{$month}-%'
+  				GROUP BY products.product_name
+  				WITH ROLLUP";
 			
 		$result = parent::query($sql);
 		return [$month,$result];
