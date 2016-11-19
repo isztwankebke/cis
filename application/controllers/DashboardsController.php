@@ -165,6 +165,39 @@ class DashboardsController extends Controller {
 	}
 	
 	
+	/**
+	 * returns array with entries added to db in specified day
+	 */
+	public function todayEntry() {
+		
+		try {
+			
+			$view = new View();
+			$layout = parent::isSupervisor();
+			$entries = new DashboardModel();
+			
+			if ($this->request->isGet()) {
+				
+				$todayEntries = $entries->todayEntry();
+				
+			}
+			elseif ($this->request->isPost()) {
+				
+				$postData = $this->request->getPostData();
+				//var_dump($postData);
+				$todayEntries = $entries->todayEntry($postData['day']);
+				
+			}
+			
+			$view->set('Dashboards/todayEntry', $todayEntries, $layout);
+			$view->render();
+			
+			
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
+	}
 	
 	
 	

@@ -17,6 +17,7 @@ class TransactionModel extends Model {
 	private $creditValue;
 	
 	
+	
 	/**
 	 * 
 	 */
@@ -392,10 +393,10 @@ class TransactionModel extends Model {
 		
 		$sql = "INSERT 
 				INTO transactions
-				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`, `credit_value`) 
+				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`, `credit_value`, `user_id`) 
 				VALUES 
 				('{$this->clientID}', '{$this->productID}', '{$this->initialDate}',
-				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}', '{$this->creditValue}')";
+				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}', '{$this->creditValue}', '{$_SESSION['user_id']}')";
 		
 		//.13
 		$result = parent::query($sql);

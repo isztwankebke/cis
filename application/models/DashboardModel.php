@@ -248,6 +248,61 @@ class DashboardModel extends Model {
 		}
 		return $result;
 	}
+	
+	
+	/**
+	 * 
+	 * @param unknown $day
+	 * @throws Exception
+	 * return entry transactions on selected day
+	 */
+	public function todayEntry($day = null) {
+		//var_dump($day);
+		if (!$day) {
+			
+			$date = new DateTime();
+			$today = $date->format('Y-m-d');
+			
+		}
+		else {
+			$today = $day;
+		}
+		//var_dump($today);
+		$sql = "SELECT
+				  clients.name AS clientName,
+				  clients.surname AS clientSurname,
+				  clients.phone_nr,
+				  products.product_name,
+				  transactions.init_date,
+				  transactions.period,
+				  transactions.credit_value,
+				  CONCAT(users.name, ' ', users.surname) AS user
+				FROM
+					transactions
+				JOIN
+				    clients
+				ON
+				    transactions.client_id = clients.id
+				JOIN
+				    products
+				ON
+				    transactions.product_id = products.id
+				JOIN
+					users
+				ON
+					transactions.user_id = users.id
+				WHERE
+				    (DATE(transactions.entry_date) = '{$today}')";
+		
+		$result = parent::query($sql);
+		//var_dump($result);
+		if (!$result && !empty($result)) {
+			
+			throw new Exception("error during reading entry from selected day");
+			return false;
+		}
+		return [$today,$result];
+	}
 
 
 

@@ -71,6 +71,7 @@ $scriptName = $_SERVER['REQUEST_URI'];
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="<?php echo $scriptName == "/clients/read" ? 'active' : ''; ?>"><a href="/clients/read">Dzisiejsze alerty<span class="sr-only">(current)</span></a></li>
+            <li class="<?php echo $scriptName == "/Dashboards/todayEntry" ? 'active' : ''; ?>"><a href="/Dashboards/todayEntry">Dzisiejsze wpisy<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "addClient" ? 'active' : ''; ?>"><a href="/clients/addClient">Dodaj Klienta<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "search" ? 'active' : ''; ?>"><a href="/transactions/search">Szukaj Klienta<span class="sr-only">(current)</span></a></li>
             <li class="<?php echo $scriptName == "reports" ? 'active' : ''; ?>"><a href="dashboards/index">Raporty<span class="sr-only">(current)</span></a></li>
