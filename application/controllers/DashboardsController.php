@@ -57,14 +57,25 @@ class DashboardsController extends Controller {
 	 * display list of transcations which were set on admin alerts mode
 	 */
 	public function index() {
-		
-		$layouts = parent::isSupervisor();
-		
-		$dashboard = new DashboardModel();
-		$alerts = $dashboard->index();
-		$view = new View();
-		$view->set('Dashboards/index', $alerts, $layouts);
-		$view->render();
+		try {
+			$layouts = parent::isSupervisor();
+			
+			$dashboard = new DashboardModel();
+			$alerts = $dashboard->index();
+			$view = new View();
+			if ($this->request->isGet()) {
+				
+				$view->set('Dashboards/index', $alerts, $layouts);
+			
+			}
+			elseif ($this->request->isPost()) {
+				
+			}
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception:", $e->getMessage();
+		}
 	}
 	
 	

@@ -3,13 +3,13 @@ class DashboardModel extends Model {
 	
 	private $alertId;
 	private $productId;
-	private $halfPeriod;
-	private $periodInfo1;
-	private $weekInfo;
-	private $last;
-	private $periodNext;
+	private $isHalfPeriod;
+	private $afterPeriodInfo1;
+	private $weekBeforeInfo;
+	private $isLastInstallment;
+	private $afterPeriod1NextInstallment;
 	private $hasProduct;
-	private $periodInfo2;
+	private $afterPeriodInfo2;
 	private $alertData;
 	
 	public function __construct() {
@@ -64,7 +64,7 @@ class DashboardModel extends Model {
 	 */
 	public function index() {
 		
-		
+		//get alerts parameters
 		$sqlListAlerts = "SELECT * 
 						FROM alerts 
 						WHERE 1";
@@ -72,112 +72,33 @@ class DashboardModel extends Model {
 		if (!$result) {
 			throw new Exception("no defined alerts found");
 		}
-		$nrAlerts = count($result) - 1;
-		if (debug) {
-			var_dump($nrAlerts);
-			var_dump($result);
-		}
-		$found = [];
-		foreach ($result as $alert) {
-			
-			$this->productId = $alert['product_id'];
-			$this->halfPeriod = $alert['half_period'];
-			$this->periodInfo1 = $alert['period_info1'];
-			$this->weekInfo = $alert['week_info'];
-			$this->last = $alert['last'];
-			$this->periodNext = $alert['period_next'];
-			$this->hasProduct = $alert['has_product'];
-			$this->periodInfo2 = $alert['period_info2'];
-			
-			//beginDate - date when start informing DateInitial+periodInfo1+weekInfo
-			//end Date - date when stop informing DateInitial+periodInfo1
-			//nr of installment = offset in month
-			//dayOffset - 1 day
-			//weekOffset - nr of weeks from alerts
-			
-			$start = new DateTime();
-			$end = new DateTime();
-			$now = new DateTime();
-			$today = $now->format('Y-m-d');
-			
-			$offsetperiodInfo1 = $this->periodInfo1;
-			$weekOffset = $this->weekInfo;
-			
-			if (!debug) {
-				echo "offset period and week are:";
-				var_dump($offsetperiodInfo1);
-				var_dump($weekOffset);
-				
-			}
-			
-			$endDate = $end->sub(new DateInterval('P'.$offsetperiodInfo1.'M'));
-			$beginDate = $start->sub(new DateInterval('P'.$offsetperiodInfo1.'M'.$weekOffset.'W'));
-			
-			$finishDate = $end->format('Y-m-d');
-			$beginDate = $start->format('Y-m-d');
-			
-			if (debug) {
-				var_dump($finishDate, $beginDate);
-				var_dump($this->periodInfo1);
-				var_dump($this->productId);
-			}
-			
-			$sql = "SELECT 
-				clients_products.id, clients_products.checked, clients_products.comments,
-				clients.name, clients.surname, clients.phone_nr, 
-				products.product_name, alerts.is_half_period, alerts.after_period_info1, alerts.is_last_installment
-				FROM 
-				clients_products 
-				JOIN
-				alerts
-				ON
-				alerts.product_id = clients_products.product_id
-				JOIN 
-				clients 
-				ON 
-				clients_products.client_id = clients.id 
-				JOIN 
-				products 
-				ON 
-				products.id = clients_products.product_id 
-				WHERE 
-				clients_products.init_date = '{$beginDate}'
-				AND 
-				clients_products.product_id = '{$this->productId}'
-				OR
-				(alerts.is_half_period = '1'
-				AND
-				clients_products.half_period = '{$today}'
-				AND
-				clients_products.product_id = '{$this->productId}')
-				OR
-				(clients_products.product_id = '{$this->productId}'
-				AND
-				clients_products.end_date = '{$today}'
-				AND
-				alerts.is_last_installment = '1')
-				"; 
-			
+		
+		$sql = "(SELECT is_half_period.*
+				FROM
+				is_half_period)
+				UNION ALL
+				(SELECT after_period_info1.*
+				FROM
+				after_period_info1)
+				UNION ALL
+				(SELECT is_last_installment.*
+				FROM
+				is_last_installment)
+				UNION ALL
+				(SELECT duplicate_clients_products.* 
+				FROM
+				duplicate_clients_products)"; 
+								
 			$result = parent::query($sql);
 			if (debug) {
 				var_dump($result);
 			}
 			
-			if ($result) {
-				foreach ($result as $find) {
-					array_push($found, $find);
-				}	
+			if (!$result) {
+				return false;
 			}
-			
-			
-			
-		}
-		if (debug) {
-			var_dump($found);
-		}
-		return $found;
-		
-		
+			return $result;
+				
 	}
 	
 	
@@ -299,7 +220,7 @@ class DashboardModel extends Model {
 				'{$hasProduct}', 
 				'{$afterPeriodInfo2}')";
 		
-		var_dump($sql);
+		//var_dump($sql);
 		$result = parent::query($sql);
 		
 		if (!$result) {

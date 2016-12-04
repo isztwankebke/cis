@@ -12,11 +12,11 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th>Nazwa Produktu</th>
-					<th>Imię</th>
-					<th>Nazwisko</th>
+					<th>Nazwa Alertu</th>
+					<th>Imię i Nazwisko</th>
+					<th>Pesel</th>
+					<th>Data zawarcia</th>
 					<th>nr telefonu</th>
-					<th>Powiadomienie</th>
 					<th>Załatwione</th>					
 					<th>Komentarz</th>
 					<th>Akcja</th>
@@ -30,19 +30,13 @@
 					//echo $name;
 					foreach ($this->data as $alerts) {
 						
-						echo "<td>", $alerts['product_name'], "</td>";
-						echo "<td>", $alerts['name'], "</td>";
-						echo "<td>", $alerts['surname'], "</td>";
+						echo "<td>", $alerts['alert_name'], "</td>";
+						echo "<td>", $alerts['clientName'], "</td>";
+						echo "<td>", $alerts['pesel'], "</td>";
+						echo "<td>", $alerts['init_date'], "</td>";
 						echo "<td>", $alerts['phone_nr'], "</td>";
-						echo "<td>";
-						if ($alerts['half_period'])
-							echo "połowa kredytu; ";
-						if ($alerts['period_info1'])
-							echo "spłacone ",$alerts['period_info1'] ," raty;";
-						echo "</td>";
-								
 						echo '<td><input type="checkbox"></input></td>';
-						echo '<td><input placeholder="dopisz komentarz"></input></td>';
+						echo '<td><input placeholder="dopisz komentarz" value="'.htmlspecialchars($alerts['comments']).'"></input></td>';
 						echo "<td> Zapisz</td>";
 						echo "</tr>";
 					}

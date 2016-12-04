@@ -100,7 +100,7 @@
 	    </div>
 	  </div>
 	  <div class="form-group">
-	    <label for="inputPeriodNext" class="col-sm-2 control-label">Po ilu kolejnych tygodniach powiadamiać</label>
+	    <label for="inputPeriodNext" class="col-sm-2 control-label">Po ilu kolejnych ratach powiadamiać</label>
 	    <div class="col-sm-4">
 	      <input 
 	      type="number"
