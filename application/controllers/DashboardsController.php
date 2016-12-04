@@ -54,7 +54,7 @@ class DashboardsController extends Controller {
 	
 	
 	/**
-	 * 
+	 * display list of transcations which were set on admin alerts mode
 	 */
 	public function index() {
 		
@@ -111,13 +111,15 @@ class DashboardsController extends Controller {
 			if ($this->request->isGet()) {
 		
 				$parameters = $this->request->getParameters();
-				$productData = $product->getProduct($parameters);
-				$view->set('Dashboards/admin_deleteAlert', $productData, $layout);
+				//var_dump($parameters);
+				$alertData = $alert->getAlert($parameters);
+				$view->set('Dashboards/admin_deleteAlert', $alertData, $layout);
 			}
 				
 			elseif ($this->request->isPost()) {
 					
 				$parameters = $this->request->getPostData();
+				//var_dump($parameters);
 				$result = $alert->deleteAlert($parameters);
 				$view->set('Dashboards/delete_confirmation', $result, $layout);
 			}
@@ -147,7 +149,7 @@ class DashboardsController extends Controller {
 		
 				$parameters = $this->request->getParameters();
 				$alertData = $alert->getAlert($parameters);
-				$view->set('Users/admin_editAlert', $alertData, $layout);
+				$view->set('Dashboards/admin_editAlert', $alertData, $layout);
 			}
 		
 			elseif ($this->request->isPost()) {

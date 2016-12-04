@@ -88,26 +88,26 @@ class TransactionModel extends Model {
 		}
 		
 		$sql = "SELECT
-					transactions.id,
+					clients_products.id,
 					clients.name, 
 					clients.surname, 
 					clients.pesel, 
 					clients.phone_nr, 
 					products.product_name, 
-					transactions.init_date, 
-					transactions.period,
-					transactions.credit_value,
+					clients_products.init_date, 
+					clients_products.period,
+					clients_products.credit_value,
 					clients.extra_info						
 				FROM 
-					transactions
+					clients_products
 				JOIN
 					clients
 				ON 
-					transactions.client_id = clients.id
+					clients_products.client_id = clients.id
 				JOIN
 					products
 				ON
-					products.id = transactions.product_id
+					products.id = clients_products.product_id
 				WHERE 
 					clients.id IN ({$clientsId})";
 			//AND 
@@ -193,7 +193,7 @@ class TransactionModel extends Model {
 		
 		//try {
 			//.1 check is post data is consistent
-			
+			//var_dump($transactionData);
 			
 			if (!isset($transactionData['pesel'],
 					$transactionData['name'],
@@ -261,7 +261,7 @@ class TransactionModel extends Model {
 		WHERE clients.pesel = '{$transactionData['pesel']}'";
 		
 		$result = parent::query($sql);
-		
+		//var_dump($result);
 		if (debug) {
 			
 			var_dump($result);
@@ -318,7 +318,7 @@ class TransactionModel extends Model {
 			
 		} 
 		
-		
+		//var_dump($this->clientID);
 		//.7
 		if (!$this->clientID) { //client not exist - prepare sql to add client
 			
@@ -329,6 +329,7 @@ class TransactionModel extends Model {
 					VALUES 
 					('{$transactionData['pesel']}', '{$name}', '{$surname}', 
 					'{$transactionData['phone_nr']}', '{$transactionData['extra_info']}')";
+			//var_dump($sqlClient);
 			$result = parent::query($sqlClient);
 			
 			if (debug) {
@@ -392,13 +393,15 @@ class TransactionModel extends Model {
 		}
 		
 		$sql = "INSERT 
-				INTO transactions
+				INTO clients_products
 				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`, `credit_value`, `user_id`) 
 				VALUES 
 				('{$this->clientID}', '{$this->productID}', '{$this->initialDate}',
 				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}', '{$this->creditValue}', '{$_SESSION['user_id']}')";
 		
 		//.13
+		
+		//var_dump($sql);
 		$result = parent::query($sql);
 		
 		if (debug) {
@@ -555,24 +558,24 @@ class TransactionModel extends Model {
 	public function getClientTransaction($clientID) {
 		//var_dump($clientID);
 		$sql = "SELECT
-			transactions.id,
+			clients_products.id,
 			clients.name,
 			clients.surname,
 			clients.pesel,
 			products.product_name,
-			transactions.init_date,
-			transactions.period,
-			transactions.credit_value
+			clients_products.init_date,
+			clients_products.period,
+			clients_products.credit_value
 		FROM
-			transactions
+			clients_products
 		JOIN
 			clients
 		ON
-			transactions.client_id = clients.id
+			clients_products.client_id = clients.id
 		JOIN
 			products
 		ON
-			products.id = transactions.product_id
+			products.id = clients_products.product_id
 		WHERE
 		clients.id = '{$clientID}'";
 		//AND
@@ -594,26 +597,26 @@ class TransactionModel extends Model {
 	 */
 	public function getTransaction($transactionID) {
 		$sql = "SELECT
-        	transactions.id,
+        	clients_products.id,
 			clients.name,
 			clients.surname,
 			clients.pesel,
 			products.product_name,
-			transactions.init_date,
-			transactions.period,
-			transactions.credit_value
+			clients_products.init_date,
+			clients_products.period,
+			clients_products.credit_value
 		FROM
-			transactions
+			clients_products
 		JOIN
 			clients
 		ON
-			transactions.client_id = clients.id
+			clients_products.client_id = clients.id
 		JOIN
 			products
 		ON
-			products.id = transactions.product_id
+			products.id = clients_products.product_id
 		WHERE
-		transactions.id = '{$transactionID}'";
+		clients_products.id = '{$transactionID}'";
 		
 		$result = parent::query($sql);
 		//var_dump($result);
@@ -666,16 +669,16 @@ class TransactionModel extends Model {
 		//prepare sql update set
 		
 		$sql = "UPDATE
-					transactions
+					clients_products
 				SET
-				  transactions.product_id = '{$transactionData['product_name']}',
-				  transactions.init_date = '{$transactionData['init_date']}',
-				  transactions.credit_value = '{$transactionData['credit_value']}',
-				  transactions.period = '{$transactionData['period']}',
-				  transactions.end_date = '{$this->endDate}',
-				  transactions.half_period = '{$this->halfPeriod}'
+				  clients_products.product_id = '{$transactionData['product_name']}',
+				  clients_products.init_date = '{$transactionData['init_date']}',
+				  clients_products.credit_value = '{$transactionData['credit_value']}',
+				  clients_products.period = '{$transactionData['period']}',
+				  clients_products.end_date = '{$this->endDate}',
+				  clients_products.half_period = '{$this->halfPeriod}'
 				WHERE
-					transactions.id = '{$transactionData['id']}'
+					clients_products.id = '{$transactionData['id']}'
 				";
 		
 		$result = parent::query($sql);
@@ -699,8 +702,8 @@ class TransactionModel extends Model {
 		
 		$sql = "DELETE 
 				FROM 
-				transactions WHERE 
-				transactions.id = '{$transactionId}'";
+				clients_products WHERE 
+				clients_products.id = '{$transactionId}'";
 		
 		$result = parent::query($sql);
 		
@@ -723,25 +726,25 @@ class TransactionModel extends Model {
 		
 		$sql = "SELECT * 
 				FROM 
-				transactions 
+				clients_products 
 				JOIN 
 				clients 
 				ON 
-				transactions.client_id = clients.id 
+				clients_products.client_id = clients.id 
 				JOIN 
 				products 
 				ON 
-				transactions.product_id = products.id 
+				clients_products.product_id = products.id 
 				WHERE 
 				clients.pesel='{$transactionData['pesel']}' 
 				AND 
-				transactions.credit_value = '{$transactionData['credit_value']}'
+				clients_products.credit_value = '{$transactionData['credit_value']}'
 				AND
-				transactions.period = '{$transactionData['period']}'
+				clients_products.period = '{$transactionData['period']}'
 				AND
 				products.product_name = '{$transactionData['product_name']}'
 				AND
-				transactions.init_date = '{$transactionData['init_date']}'
+				clients_products.init_date = '{$transactionData['init_date']}'
 				";
 		
 		$result = parent::query($sql);
@@ -763,7 +766,7 @@ class TransactionModel extends Model {
 	public function addDuplicateTransaction($insertValue) {
 		
 		$sql = "INSERT 
-				INTO `transactions`
+				INTO `clients_products`
 				(`client_id`, `product_id`, `init_date`, `credit_value`, `period`, `end_date`, `half_period`) 
 				VALUES 
 				('{$insertValue['client_id']}',

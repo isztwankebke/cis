@@ -40,7 +40,20 @@ class DashboardModel extends Model {
 	}
 	
 	public function getAlert($parameters) {
-		//pobrac dane nt jednego alerta
+		
+		$sql = "SELECT
+				* 
+				FROM 
+				alerts 
+				WHERE 
+				alerts.id = '{$parameters[0]}'";
+		//var_dump($sql);
+		$result = parent::query($sql);
+		//var_dump($result);
+		if (!$result) {
+			return false;
+		}
+		return $result;
 	}
 	
 	
@@ -90,7 +103,7 @@ class DashboardModel extends Model {
 			$offsetperiodInfo1 = $this->periodInfo1;
 			$weekOffset = $this->weekInfo;
 			
-			if (debug) {
+			if (!debug) {
 				echo "offset period and week are:";
 				var_dump($offsetperiodInfo1);
 				var_dump($weekOffset);
@@ -110,39 +123,39 @@ class DashboardModel extends Model {
 			}
 			
 			$sql = "SELECT 
-				transactions.id, transactions.checked, transactions.comments,
+				clients_products.id, clients_products.checked, clients_products.comments,
 				clients.name, clients.surname, clients.phone_nr, 
-				products.product_name, alerts.half_period, alerts.period_info1, alerts.last
+				products.product_name, alerts.is_half_period, alerts.after_period_info1, alerts.is_last_installment
 				FROM 
-				transactions 
+				clients_products 
 				JOIN
 				alerts
 				ON
-				alerts.product_id = transactions.product_id
+				alerts.product_id = clients_products.product_id
 				JOIN 
 				clients 
 				ON 
-				transactions.client_id = clients.id 
+				clients_products.client_id = clients.id 
 				JOIN 
 				products 
 				ON 
-				products.id = transactions.product_id 
+				products.id = clients_products.product_id 
 				WHERE 
-				transactions.init_date = '{$beginDate}'
+				clients_products.init_date = '{$beginDate}'
 				AND 
-				transactions.product_id = '{$this->productId}'
+				clients_products.product_id = '{$this->productId}'
 				OR
-				(alerts.half_period = 'tak'
+				(alerts.is_half_period = '1'
 				AND
-				transactions.half_period = '{$today}'
+				clients_products.half_period = '{$today}'
 				AND
-				transactions.product_id = '{$this->productId}')
+				clients_products.product_id = '{$this->productId}')
 				OR
-				(transactions.product_id = '{$this->productId}'
+				(clients_products.product_id = '{$this->productId}'
 				AND
-				transactions.end_date = '{$today}'
+				clients_products.end_date = '{$today}'
 				AND
-				alerts.last = 'tak')
+				alerts.is_last_installment = '1')
 				"; 
 			
 			$result = parent::query($sql);
@@ -179,48 +192,114 @@ class DashboardModel extends Model {
 		//check is data is consistent
 		//check is alert exist
 		//add alert
-		if (!isset($alertData['period_info1'])) {
+		
+		
+		//check alert name is set
+		if (!isset($alertData['alert_name'])) {
 			
-			throw new Exception("Period Info is necessary");
+			throw new Exception("Alert name is necessary");
 			return false;
 		}
-		if (isset($alertData['half_period'])) {
+		
+		//check after_period_info1 is filed, set default 0
+		if (empty($alertData['after_period_info1'])) {
 			
-			$halfPeriod = 'tak';
+			$afterPeriodInfo1= 0;
+		}
+			
+		else {
+			
+			$afterPeriodInfo1 = $alertData['after_period_info1'];
+		}
+		
+		//check is_half_period is set
+		if (isset($alertData['is_half_period'])) {
+			
+			$isHalfPeriod = 1;
 		}
 		
 		else {
 			
-			$halfPeriod = 'nie';
+			$isHalfPeriod = 0;
 		}
 		
-		if (isset($alertData['last'])) {
+		//check is_last_installment is set
+		if (isset($alertData['is_last_installment'])) {
 			
-			$last = 'tak';
+			$isLastInstallment = 1;
 		}
 		
 		else {
-			$last = 'nie';
+			$isLastInstallment = 0;
 		}
 		
+		//check has_product is set
 		if (isset($alertData['has_product'])) {
 			
-			$hasProduct = 'tak';
+			$hasProduct = 1;
 		}
 		
 		else {
 			
-			$hasProduct = 'nie';
+			$hasProduct = 0;
+		}
+		
+		//check week_befor_info is filled, set default 0
+		if (empty($alertData['week_before_info'])) {
+				
+			$weekBeforeInfo = 0;
+		}
+			
+		else {
+				
+			$weekBeforeInfo = $alertData['week_before_info'];
+		}
+		
+		//check after_period1_next_installment is filled, set default 0
+		if (empty($alertData['after_period1_next_installment'])) {
+				
+			$afterPeriod1NextInstallment = 0;
+		}
+			
+		else {
+				
+			$afterPeriod1NextInstallment = $alertData['after_period1_next_installment'];
+		}
+		
+		if (empty($alertData['after_period_info2'])) {
+				
+			$afterPeriodInfo2 = 0;
+		}
+			
+		else {
+				
+			$afterPeriodInfo2 = $alertData['after_period_info2'];
 		}
 		
 		$sql = "INSERT 
 				INTO 
 				alerts 
-				(`product_id`, `half_period`, `period_info1`, `week_info`, `last`, `period_next`, `has_product`, `period_info2`) 
+				(`alert_name`, 
+				`product_id`, 
+				`is_half_period`, 
+				`after_period_info1`, 
+				`week_before_info`, 
+				`is_last_installment`, 
+				`after_period1_next_installment`, 
+				`has_product`, 
+				`after_period_info2`) 
 				VALUES 
-				('{$alertData['product_name']}', '{$halfPeriod}', '{$alertData['period_info1']}',
-				'{$alertData['week_info']}', '{$last}', '{$alertData['period_next']}', 
-				'{$hasProduct}', '{$alertData['period_info2']}')";
+				('{$alertData['alert_name']}', 
+				'{$alertData['product_name']}', 
+				'{$isHalfPeriod}', 
+				'{$afterPeriodInfo1}',
+				'{$weekBeforeInfo}', 
+				'{$isLastInstallment}', 
+				'{$afterPeriod1NextInstallment}', 
+				'{$hasProduct}', 
+				'{$afterPeriodInfo2}')";
+		
+		var_dump($sql);
 		$result = parent::query($sql);
 		
 		if (!$result) {
@@ -273,26 +352,26 @@ class DashboardModel extends Model {
 				  clients.surname AS clientSurname,
 				  clients.phone_nr,
 				  products.product_name,
-				  transactions.init_date,
-				  transactions.period,
-				  transactions.credit_value,
+				  clients_products.init_date,
+				  clients_products.period,
+				  clients_products.credit_value,
 				  CONCAT(users.name, ' ', users.surname) AS user
 				FROM
-					transactions
+					clients_products
 				JOIN
 				    clients
 				ON
-				    transactions.client_id = clients.id
+				    clients_products.client_id = clients.id
 				JOIN
 				    products
 				ON
-				    transactions.product_id = products.id
+				    clients_products.product_id = products.id
 				JOIN
 					users
 				ON
-					transactions.user_id = users.id
+					clients_products.user_id = users.id
 				WHERE
-				    (DATE(transactions.entry_date) = '{$today}')";
+				    (DATE(clients_products.entry_date) = '{$today}')";
 		
 		$result = parent::query($sql);
 		//var_dump($result);

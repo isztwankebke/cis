@@ -10,6 +10,7 @@
 			<thead>
 				<tr>
 					<th>#</th>
+					<th>Nazwa Alertu</th>
 					<th>Nazwa produktu</th>
 					<th>połowa rat</th>
 					<th>po ilu spłaconych ratach informować</th>
@@ -30,14 +31,15 @@
 					foreach ($this->data as $alerts) {
 						echo "<tr>";
 						echo "<td>", $alerts['id'], "</td>";
+						echo "<td>", $alerts['alert_name'], "</td>";
 						echo "<td>", $alerts['product_name'], "</td>";
-						echo "<td>", $alerts['half_period'], "</td>";
-						echo "<td>", $alerts['period_info1'], "</td>";
-						echo "<td>", $alerts['week_info'], "</td>";
-						echo "<td>", $alerts['last'], "</td>";
-						echo "<td>", $alerts['period_next'], "</td>";
+						echo "<td>", $alerts['is_half_period'], "</td>";
+						echo "<td>", $alerts['after_period_info1'], "</td>";
+						echo "<td>", $alerts['week_before_info'], "</td>";
+						echo "<td>", $alerts['is_last_installment'], "</td>";
+						echo "<td>", $alerts['after_period1_next_installment'], "</td>";
 						echo "<td>", $alerts['has_product'], "</td>";
-						echo "<td>", $alerts['period_info2'], "</td>";
+						echo "<td>", $alerts['after_period_info2'], "</td>";
 						echo '<td><a class="btn btn-warning" role="button" href="/Dashboards/admin_editAlert/'.$alerts['id'].'">Edytuj</a></td>';
 						echo '<td><a class="btn btn-danger" role="button" href="/Dashboards/admin_deleteAlert/'.$alerts['id'].'">Usuń</a></td>';
 						echo "</tr>";

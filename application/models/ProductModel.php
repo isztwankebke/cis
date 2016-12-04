@@ -96,9 +96,10 @@ class ProductModel  extends Model{
 				FROM 
 				products 
 				WHERE 
-				id = '{$parameters[0]}' ";
-		
+				id = '{$parameters[0]}'";
+		//var_dump($sql);
 		$result = parent::query($sql);
+		//var_dump($result);
 		if (!$result) {
 			return false;
 		}
@@ -156,7 +157,8 @@ class ProductModel  extends Model{
 		if (!$this->checkProductData($productData)) {
 			return false;
 		}
-		$productName = parent::setFirstLetterUppercase($productData['product_name']);
+		//$productName = parent::setFirstLetterUppercase($productData['product_name']);
+		$productName = $productData['product_name'];
 		
 		if ($this->isProductExist($productName, null)) {
 			

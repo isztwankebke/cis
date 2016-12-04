@@ -7,12 +7,26 @@
 	<div class="alert alert-warning" role="alert">
 		<a>Jeśli jakieś pole jest nie używane zostaw puste!</a>
 	</div>
+	<div class="form-group">
+	    <label for="inputAlertName" class="col-sm-2 control-label">Nazwa alertu</label>
+	    <div class="col-sm-4">
+	      <input
+	      type="text" 
+	      class="form-control"
+	      tabindex="1"
+	      autofocus="autofocus"
+	      id="inputAlertName"
+	      name="alert_name"
+	      required="required"
+	      placeholder="np. TakTo połowa rat">
+	    </div>
+	  </div>
 	  <div class="form-group">
 	    <label for="inputProduct" class="col-sm-2 control-label">Produkt</label>
 	    <div class="col-sm-4">
 	      <select 
 	      class="form-control"
-	      tabindex="1"
+	      tabindex="2"
 	      autofocus="autofocus"
 	      id="inputProduct"
 	      name="product_name">
@@ -34,9 +48,9 @@
 	      type="checkbox"
 	      class="checkbox" 
 	      id="inputHalfPeriod" 
-	      name="half_period" 
+	      name="is_half_period" 
 	      
-	      tabindex="2"
+	      tabindex="3"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -45,11 +59,11 @@
 	    <div class="col-sm-4">
 	      <input 
 	      type="number" 
-	      maxlength="3"
+	      maxlength="4"
 	      class="form-control" 
 	      id="inputPeriodInfo1" 
-	      name="period_info1" 
-	      placeholder="np. 4 - pole obligatoryjne"
+	      name="after_period_info1" 
+	      placeholder="np. 4"
 	      tabindex="3"
 	      min="0"
 	      max="300"
@@ -66,9 +80,9 @@
 	      max="99" 
 	      class="form-control" 
 	      id="inputWeekInfo" 
-	      name="week_info" 
-	      placeholder="np. 2"
-	      tabindex="4"
+	      name="week_before_info" 
+	      placeholder="np. 2; jeśli od razu to 0"
+	      tabindex="5"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -79,9 +93,9 @@
 	      type="checkbox"
 	      class="checkbox" 
 	      id="inputLast" 
-	      name="last" 
+	      name="is_last_installment" 
 	      
-	      tabindex="5"
+	      tabindex="6"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -94,9 +108,9 @@
 	      max="99" 
 	      class="form-control" 
 	      id="inputPeriodNext" 
-	      name="period_next" 
+	      name="after_period1_next_installment" 
 	      placeholder="np.2"
-	      tabindex="6"
+	      tabindex="7"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -109,7 +123,7 @@
 	      id="inputHasProduct" 
 	      name="has_product" 
 	      
-	      tabindex="7"
+	      tabindex="8"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -122,9 +136,9 @@
 	      max="99" 
 	      class="form-control" 
 	      id="inputPeriodInfo2" 
-	      name="period_info2" 
+	      name="after_period_info2" 
 	      placeholder="np.1"
-	      tabindex="8"
+	      tabindex="9"
 	      autofocus="autofocus">
 	    </div>
 	  </div>
@@ -133,7 +147,7 @@
 	      <button 
 	      type="submit" 
 	      class="btn btn-default"
-	      tabindex="9"
+	      tabindex="10"
 	      autofocus="autofocus">Zapisz</button>
 	    </div>
 	  </div>

@@ -395,15 +395,15 @@ class UserModel extends Model {
 		
 		$sql = "SELECT
 				IFNULL(product_name,'Total') AS product_name,
-   				SUM(transactions.credit_value) AS credit_value
+   				SUM(clients_products.credit_value) AS credit_value
 				FROM
-  				transactions
+  				clients_products
 				JOIN
   				products
 				ON
-  				transactions.product_id = products.id
+  				clients_products.product_id = products.id
 				WHERE
-  				transactions.init_date LIKE '{$month}-%'
+  				clients_products.init_date LIKE '{$month}-%'
   				GROUP BY products.product_name
   				WITH ROLLUP";
 			
