@@ -19,12 +19,33 @@ class ReportsController extends Controller {
 	 * 
 	 */
 	public function index() {
+		try {
+			
+			$layout = parent::isSupervisor();
+			$view = new View();
+			$report = new DashboardModel();
+			
+			if ($this->request->isGet()) {
+				
+				$view->set('Reports/index', null, $layout);
+					
+			}
+			elseif ($this->request->isPost()) {
+				
+				$parameters = $this->request->getPostData();
+				//var_dump($parameters);
+				$reports = $report->index($parameters);
+				//var_dump($reports);
+				$view->set('Reports/index', $reports, $layout);
+					
+			}
+			
+			$view->render();
+		}
+		catch (Exception $e) {
+			echo "Exception: ", $e->getMessage();
+		}
 		
-		$layout = parent::isSupervisor();
-		
-		$view = new View();
-		$view->set('Reports/index', null, $layout);
-		$view->render();
 	}
 	
 	

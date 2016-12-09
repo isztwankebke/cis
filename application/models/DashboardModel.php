@@ -62,9 +62,9 @@ class DashboardModel extends Model {
 	 * 
 	 * @throws Exception
 	 */
-	public function index() {
+	public function index($parameters = null) {
 		
-		//get alerts parameters
+		//check is any alerts set
 		$sqlListAlerts = "SELECT * 
 						FROM alerts 
 						WHERE 1";
@@ -72,24 +72,270 @@ class DashboardModel extends Model {
 		if (!$result) {
 			throw new Exception("no defined alerts found");
 		}
+		//using offset parameters - needs to create reports. In normal case is equal 0 
+		if (!isset($parameters['offset'])) {
+			
+			$offset = 0;
+			
+		}
+		else {
+			
+			$offset = $parameters['offset'];
+		}
+		//var_dump($offset);
+		if ($offset == 1 || $offset == 0) {
+			//check alerts for next week
+			
+			$isHalfPeriodAlert = "(
+				alerts.is_half_period = 1
+				AND
+				YEARWEEK(NOW() + INTERVAL alerts.week_before_info WEEK + INTERVAL '{$offset}' WEEK) =
+				YEARWEEK(t1.half_period)
+				)
+				OR
+				(
+				alerts.after_period1_next_installment != 0
+				AND
+				alerts.is_half_period = 1
+				AND
+				YEARWEEK(NOW() + INTERVAL '$offset' WEEK) =
+				YEARWEEK(t1.half_period + INTERVAL alerts.after_period1_next_installment MONTH )
+				)";
+			
+			$afterPeriod1Info = "(
+				alerts.after_period_info1 != 0
+				AND
+				YEARWEEK(NOW() + INTERVAL alerts.week_before_info WEEK + INTERVAL '{$offset}' WEEK) =
+				YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info1 MONTH)
+				)
+				OR
+				(
+				alerts.after_period_info1 !=0
+				AND
+				alerts.after_period1_next_installment != 0
+				AND
+				YEARWEEK(NOW() + INTERVAL '{$offset}' WEEK) =
+				YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info1 MONTH +
+				INTERVAL alerts.after_period1_next_installment MONTH)
+				)";
+			
+			$isLastInstallment = "(
+				alerts.is_last_installment != 0
+				AND
+				YEARWEEK(NOW() + INTERVAL alerts.week_before_info WEEK + INTERVAL '{$offset}' WEEK) =
+				YEARWEEK(t1.end_date)
+				)
+				OR
+				(
+				alerts.is_last_installment !=0
+				AND
+				alerts.after_period1_next_installment != 0
+				AND
+				YEARWEEK(NOW() + INTERVAL '$offset' WEEK) =
+				YEARWEEK(t1.end_date + INTERVAL alerts.after_period1_next_installment MONTH)
+				)";
+			
+			$duplicate = "
+					(
+					alerts.after_period_info2 != 0 
+					AND 
+					t1.product_id = t2.product_id 
+					AND 
+					t1.client_id = t2.client_id 
+					AND 
+					YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info2 MONTH) = 
+					YEARWEEK(NOW() + INTERVAL alerts.week_before_info WEEK + INTERVAL '{$offset}' WEEK) 
+					AND 
+					t2.half_period < NOW()
+					)
+				OR
+					(
+					alerts.after_period_info2 != 0
+					AND
+					alerts.after_period1_next_installment != 0
+					AND
+					t1.product_id = t2.product_id 
+					AND 
+					t1.client_id = t2.client_id 
+					AND 
+					YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info2 MONTH +
+					INTERVAL alerts.after_period1_next_installment MONTH) = 
+					YEARWEEK(NOW() + INTERVAL '{$offset}' WEEK) 
+					AND 
+					t2.half_period < NOW()
+					)";
+		}
+		elseif ($offset == 2) {
+			//check start and end date is set
+			if (empty($parameters['dateFrom']) || empty($parameters['dateTo'])) {
+				
+				throw new Exception("date not set. Cannot check date range!");
+				return false;
+			}
+			//check start date is older then end date
+			elseif (strtotime($parameters['dateFrom']) > strtotime($parameters['dateTo'])) {
+				
+				throw new Exception("start date must be older than end time");
+				return false;
+			}
+			//settting start and end date for date range
+			
+			$startDate = $parameters['dateFrom'];
+			$endDate = $parameters['dateTo'];
+			
+			$dateRange = "BETWEEN
+				YEARWEEK('{$startDate}')
+				AND
+				YEARWEEK('{$endDate}')";
+			
+			//check alerts from date range
+			$isHalfPeriodAlert = "(
+				alerts.is_half_period = 1
+				AND
+				(YEARWEEK(t1.half_period - INTERVAL alerts.week_before_info WEEK) 
+				{$dateRange})
+				)
+				OR
+				(
+				alerts.after_period1_next_installment != 0
+				AND
+				alerts.is_half_period = 1
+				AND
+				(YEARWEEK(t1.half_period + INTERVAL alerts.after_period1_next_installment MONTH )
+				{$dateRange})
+				)";
+			
+			$afterPeriod1Info = "(
+				alerts.after_period_info1 != 0
+				AND
+				(YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info1 MONTH - INTERVAL alerts.week_before_info WEEK)
+				{$dateRange})
+				)
+				OR
+				(
+				alerts.after_period_info1 !=0
+				AND
+				alerts.after_period1_next_installment != 0
+				AND
+				(
+				YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info1 MONTH +
+				INTERVAL alerts.after_period1_next_installment MONTH)
+				{$dateRange})
+				)";
+				
+			$isLastInstallment = "(
+				alerts.is_last_installment != 0
+				AND
+				(
+				YEARWEEK(t1.end_date - INTERVAL alerts.week_before_info WEEK)
+				{$dateRange})
+				)
+				OR
+				(
+				alerts.is_last_installment !=0
+				AND
+				alerts.after_period1_next_installment != 0
+				AND
+				(
+				YEARWEEK(t1.end_date + INTERVAL alerts.after_period1_next_installment MONTH)
+				{$dateRange})
+				)";
+					
+			$duplicate = "
+				(
+				alerts.after_period_info2 != 0
+				AND
+				t1.product_id = t2.product_id
+				AND
+				t1.client_id = t2.client_id
+				AND
+				(YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info2 MONTH - INTERVAL alerts.week_before_info WEEK)
+				{$dateRange})
+				AND
+				t2.half_period < '{$endDate}'
+				)
+				OR
+				(
+				alerts.after_period_info2 != 0
+				AND
+				alerts.after_period1_next_installment != 0
+				AND
+				t1.product_id = t2.product_id
+				AND
+				t1.client_id = t2.client_id
+				AND
+				(YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info2 MONTH +
+				INTERVAL alerts.after_period1_next_installment MONTH)
+				{$dateRange})
+				AND
+				t2.half_period < '{$endDate}'
+				)";
+				
+			
+		}
 		
-		$sql = "(SELECT is_half_period.*
+		$columns = "alerts.alert_name,
+				  CONCAT(clients.name, ' ', clients.surname) AS clientName,
+				  clients.phone_nr,
+				  clients.pesel,
+				  t1.*";
+		//var_dump($duplicate);
+		//var_dump($isHalfPeriodAlert);
+		$sql = "(#for isHalfPeriod, afterPeriod1, isLastInstallment
+				SELECT 
+				  {$columns}
 				FROM
-				is_half_period)
+				  clients_products t1
+				JOIN
+				  clients
+				ON
+				  clients.id = t1.client_id
+				JOIN
+				  alerts
+				ON
+				  alerts.product_id = t1.product_id
+				WHERE
+				{$isHalfPeriodAlert}
+				OR
+				{$afterPeriod1Info}
+				OR
+				{$isLastInstallment}
+				)
+				
 				UNION ALL
-				(SELECT after_period_info1.*
+				
+				(#for duplicate entry
+				
+				SELECT
+					{$columns}
 				FROM
-				after_period_info1)
-				UNION ALL
-				(SELECT is_last_installment.*
-				FROM
-				is_last_installment)
-				UNION ALL
-				(SELECT duplicate_clients_products.* 
-				FROM
-				duplicate_clients_products)"; 
-								
+					clients_products t1
+				JOIN
+					clients
+				ON
+					clients.id = t1.client_id
+				LEFT JOIN
+					clients_products t3
+				ON
+					t1.id = t3.id
+				LEFT JOIN
+					alerts
+				ON
+					t3.product_id = alerts.product_id
+				LEFT JOIN
+					clients_products t2
+				ON
+					(#for duplicate
+					t1.id != t2.id)
+				WHERE
+					{$duplicate}	
+				)";
+							
+			
+					
+					
 			$result = parent::query($sql);
+			
 			if (debug) {
 				var_dump($result);
 			}

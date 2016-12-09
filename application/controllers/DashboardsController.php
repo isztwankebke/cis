@@ -63,6 +63,7 @@ class DashboardsController extends Controller {
 			$dashboard = new DashboardModel();
 			$alerts = $dashboard->index();
 			$view = new View();
+			
 			if ($this->request->isGet()) {
 				
 				$view->set('Dashboards/index', $alerts, $layouts);

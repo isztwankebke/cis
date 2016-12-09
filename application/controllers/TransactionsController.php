@@ -60,7 +60,7 @@ class TransactionsController extends Controller {
 		}
 		catch (Exception $e) {
 			echo "Caught exception: ", $e->getMessage();
-			var_dump($e->getTrace());
+			//var_dump($e->getTrace());
 		}
 		
 		
