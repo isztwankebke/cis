@@ -48,6 +48,8 @@ else : ?>
 					<th>Okres</th>
 					<th>Kwota kredytu</th>
 					<th>Extra info</th>
+					<th>Wcześniejsza spłata</th>
+					<th>Akcja</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,6 +70,8 @@ else : ?>
 						echo "<td>", $data['period'], "</td>";
 						echo "<td>", $data['credit_value'], "</td>";
 						echo "<td>", $data['extra_info'], "</td>";
+						echo '<td><input type="checkbox" name="endEarlier"></input></td>';
+						echo '<td><a class="btn btn-warning" role="button" href="/Transactions/update/'.$data['id'].'">Zapisz</a></td>';
 						echo "</tr>";
 					}
 					/**

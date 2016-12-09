@@ -35,9 +35,9 @@
 						echo "<td>", $alerts['pesel'], "</td>";
 						echo "<td>", $alerts['init_date'], "</td>";
 						echo "<td>", $alerts['phone_nr'], "</td>";
-						echo '<td><input type="checkbox"></input></td>';
+						echo '<td><input type="checkbox" name="checked"></input></td>';
 						echo '<td><input placeholder="dopisz komentarz" value="'.htmlspecialchars($alerts['comments']).'"></input></td>';
-						echo "<td> Zapisz</td>";
+						echo '<td><a class="btn btn-warning" role="button" href="/Dashboards/index/'.$alerts['id'].'">Zapisz</a></td>';
 						echo "</tr>";
 					}
 					

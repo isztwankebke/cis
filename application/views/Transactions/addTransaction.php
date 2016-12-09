@@ -133,6 +133,23 @@
 	    </div>
 	  </div>
 	  <div class="form-group">
+	    <label for="inputDeleyed" class="col-sm-2 control-label">Odroczona płatność</label>
+	    <div class="col-sm-4">
+	      <input 
+	      type="number"
+	      maxlength="2"
+	      min="1"
+	      max="12" 
+	      class="form-control" 
+	      id="inputDeleyed" 
+	      name="deleyed" 
+	      placeholder="w miesiącach np 0 albo 3"
+	      tabindex="9"
+	      autofocus="autofocus"
+	      required="required">
+	    </div>
+	  </div>
+	  <div class="form-group">
 	    <label for="inputExtraInfo" class="col-sm-2 control-label">Notatki, info dodatkowe o kliencie</label>
 	    <div class="col-sm-4">
 	      <textarea
@@ -141,7 +158,7 @@
 	      class="form-control" 
 	      rows="3"
 	      name="extra_info"
-	      tabindex="9"
+	      tabindex="10"
 	      autofocus="autofocus"
 	      placeholder="Zawsze dopisuję: kłamca. Możesz też dopisać: kutas albo przemiły człowiek, daje napiwki... Możesz też nic nie dopisywać." 
 	      ></textarea>
@@ -152,7 +169,7 @@
 	      <button 
 	      type="submit" 
 	      class="btn btn-default"
-	      tabindex="10"
+	      tabindex="11"
 	      autofocus="autofocus">Zapisz</button>
 	    </div>
 	  </div>
