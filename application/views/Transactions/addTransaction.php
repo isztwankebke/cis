@@ -137,16 +137,16 @@
 	    <div class="col-sm-4">
 	      <input 
 	      type="number"
-	      maxlength="2"
-	      min="1"
-	      max="12" 
+	      maxlength="1"
+	      min="0"
+	      max="9" 
 	      class="form-control" 
 	      id="inputDeleyed" 
-	      name="deleyed" 
+	      name="deleyedPayment" 
 	      placeholder="w miesiącach np 0 albo 3"
 	      tabindex="9"
 	      autofocus="autofocus"
-	      required="required">
+	      >
 	    </div>
 	  </div>
 	  <div class="form-group">

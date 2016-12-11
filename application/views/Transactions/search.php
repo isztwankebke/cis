@@ -74,18 +74,7 @@ else : ?>
 						echo '<td><a class="btn btn-warning" role="button" href="/Transactions/update/'.$data['id'].'">Zapisz</a></td>';
 						echo "</tr>";
 					}
-					/**
-					 * $clients = []; // collected from database
-					 * 
-					 * foreach ($clients as $client) {
-					 * 
-					 * echo <tr>
-					 * echo <td> $client['name'];
-					 * echo </tr>
-					 * 
-					 * }
-					 * 
-					 */
+					
 					
 				?>
 			</tbody>

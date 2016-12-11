@@ -15,6 +15,7 @@ class TransactionModel extends Model {
 	private $clientDataDifference = FALSE;
 	private $halfPeriod;
 	private $creditValue;
+	private $deleyedPayment;
 	
 	
 	
@@ -173,10 +174,14 @@ class TransactionModel extends Model {
 		//5a. get extra_info and add new one on the end of old value
 		//6. if client not exist check name and surname, phone number and extra info
 		//7.if everything is ok, prepare data to begin transaction
-		//7a.prepare halfperiod date
+		//7a. check the deleyaed initial_date (>0) if true add deleyed offset in month
+		//to initial date.
+		//7b.prepare halfperiod date
+		//
 		//8.check product name - if is ok prepare to transaction
 		
 		//9.check initial_date and period - if is ok - prepare to transaction
+		
 		//9a.check credit value - mast be >0 and numeric
 		//10.begin transaction:
 		//11.add client or read parameters to get client.id
@@ -192,7 +197,7 @@ class TransactionModel extends Model {
 		
 		
 		//try {
-			//.1 check is post data is consistent
+			//.1 check is post data is consistent = have request data to add to db
 			//var_dump($transactionData);
 			
 			if (!isset($transactionData['pesel'],
@@ -246,9 +251,27 @@ class TransactionModel extends Model {
 				return false;
 			}
 			
+			//deleyed field colud be empty (default = 0 or value)
+			
+			$this->deleyedPayment = 0;
+			
+			if (!empty($transactionData['deleyedPayment'])) {
+				if (!is_numeric($transactionData['deleyedPayment'])) {
+						
+					throw new Exception("Credit value is not valid");
+					return false;
+				}
+				else {
+					//set deleyedPayment
+					$this->deleyedPayment = $transactionData['deleyedPayment'];
+				}
+				
+			}
+			
+			
 		$client = new ClientModel();
 		
-		//.4 check pesel is valid
+		//.4 check is client data is valid = pesel
 		if (!$client->validatePesel($transactionData['pesel'])) {
 		
 			throw new Exception("pesel not valid");
@@ -275,7 +298,7 @@ class TransactionModel extends Model {
 			$this->clientPhone = $result[0]['phone_nr'];
 			$this->clientExtraInfo = $result[0]['extra_info'];
 			
-			//.4a
+			//.4a if client exist check, is in database the same entry (date, credit value, product name, period).
 			//var_dump($transactionData);
 			
 			if ($transaction = $this->validateExistTransaction($transactionData)) {
@@ -285,7 +308,8 @@ class TransactionModel extends Model {
 				
 			
 			
-			//.5
+			//.5 if client exist check the name, surname and phone number is the same if not use old value, and give notification
+		//that need to change data in database
 			if (!$this->checkDifference($transactionData)) {
 				
 				throw new Exception("Client data in db not the same as in form - check data, edit client data first, then add client and transaction");
@@ -319,7 +343,7 @@ class TransactionModel extends Model {
 		} 
 		
 		//var_dump($this->clientID);
-		//.7
+		//.7 if everything is ok, prepare data to begin transaction
 		if (!$this->clientID) { //client not exist - prepare sql to add client
 			
 			
@@ -340,13 +364,8 @@ class TransactionModel extends Model {
 			$this->clientID = $result;
 			
 		}
-		//.7a
-		if (!$this->halfPeriodDate($transactionData['period'], $transactionData['init_date'])) {
-			
-			throw new Exception("half period date abnormal");
-			return false;
-		}
-		//.8
+		
+		//.8 check product name - if is ok prepare to transaction
 		$sqlProduct = "SELECT products.id 
 						FROM products 
 						WHERE products.product_name = '{$transactionData['product_name']}'";
@@ -364,15 +383,38 @@ class TransactionModel extends Model {
 		
 		$this->productID = $result[0]['id'];
 		
-		//.9
-		if (!$this->checkDate($transactionData['init_date']) ||
-				!$this->vaidatePeriod($transactionData['period'])) {
+		//.7a
+		
+		//check init date, then add offset and check date after offset
+		if (!$this->checkDate($transactionData['init_date'])) {
+			
+			throw new Exception("init data not valid");
+			return false;
+		}
+		$this->period = $transactionData['period'];
+		//add offset (deleyaedPayment)
+		$this->initialDate = date('Y-m-d', strtotime("+".$this->deleyedPayment." months", strtotime($transactionData['init_date'])));
+		//var_dump($this->initialDate);
+		//second check init date with deleyed payment
+		
+		
+		//seting halfPeriodDate
+		if (!$this->halfPeriodDate($this->period, $this->initialDate)) {
+				
+			throw new Exception("half period date abnormal");
+			return false;
+		}
+		
+		
+		//.9 check initial_date and period - if is ok - prepare to transaction
+		if (!$this->checkDate($this->initialDate) ||
+				!$this->checkDate($this->halfPeriod)) {
 					
-					throw new Exception("data not valid");
+					throw new Exception("init date or half period date not valid");
 					return false;
 			
 		}
-		//.9a
+		//.9a check credit value - mast be >0 and numeric
 		if ($transactionData['credit_value'] <= 0 || 
 				!is_numeric($transactionData['credit_value']) ) {
 			
@@ -380,10 +422,10 @@ class TransactionModel extends Model {
 					return false;
 		}
 		
-		$this->initialDate = $transactionData['init_date'];
-		$this->period = $transactionData['period'];
+		
+		
 		$this->creditValue = $transactionData['credit_value'];
-		$this->endDate($transactionData['init_date'], $transactionData['period']);
+		$this->endDate($this->initialDate, $this->period);
 		
 		if (debug) {
 			
@@ -394,10 +436,29 @@ class TransactionModel extends Model {
 		
 		$sql = "INSERT 
 				INTO clients_products
-				(`client_id`, `product_id`, `init_date`, `period`, `end_date`, `half_period`, `credit_value`, `user_id`) 
+				(
+				`client_id`, 
+				`product_id`, 
+				`init_date`, 
+				`period`, 
+				`end_date`, 
+				`half_period`, 
+				`credit_value`, 
+				`user_id`,
+				`deleyed_payment`
+				) 
 				VALUES 
-				('{$this->clientID}', '{$this->productID}', '{$this->initialDate}',
-				'{$this->period}', '{$this->endDate}', '{$this->halfPeriod}', '{$this->creditValue}', '{$_SESSION['user_id']}')";
+				(
+				'{$this->clientID}', 
+				'{$this->productID}', 
+				'{$this->initialDate}',
+				'{$this->period}', 
+				'{$this->endDate}', 
+				'{$this->halfPeriod}', 
+				'{$this->creditValue}', 
+				'{$_SESSION['user_id']}',
+				'{$this->deleyedPayment}'
+				)";
 		
 		//.13
 		
@@ -412,49 +473,7 @@ class TransactionModel extends Model {
 			return true;
 		}
 		throw new Exception("error during update db");
-		/*}
-		catch (Exception $e) {
-			echo "Caught exception: ", $e->getMessage();
-		}
-		*/
-			
 		
-		
-		
-		
-/*		
-		$transactionParameters = $this->getTransactionParameters($parameters);
-		
-		if (!$transactionParameters) {
-			throw new Exception("wrong parameters");
-			return false;
-		}
-		
-		$clientID = $clientData['id'];
-		$productID = $productData['id'];
-		
-		$this->setClientID($clientID);
-		$this->setProductID($productID);
-		
-		$sql = "INSERT 
-		INTO `transactions`
-		(`client_id`, `product_id`, `init_date`, `period`, `end_date`) 
-		VALUES 
-		('{$this->getClientID()}', '{$this->getProductID()}', '{$this->getInitialDate()}', '{$this->getPeriod()}', '{$this->getEndDate()}')";
-		
-		$result = parent::query($sql);
-		
-		if (empty($result)) {
-			throw new Exception("can not add transaction to db");
-			return false;
-			
-		}
-		$transactionID = $this->insert_id;
-		$this->setTranasactionID($transactionID);
-		$this->setTransactionData();
-		
-		return true;
-			*/
 	}
 	
 	
