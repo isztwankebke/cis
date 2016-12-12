@@ -623,7 +623,8 @@ class TransactionModel extends Model {
 			products.product_name,
 			clients_products.init_date,
 			clients_products.period,
-			clients_products.credit_value
+			clients_products.credit_value,
+			clients_products.deleyed_payment
 		FROM
 			clients_products
 		JOIN
@@ -679,11 +680,23 @@ class TransactionModel extends Model {
 			throw new Exception("Credit value is not valid");
 			return false;
 			}
+		if (!empty($transactionData['deleyedPayment'])) {
+			if (!is_numeric($transactionData['deleyedPayment'])) {
+				throw new Exception("deleyed Payment value is incorrect");
+				return false;
+			}
+			else {
+				$this->deleyedPayment = $transactionData['deleyedPayment'];
+			}
+		}
+		else {
+			$this->deleyedPayment = 0;
+		}
 		
 		//set end_date and half_period
-		
-		$this->endDate($transactionData['init_date'], $transactionData['period']);
-		$this->halfPeriodDate($transactionData['period'], $transactionData['init_date']);
+		$this->initialDate = date('Y-m-d', strtotime("+".$this->deleyedPayment." months", strtotime($transactionData['init_date'])));
+		$this->endDate($this->initialDate, $transactionData['period']);
+		$this->halfPeriodDate($transactionData['period'], $this->initialDate);
 		
 		//prepare sql update set
 		
@@ -691,15 +704,16 @@ class TransactionModel extends Model {
 					clients_products
 				SET
 				  clients_products.product_id = '{$transactionData['product_name']}',
-				  clients_products.init_date = '{$transactionData['init_date']}',
+				  clients_products.init_date = '{$this->initialDate}',
 				  clients_products.credit_value = '{$transactionData['credit_value']}',
 				  clients_products.period = '{$transactionData['period']}',
 				  clients_products.end_date = '{$this->endDate}',
-				  clients_products.half_period = '{$this->halfPeriod}'
+				  clients_products.half_period = '{$this->halfPeriod}',
+				  clients_products.deleyed_payment = '{$this->deleyedPayment}'
 				WHERE
 					clients_products.id = '{$transactionData['id']}'
 				";
-		
+		var_dump($sql);
 		$result = parent::query($sql);
 		
 		if (empty($result)) {

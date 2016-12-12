@@ -403,7 +403,8 @@ class UserModel extends Model {
 				ON
   				clients_products.product_id = products.id
 				WHERE
-  				clients_products.init_date LIKE '{$month}-%'
+  				(clients_products.init_date - INTERVAL clients_products.deleyed_payment MONTH) 
+  				LIKE '{$month}-%'
   				GROUP BY products.product_name
   				WITH ROLLUP";
 			

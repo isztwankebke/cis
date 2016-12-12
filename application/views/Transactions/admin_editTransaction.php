@@ -1,7 +1,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   	<h1 class="page-header">Edycja transakcji:</h1>
   	<h3>Wprowadź dane dla klienta: </h3>
-<?php if (debug) {
+<?php if (!debug) {
 		var_dump($this->data);
 		var_dump($this->data[1]);
 	}?>
@@ -144,6 +144,24 @@
 	      value="<?php echo $this->data[0][0]['period'];?>">
 	    </div>
 	  </div>
+	  <div class="form-group">
+	    <label for="inputDeleyedPayment" class="col-sm-2 control-label">Odroczona płatność</label>
+	    <div class="col-sm-4">
+	      <input 
+	      type="number"
+	      maxlength="1"
+	      min="0"
+	      max="9" 
+	      class="form-control" 
+	      id="inputDeleyedPayment" 
+	      name="deleyedPayment" 
+	      
+	      tabindex="9"
+	      autofocus="autofocus"
+	      
+	      value="<?php echo $this->data[0][0]['deleyed_payment'];?>">
+	    </div>
+	  </div>
 	  
 	  
 	  
@@ -152,7 +170,7 @@
 	      <button 
 	      type="submit" 
 	      class="btn btn-default"
-	      tabindex="2"
+	      tabindex="10"
 	      autofocus="autofocus">Zapisz</button>
 	    </div>
 	   </div>

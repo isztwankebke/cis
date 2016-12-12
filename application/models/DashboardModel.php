@@ -522,6 +522,7 @@ class DashboardModel extends Model {
 				  clients_products.init_date,
 				  clients_products.period,
 				  clients_products.credit_value,
+				  clients_products.deleyed_payment,
 				  CONCAT(users.name, ' ', users.surname) AS user
 				FROM
 					clients_products

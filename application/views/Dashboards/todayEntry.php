@@ -31,11 +31,12 @@
 				<tr>
 					<th>Imię</th>
 					<th>Nazwisko</th>
-					<th>nr telefonu</th>
-					<th>nazwa produktu</th>
-					<th>data zawarcia</th>
-					<th>okres</th>					
-					<th>kwota</th>
+					<th>Nr telefonu</th>
+					<th>Nazwa produktu</th>
+					<th>Data zawarcia</th>
+					<th>Odroczona płatność</th>
+					<th>Okres</th>					
+					<th>Kwota</th>
 					<th>Wprowadził</th>
 					
 				</tr>
@@ -50,6 +51,7 @@
 						echo "<td>", $entry['phone_nr'], "</td>";
 						echo "<td>", $entry['product_name'], "</td>";
 						echo "<td>", $entry['init_date'], "</td>";
+						echo "<td>", $entry['deleyed_payment'], "</td>";
 						echo "<td>", $entry['period'], "</td>";
 						echo "<td>", $entry['credit_value'], "</td>";
 						echo "<td>", $entry['user'], "</td>";
