@@ -49,6 +49,7 @@ else : ?>
 					<th>Kwota Kredytu</th>
 					<th>Data zawarcia</th>
 					<th>Okres</th>
+					<th>Spłacony</th>
 					<th>Akcja</th>
 				</tr>
 			</thead>
@@ -68,6 +69,11 @@ else : ?>
 						echo "<td>", $data['credit_value'], "</td>";
 						echo "<td>", $data['init_date'], "</td>";
 						echo "<td>", $data['period'], "</td>";
+						echo '<td><input 
+	    							type="checkbox" 
+	    							name="endEarlier'.$data['id'].'"
+	      							'.(!empty($data['end_earlier']) ? "checked disabled" : "unchecked disabled").'
+	      							></input></td>';
 						echo '<td><a class="btn btn-info" role="button" href="/Transactions/admin_editTransaction/'.$data['id'].'">Edytuj</a></td>';
 						echo '<td><a class="btn btn-danger" role="button" href="/Transactions/admin_deleteTransaction/'.$data['id'].'">Usuń</a></td>';
 						echo "</tr>";

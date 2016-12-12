@@ -16,6 +16,7 @@ class TransactionModel extends Model {
 	private $halfPeriod;
 	private $creditValue;
 	private $deleyedPayment;
+	private $endEarlier;
 	
 	
 	
@@ -98,7 +99,8 @@ class TransactionModel extends Model {
 					clients_products.init_date, 
 					clients_products.period,
 					clients_products.credit_value,
-					clients.extra_info						
+					clients.extra_info,
+					clients_products.end_earlier
 				FROM 
 					clients_products
 				JOIN
@@ -692,6 +694,13 @@ class TransactionModel extends Model {
 		else {
 			$this->deleyedPayment = 0;
 		}
+		if (!isset($transactionData['endEarlier'])) {
+			
+			$this->endEarlier = 0;
+		}
+		else {
+			$this->endEarlier = 1;
+		}
 		
 		//set end_date and half_period
 		$this->initialDate = date('Y-m-d', strtotime("+".$this->deleyedPayment." months", strtotime($transactionData['init_date'])));
@@ -709,7 +718,8 @@ class TransactionModel extends Model {
 				  clients_products.period = '{$transactionData['period']}',
 				  clients_products.end_date = '{$this->endDate}',
 				  clients_products.half_period = '{$this->halfPeriod}',
-				  clients_products.deleyed_payment = '{$this->deleyedPayment}'
+				  clients_products.deleyed_payment = '{$this->deleyedPayment}',
+				  clients_products.end_earlier = '{$this->endEarlier}'
 				WHERE
 					clients_products.id = '{$transactionData['id']}'
 				";
@@ -820,5 +830,49 @@ class TransactionModel extends Model {
 	}
 	
 	
+	
+	/**
+	 * 
+	 * @param unknown $dataToFinishPayment
+	 * @throws Exception
+	 */
+	public function endEarlier($dataToFinishPayment) {
+		
+		if (!isset($dataToFinishPayment['update'])){
+			
+			throw new Exception("can not finish earlier this client - contact administrator");
+			return false;
+		}
+		
+		
+		if (!isset($dataToFinishPayment["endEarlier".$dataToFinishPayment['update']])) {
+			
+			throw new Exception("can not finish earlier this client - checkbox not set");
+			return false;
+		}
+				
+		$clietnID = $dataToFinishPayment['update'];
+		
+		$sql = "UPDATE
+				  clients_products
+				SET
+				  clients_products.end_earlier = '1',
+				  clients_products.end_date = NOW()
+				WHERE
+				  clients_products.id = '{$clietnID}'";
+		
+	
+		$result = parent::query($sql);
+		//var_dump($result);
+		if (!$result) {
+			
+			throw new Exception("error during updated db while finish earlier a payment");
+			return false;
+		}
+		
+		return $result;
+	
+		
+	}
 	
 }

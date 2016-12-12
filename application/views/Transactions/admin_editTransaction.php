@@ -1,7 +1,7 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
   	<h1 class="page-header">Edycja transakcji:</h1>
   	<h3>Wprowadź dane dla klienta: </h3>
-<?php if (!debug) {
+<?php if (debug) {
 		var_dump($this->data);
 		var_dump($this->data[1]);
 	}?>
@@ -162,7 +162,20 @@
 	      value="<?php echo $this->data[0][0]['deleyed_payment'];?>">
 	    </div>
 	  </div>
-	  
+	  <div class="form-group">
+	    <label for="checkBoxEndEarlier" class="col-sm-2 control-label">Spłacony</label>
+	    <div class="col-sm-4">
+	      <input 
+	      type="checkbox"
+	       
+	      id="checkBoxEndEarlier" 
+	      name="endEarlier" 
+	      
+	      tabindex="10"
+	      autofocus="autofocus"
+	      <?php echo (empty($this->data[0][0]['end_earlier'])) ? "checked" : "unchecked";?>>
+	    </div>
+	  </div>
 	  
 	  
 	  <div class="form-group">
@@ -170,7 +183,7 @@
 	      <button 
 	      type="submit" 
 	      class="btn btn-default"
-	      tabindex="10"
+	      tabindex="11"
 	      autofocus="autofocus">Zapisz</button>
 	    </div>
 	   </div>

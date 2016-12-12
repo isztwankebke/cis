@@ -34,6 +34,7 @@ elseif (!is_array($this->data)) :?>
 	<div><p class="text-danger">Nie wpisano danych</p></div>
 <?php 
 else : ?>
+	<form class="form-horizontal" action="../transactions/endEarlier" method="post">
 	<div class="table-responsive">
 		<table class="table table-striped">
 			<thead>
@@ -70,8 +71,12 @@ else : ?>
 						echo "<td>", $data['period'], "</td>";
 						echo "<td>", $data['credit_value'], "</td>";
 						echo "<td>", $data['extra_info'], "</td>";
-						echo '<td><input type="checkbox" name="endEarlier"></input></td>';
-						echo '<td><a class="btn btn-warning" role="button" href="/Transactions/update/'.$data['id'].'">Zapisz</a></td>';
+						echo '<td><input 
+	    							type="checkbox" 
+	    							name="endEarlier'.$data['id'].'"
+	      							'.(!empty($data['end_earlier']) ? "checked disabled" : "unchecked").'
+	      							></input></td>';
+						echo '<td><button type="submit" class="btn btn-warning" name="update" value="'.$data['id'].'">Zapisz</button></td>';
 						echo "</tr>";
 					}
 					
@@ -80,6 +85,7 @@ else : ?>
 			</tbody>
 		</table>
 	</div>
+	</form>
 <?php 
 endif;
 ?>

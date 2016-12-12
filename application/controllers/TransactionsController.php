@@ -383,4 +383,31 @@ class TransactionsController extends Controller {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 */
+	public function endEarlier() {
+		try {
+			
+			if ($this->request->isPost()) {
+					
+				$layout = parent::isSupervisor();
+				
+				$view = new View();
+				$finishPayment = new TransactionModel();
+				$postData = $this->request->getPostData();
+				//var_dump($postData);
+				$clientProduct = $finishPayment->endEarlier($postData);
+				//var_dump($clientProduct);
+				$view->set('Transactions/endEarlier', $clientProduct, $layout);
+				$view->render();
+			}
+					
+		}
+		catch (Exception $e) {
+			echo "caugh Exception: ", $e->getMessage();
+		}
+	}
+	
 }
