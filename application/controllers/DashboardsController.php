@@ -71,6 +71,10 @@ class DashboardsController extends Controller {
 			}
 			elseif ($this->request->isPost()) {
 				
+				$postData = $this->request->getPostData();
+				$setChecked = $dashboard->setChecked($postData);
+				$alerts = $dashboard->index();
+				$view->set('Dashboards/index', $alerts, $layouts);
 			}
 			$view->render();
 		}

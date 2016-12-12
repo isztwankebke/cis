@@ -7,6 +7,7 @@
 	if (!$this->data):?>
 	<div class="alert alert-danger" role="alert"><p align="center">Dzisiaj nie ma żadnych alertów, można grać w pasjansa:P</p></div>
 	<?php else :?>
+	<form class="form-horizontal" action="../Dashboards/index" method="post">
 	<div class="table-responsive">
 		
 		<table class="table table-hover">
@@ -35,16 +36,32 @@
 						echo "<td>", $alerts['pesel'], "</td>";
 						echo "<td>", $alerts['init_date'], "</td>";
 						echo "<td>", $alerts['phone_nr'], "</td>";
-						echo '<td><input type="checkbox" name="checked"></input></td>';
-						echo '<td><input placeholder="dopisz komentarz" value="'.htmlspecialchars($alerts['comments']).'"></input></td>';
-						echo '<td><a class="btn btn-warning" role="button" href="/Dashboards/index/'.$alerts['id'].'">Zapisz</a></td>';
+						echo '<td><input
+									type="checkbox" 
+									name="checked'.$alerts['id'].'"
+	      							'.(!empty($alerts['checked']) ? "checked disabled" : "unchecked").'
+								></input>
+							</td>';
+						echo '<td><input
+									name="comments"
+									placeholder="dopisz komentarz" 
+									'.(!empty($alerts['checked']) ? "disabled" : "").'
+									value="'.htmlspecialchars($alerts['comments']).'"
+							></input></td>';
+						echo '<td><button 
+									class="btn btn-warning" 
+									value="'.$alerts['id'].'"
+									type="submit"
+									name="setChecked"
+									>Zapisz</button></td>';
 						echo "</tr>";
 					}
 					
 				?>
 			</tbody>
 		</table>
-	</div>		
+	</div>
+	</form>		
 	
 </div>
 <?php endif;?>

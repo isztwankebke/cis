@@ -11,6 +11,9 @@ class DashboardModel extends Model {
 	private $hasProduct;
 	private $afterPeriodInfo2;
 	private $alertData;
+	private $comments;
+	private $checked;
+	private $transactionID;
 	
 	public function __construct() {
 		
@@ -551,7 +554,50 @@ class DashboardModel extends Model {
 		return [$today,$result];
 	}
 
-
+	public function setChecked($postData) {
+		
+		if (empty($postData['setChecked'])) {
+			
+			throw new Exception("error during update checked in Dashboard");
+			return false;
+		}
+		
+		if (empty($postData['checked'.$postData['setChecked']])) {
+			
+			throw new Exception("can not set to checked - checkbox not set");
+			return false;
+		}
+		
+		if (!empty($postData['comments'])) {
+			
+			$this->comments = $postData['comments'];
+		}
+		else {
+			
+			$this->comments = null;
+		}
+		$this->checked = 1;
+		$this->transactionID = $postData['setChecked'];
+		
+		$sql = "UPDATE
+				  clients_products
+				SET
+				  clients_products.checked = '{$this->checked}',
+				  clients_products.comments = '{$this->comments}'
+				WHERE
+				  clients_products.id = '{$this->transactionID}'";
+		
+		$request = parent::query($sql);
+		
+		if (!$request) {
+			
+			throw new Exception("error during update db while set to check a transaction");
+			return false;
+		}
+		
+		return $request;
+		
+	}
 
 
 }
