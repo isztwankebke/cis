@@ -73,6 +73,7 @@ class DashboardsController extends Controller {
 				
 				$postData = $this->request->getPostData();
 				$setChecked = $dashboard->setChecked($postData);
+				//var_dump($postData);
 				$alerts = $dashboard->index();
 				$view->set('Dashboards/index', $alerts, $layouts);
 			}

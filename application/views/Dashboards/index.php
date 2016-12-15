@@ -40,20 +40,24 @@
 									type="checkbox" 
 									name="checked'.$alerts['id'].'"
 	      							'.(!empty($alerts['checked']) ? "checked disabled" : "unchecked").'
-								></input>
+								>
 							</td>';
-						echo '<td><input
-									name="comments"
-									placeholder="dopisz komentarz" 
-									'.(!empty($alerts['checked']) ? "disabled" : "").'
-									value="'.htmlspecialchars($alerts['comments']).'"
-							></input></td>';
-						echo '<td><button 
+						echo '<td>'.(!empty($alerts['checked'])? $alerts['comments'] : '
+										<input
+											type="text"
+											name="comments'.$alerts['id'].'"
+											placeholder="Wpisz komentarz...">')
+							
+						.'</td>';
+						echo '<td><button
 									class="btn btn-warning" 
 									value="'.$alerts['id'].'"
 									type="submit"
 									name="setChecked"
-									>Zapisz</button></td>';
+							'.(!empty($alerts['checked']) ? 'disabled="disabled"' : "").'
+									>Zapisz</button>
+								</td>';
+								 
 						echo "</tr>";
 					}
 					

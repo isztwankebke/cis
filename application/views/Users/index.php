@@ -5,6 +5,6 @@ if (debug) {
 	var_dump($_SESSION);
 }
 ?>	
-	<h1>Witam w systemie ifnormacji o promocjach w Biedronce:P</h1>
+	<h1>Witaj w systemie ifnormacji o promocjach w Biedronce:P</h1>
 </div>
 

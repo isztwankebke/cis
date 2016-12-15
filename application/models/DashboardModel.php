@@ -303,6 +303,7 @@ class DashboardModel extends Model {
 				{$afterPeriod1Info}
 				OR
 				{$isLastInstallment}
+				
 				)
 				
 				UNION ALL
@@ -332,7 +333,8 @@ class DashboardModel extends Model {
 					t1.id != t2.id)
 				WHERE
 					{$duplicate}	
-				)";
+				) ORDER BY checked ASC
+				";
 							
 			
 					
@@ -568,9 +570,9 @@ class DashboardModel extends Model {
 			return false;
 		}
 		
-		if (!empty($postData['comments'])) {
+		if (!empty($postData['comments'.$postData['setChecked']])) {
 			
-			$this->comments = $postData['comments'];
+			$this->comments = $postData['comments'.$postData['setChecked']];
 		}
 		else {
 			
