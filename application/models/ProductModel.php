@@ -80,7 +80,22 @@ class ProductModel  extends Model{
 	 * 
 	 */
 	public function getProductData() {
-		return $this->productData;
+		//return $this->productData;
+		$sql = "SELECT
+				  *
+				FROM
+				  products
+				WHERE
+				  1";
+		$result = parent::query($sql);
+		
+		if (!$result) {
+			
+			throw new Exception("there is no any product in data base");
+			return false;
+		}
+		
+		return $result;
 	}
 	
 	

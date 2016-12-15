@@ -14,6 +14,8 @@ class DashboardModel extends Model {
 	private $comments;
 	private $checked;
 	private $transactionID;
+	private $alertName;
+	private $productName;
 	
 	public function __construct() {
 		
@@ -358,6 +360,101 @@ class DashboardModel extends Model {
 	 * 
 	 * @param unknown $alertData
 	 * @throws Exception
+	 */
+	private function checkAlerttData($alertData) {
+		if (!isset($alertData['alert_name'])) {
+				
+			throw new Exception("Alert name is necessary");
+			return false;
+		}
+		else {
+				
+			$this->alertName = $alertData['alert_name'];
+		}
+		
+		//check after_period_info1 is filed, set default 0
+		if (empty($alertData['after_period_info1'])) {
+				
+			$this->afterPeriodInfo1= 0;
+		}
+			
+		else {
+				
+			$this->afterPeriodInfo1 = $alertData['after_period_info1'];
+		}
+		
+		//check is_half_period is set
+		if (isset($alertData['is_half_period'])) {
+				
+			$this->isHalfPeriod = 1;
+		}
+		
+		else {
+				
+			$this->isHalfPeriod = 0;
+		}
+		
+		//check is_last_installment is set
+		if (isset($alertData['is_last_installment'])) {
+				
+			$this->isLastInstallment = 1;
+		}
+		
+		else {
+			$this->isLastInstallment = 0;
+		}
+		
+		//check has_product is set
+		if (isset($alertData['has_product'])) {
+				
+			$this->hasProduct = 1;
+		}
+		
+		else {
+				
+			$this->hasProduct = 0;
+		}
+		
+		//check week_befor_info is filled, set default 0
+		if (empty($alertData['week_before_info'])) {
+		
+			$this->weekBeforeInfo = 0;
+		}
+			
+		else {
+		
+			$this->weekBeforeInfo = $alertData['week_before_info'];
+		}
+		
+		//check after_period1_next_installment is filled, set default 0
+		if (empty($alertData['after_period1_next_installment'])) {
+		
+			$this->afterPeriod1NextInstallment = 0;
+		}
+			
+		else {
+		
+			$this->afterPeriod1NextInstallment = $alertData['after_period1_next_installment'];
+		}
+		
+		if (empty($alertData['after_period_info2'])) {
+		
+			$this->afterPeriodInfo2 = 0;
+		}
+			
+		else {
+		
+			$this->afterPeriodInfo2 = $alertData['after_period_info2'];
+		}
+		
+		$this->productName = $alertData['product_name'];
+	}
+	
+	
+	/**
+	 * 
+	 * @param unknown $alertData
+	 * @throws Exception
 	 * @return boolean
 	 */
 	public function addAlert($alertData) {
@@ -367,86 +464,7 @@ class DashboardModel extends Model {
 		
 		
 		//check alert name is set
-		if (!isset($alertData['alert_name'])) {
-			
-			throw new Exception("Alert name is necessary");
-			return false;
-		}
-		
-		//check after_period_info1 is filed, set default 0
-		if (empty($alertData['after_period_info1'])) {
-			
-			$afterPeriodInfo1= 0;
-		}
-			
-		else {
-			
-			$afterPeriodInfo1 = $alertData['after_period_info1'];
-		}
-		
-		//check is_half_period is set
-		if (isset($alertData['is_half_period'])) {
-			
-			$isHalfPeriod = 1;
-		}
-		
-		else {
-			
-			$isHalfPeriod = 0;
-		}
-		
-		//check is_last_installment is set
-		if (isset($alertData['is_last_installment'])) {
-			
-			$isLastInstallment = 1;
-		}
-		
-		else {
-			$isLastInstallment = 0;
-		}
-		
-		//check has_product is set
-		if (isset($alertData['has_product'])) {
-			
-			$hasProduct = 1;
-		}
-		
-		else {
-			
-			$hasProduct = 0;
-		}
-		
-		//check week_befor_info is filled, set default 0
-		if (empty($alertData['week_before_info'])) {
-				
-			$weekBeforeInfo = 0;
-		}
-			
-		else {
-				
-			$weekBeforeInfo = $alertData['week_before_info'];
-		}
-		
-		//check after_period1_next_installment is filled, set default 0
-		if (empty($alertData['after_period1_next_installment'])) {
-				
-			$afterPeriod1NextInstallment = 0;
-		}
-			
-		else {
-				
-			$afterPeriod1NextInstallment = $alertData['after_period1_next_installment'];
-		}
-		
-		if (empty($alertData['after_period_info2'])) {
-				
-			$afterPeriodInfo2 = 0;
-		}
-			
-		else {
-				
-			$afterPeriodInfo2 = $alertData['after_period_info2'];
-		}
+		$this->checkAlerttData($alertData);
 		
 		$sql = "INSERT 
 				INTO 
@@ -461,15 +479,15 @@ class DashboardModel extends Model {
 				`has_product`, 
 				`after_period_info2`) 
 				VALUES 
-				('{$alertData['alert_name']}', 
-				'{$alertData['product_name']}', 
-				'{$isHalfPeriod}', 
-				'{$afterPeriodInfo1}',
-				'{$weekBeforeInfo}', 
-				'{$isLastInstallment}', 
-				'{$afterPeriod1NextInstallment}', 
-				'{$hasProduct}', 
-				'{$afterPeriodInfo2}')";
+				('{$this->alertName}', 
+				'{$this->productName}', 
+				'{$this->isHalfPeriod}', 
+				'{$this->afterPeriodInfo1}',
+				'{$this->weekBeforeInfo}', 
+				'{$this->isLastInstallment}', 
+				'{$this->afterPeriod1NextInstallment}', 
+				'{$this->hasProduct}', 
+				'{$this->afterPeriodInfo2}')";
 		
 		//var_dump($sql);
 		$result = parent::query($sql);
@@ -600,7 +618,42 @@ class DashboardModel extends Model {
 		return $request;
 		
 	}
-
+	
+	
+	
+	
+	public function editAlert($parameters) {
+		
+		$this->checkAlerttData($parameters);
+		$this->productId = $parameters['product_name'];
+		$this->alertId = $parameters['alert_id'];
+		
+		$sql = "UPDATE 
+				`alerts` 
+				SET
+				`alert_name` = '{$this->alertName}', 
+				`product_id` = '{$this->productId}', 
+				`is_half_period` = '{$this->isHalfPeriod}', 
+				`after_period_info1` = '{$this->afterPeriodInfo1}',
+				`week_before_info` = '{$this->weekBeforeInfo}',  
+				`is_last_installment` = '{$this->isLastInstallment}', 
+				`after_period1_next_installment` = '{$this->afterPeriod1NextInstallment}', 
+				`has_product` = '{$this->hasProduct}',  
+				`after_period_info2` = '{$this->afterPeriodInfo2}'
+				WHERE
+				`id` = '{$this->alertId}'";
+		var_dump($sql);
+		$result = parent::query($sql);
+		var_dump($result);
+		die;
+		if (!$result) {
+			
+			throw new Exception("error during update alert");
+			return false;
+		}
+		
+		return $result;
+	}
 
 }
 

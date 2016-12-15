@@ -161,18 +161,23 @@ class DashboardsController extends Controller {
 			
 			$view = new View();
 			$alert = new DashboardModel();
+			$product = new ProductModel();
 		
 			if ($this->request->isGet()) {
 		
 				$parameters = $this->request->getParameters();
 				$alertData = $alert->getAlert($parameters);
-				$view->set('Dashboards/admin_editAlert', $alertData, $layout);
+				$products = $product->getProductData();
+				$view->set('Dashboards/admin_editAlert', [$alertData,$products], $layout);
 			}
 		
 			elseif ($this->request->isPost()) {
 					
 				$parameters = $this->request->getPostData();
+				var_dump($parameters);
 				$result = $alert->editAlert($parameters);
+				var_dump($result);
+				
 				$view->set('Dashboards/confirmation', $result, $layout);
 			}
 		
