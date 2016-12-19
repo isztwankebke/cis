@@ -29,7 +29,7 @@
 					<?php 
 					//header('Content-type: text/html; charset=utf-8');
 					//echo $name;
-					foreach ($this->data as $alerts) {
+					foreach ($this->data[0] as $alerts) {
 						
 						echo "<td>", $alerts['alert_name'], "</td>";
 						echo "<td>", $alerts['clientName'], "</td>";

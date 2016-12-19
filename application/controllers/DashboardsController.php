@@ -174,9 +174,9 @@ class DashboardsController extends Controller {
 			elseif ($this->request->isPost()) {
 					
 				$parameters = $this->request->getPostData();
-				var_dump($parameters);
+				//var_dump($parameters);
 				$result = $alert->editAlert($parameters);
-				var_dump($result);
+				//var_dump($result);
 				
 				$view->set('Dashboards/confirmation', $result, $layout);
 			}

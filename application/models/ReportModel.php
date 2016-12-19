@@ -1,5 +1,6 @@
 <?php
-class UserModel extends Model {
+
+class ReportModel extends Model {
 
 	public  $string;
 
@@ -9,5 +10,10 @@ class UserModel extends Model {
 
 	}
 	
-	
+	public function exportToFile ($data) {
+		
+		var_dump($data);
+		var_dump($_SESSION);
+		die;
+	}
 }

@@ -1,10 +1,10 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 	<h1 class="page-header">Edycja Alertu:</h1>
-	<?php if (!debug) {
+	<?php if (debug) {
 		var_dump($this->data);
 		
 	}?>
-	<form class="form-horizontal" method="post" action="../admin_addAlert">
+	<form class="form-horizontal" method="post" action="../admin_editAlert">
 	<div class="alert alert-warning" role="alert">
 		<a>Jeśli jakieś pole jest nie używane zostaw puste!</a>
 	</div>
@@ -22,12 +22,12 @@
 	      value="<?php echo $this->data[0][0]['alert_name'];?>">
 	    </div>
 	  </div>
-	  <div class="form-group">
+	  <div class="hide">
 	    <label for="inputAlertID" class="col-sm-2 control-label">Nr alertu</label>
 	    <div class="col-sm-4">
 	      <input
 	      type="text" 
-	      hidden=""
+	      
 	      class="form-control"
 	      
 	      autofocus="autofocus"

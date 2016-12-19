@@ -16,6 +16,8 @@ class DashboardModel extends Model {
 	private $transactionID;
 	private $alertName;
 	private $productName;
+	private $startDate = null;
+	private $endDate = null;
 	
 	public function __construct() {
 		
@@ -185,13 +187,13 @@ class DashboardModel extends Model {
 			}
 			//settting start and end date for date range
 			
-			$startDate = $parameters['dateFrom'];
-			$endDate = $parameters['dateTo'];
+			$this->startDate = $parameters['dateFrom'];
+			$this->endDate = $parameters['dateTo'];
 			
 			$dateRange = "BETWEEN
-				YEARWEEK('{$startDate}')
+				YEARWEEK('{$this->startDate}')
 				AND
-				YEARWEEK('{$endDate}')";
+				YEARWEEK('{$this->endDate}')";
 			
 			//check alerts from date range
 			$isHalfPeriodAlert = "(
@@ -257,7 +259,7 @@ class DashboardModel extends Model {
 				(YEARWEEK(t1.init_date + INTERVAL alerts.after_period_info2 MONTH - INTERVAL alerts.week_before_info WEEK)
 				{$dateRange})
 				AND
-				t2.half_period < '{$endDate}'
+				t2.half_period < '{$this->endDate}'
 				)
 				OR
 				(
@@ -273,7 +275,7 @@ class DashboardModel extends Model {
 				INTERVAL alerts.after_period1_next_installment MONTH)
 				{$dateRange})
 				AND
-				t2.half_period < '{$endDate}'
+				t2.half_period < '{$this->endDate}'
 				)";
 				
 			
@@ -283,7 +285,10 @@ class DashboardModel extends Model {
 				  CONCAT(clients.name, ' ', clients.surname) AS clientName,
 				  clients.phone_nr,
 				  clients.pesel,
-				  t1.*";
+				  t1.init_date,
+				  t1.checked,
+				  t1.comments,
+				  t1.id";
 		//var_dump($duplicate);
 		//var_dump($isHalfPeriodAlert);
 		$sql = "(#for isHalfPeriod, afterPeriod1, isLastInstallment
@@ -347,13 +352,75 @@ class DashboardModel extends Model {
 				var_dump($result);
 			}
 			
-			if (!$result) {
-				return false;
-			}
-			return $result;
+			
+			return [$result, $offset, $this->startDate, $this->endDate];
 				
 	}
 	
+	
+	
+	/**
+	 * 
+	 * @param unknown $array
+	 * @param string $fileName
+	 * @param string $delimiter
+	 */
+	private function arrayToCSV($array, $fileName = "export.csv", $delimiter = ";") {
+		
+		if (count($array) == 0) {
+			
+			return false;
+		}
+		//var_dump($array);
+		$file = fopen('php://memory', 'w');
+		
+		foreach ($array as $line) {
+			
+			fputcsv($file, $line, $delimiter);
+			
+		}
+		
+		fseek($file, 0);
+		header("Content-Type: application/force-download");
+		header("Content-Type: application/octet-stream");
+		header("Content-Type: application/download");
+		
+		// disposition / encoding on response body
+		header("Content-Disposition: attachment;filename={$fileName}");
+		header("Content-Transfer-Encoding: binary");
+		
+		//header('Content-Type: application/csv');
+		// tell the browser we want to save it instead of displaying it
+		//header('Content-Disposition: attachment; filename="'.$fileName.'";');
+		// make php send the generated csv lines to the browser
+		fpassthru($file);
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param unknown $parameters
+	 */
+	public function createCSV($parameters) {
+		
+		$reportData = $this->index($parameters);
+		$columnName = [[
+				'Nazwa Alertu', 
+				'Imię i Nazwisko', 
+				'Nr telefonu', 
+				'Pesel', 
+				'Data Zawarcia umowy', 
+				'podjęte działanie', 
+				'komentarz', 
+				'Id klienta']];
+		array_splice($reportData[0], 0,0,$columnName);
+		//var_dump($reportData[0]);
+		//var_dump($columnName);
+		$this->arrayToCSV($reportData[0]);
+		die;
+		//return $reportData;
+	}
 	
 	
 	/**
@@ -642,10 +709,10 @@ class DashboardModel extends Model {
 				`after_period_info2` = '{$this->afterPeriodInfo2}'
 				WHERE
 				`id` = '{$this->alertId}'";
-		var_dump($sql);
+		//var_dump($sql);
 		$result = parent::query($sql);
-		var_dump($result);
-		die;
+		//var_dump($result);
+		
 		if (!$result) {
 			
 			throw new Exception("error during update alert");

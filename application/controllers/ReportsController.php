@@ -34,8 +34,18 @@ class ReportsController extends Controller {
 				
 				$parameters = $this->request->getPostData();
 				//var_dump($parameters);
-				$reports = $report->index($parameters);
-				//var_dump($reports);
+				
+				if (isset($parameters['generateReport'])) {
+				
+					$reports = $report->index($parameters);
+					//var_dump($reports);					
+				}
+				elseif (isset($parameters['createCSV'])) {
+					
+					$reports = $report->createCSV($parameters);
+					
+				}
+				
 				$view->set('Reports/index', $reports, $layout);
 					
 			}
@@ -46,6 +56,25 @@ class ReportsController extends Controller {
 			echo "Exception: ", $e->getMessage();
 		}
 		
+	}
+	
+	
+	
+	public function exportReport() {
+		
+		$layout = parent::isSupervisor();
+		$view = new View();
+		$export = new ReportModel();
+		
+		
+		if ($this->request->isPost()) {
+			
+			$reportData = $this->request->getPostData();
+			$exportData = $export->exportToFile($reportData);
+			$view->set('Reports/index', null, $layout);
+		}
+		
+		$view->render();
 	}
 	
 	
