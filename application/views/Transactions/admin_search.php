@@ -1,33 +1,34 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	<h1 class="page-header">Wyszukiwanie transakcji:</h1>
-	<form class="form-horizontal" action="/Transactions/admin_search" method="post">
-  		<div class="form-group">
-	    	<label for="searchClientData" class="col-sm-2 control-label">Wpisz szukane dane</label>
-	    	<div class="col-sm-4">
-	      		<input 
-			      type="text" 
-		    	  name="clientData" 
-			      class="form-control" 
-			      id="searchClientData" 
-			      placeholder="PESEL, Nazwisko lub nr telefonu"
-			      required="required">
-  			</div>
-	  	</div>
-  		<div class="form-group">
-	    	<div class="col-sm-offset-2 col-sm-4">
-	      	<button 
-	      	type="submit" 
-	      	class="btn btn-default"
-	      	tabindex="9"
-	      	autofocus="autofocus">Szukaj</button>
-	    	</div>
-	  	</div>  		
-	</form>
+	<h2 class="page-header">Wyszukiwanie transakcji:</h2>
+	<?php //var_dump($this->data);?>
+	<form class="form" action="/Transactions/admin_search" method="post">
+  		 <div class="row">
+		  <div class="col-lg-10">
+		    <div class="input-group">
+		      <input type="text"
+		       name="clientData" 
+			   class="form-control" 
+			   id="searchClientData"
+			   value="<?php echo isset($this->data[3])? $this->data[3] : '' ?>" 
+			   placeholder="szukaj po PESEL, Nazwisku lub nr telefonu"
+			   required="required"
+			   tabindex="1"
+			   autofocus="autofocus">
+		      <span class="input-group-btn">
+		        <button class="btn btn-primary" type="submit">Szukaj</button>
+		      </span>
+		    </div><!-- /input-group -->
+		  </div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+	 </form>  	
+	  	
+	
+	
 <?php 
 //echo $_POST['dane'];
 
 if ($this->data == -1) :?>
-	<div><p class="text-danger">Nie znaleziono klienta lub jego transakcji</p></div>
+	<div><p class="text-danger">Nie znaleziono transakcji</p></div>
 
 <?php
 elseif ($this->data == null) :?>
@@ -38,6 +39,7 @@ elseif (!is_array($this->data)) :?>
 <?php 
 else : ?>
 	<div class="table-responsive">
+	<br>
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -59,7 +61,7 @@ else : ?>
 					//var_dump($this->data);
 					//header('Content-type: text/html; charset=utf-8');
 					//echo $name;
-					foreach ($this->data as $data) {
+					foreach ($this->data[2] as $data) {
 						echo "<tr>";
 						echo "<td>", $data['id'], "</td>";
 						echo "<td>", $data['name'], "</td>";
@@ -95,6 +97,32 @@ else : ?>
 			</tbody>
 		</table>
 	</div>
+	<div>
+		<nav aria-label="Page navigation">
+  			<ul class="pager">
+    		<li>
+	      		<a href="#" aria-label="Previous" class="">
+	        		<span aria-hidden="true">&laquo;</span>
+	      		</a>
+    		</li>
+		    <?php //var_dump($this->data[0], $this->data[1]);?>
+		    <?php for ($i = 1; $i <= $this->data[1]; $i++) {
+		    echo '<li><a href="/Transactions/admin_search/'.$i, (isset($this->data[3]) ? '/'.$this->data[3] : '').'">'.$i.'</a></li>';
+		    }?>
+		    
+		    <li>
+		      <a href="#" aria-label="Next">
+		        <span aria-hidden="true">&raquo;</span>
+		      </a>
+		    </li>
+		  </ul>
+		</nav>	
+		
+		
+		
+	</div>
+
+
 <?php 
 endif;
 ?>

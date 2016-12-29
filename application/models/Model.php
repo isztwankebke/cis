@@ -2,6 +2,8 @@
 class Model extends mysqli {
 
 	private static $queryLogs = [];
+	private $rowsPerPage = 10;
+	
 	
 	protected $id = null;
 	
@@ -66,6 +68,10 @@ class Model extends mysqli {
 		$FirstLetterCapital = ucwords(strtolower($string));
 		
 		return $FirstLetterCapital;
+	}
+	
+	public function getRowsNumber() {
+		return $this->rowsPerPage;
 	}
 	
 	

@@ -240,21 +240,54 @@ class TransactionsController extends Controller {
 	
 	public function admin_search() {
 		try {
+			
 			//prepare view for both Request Method
 			$layout = parent::isGrant();	
 			$view = new View();
+			$transaction = new TransactionModel();
+			$pagination = new PaginationsController();
+			
 		
 			if ($this->request->isGet()) {
 				
-				$data = null;
+				if (empty($this->request->getParameters())) {
+					
+					//settings for default attributes
+					$paginationSetup = $pagination->setPaginationAttributes();
+					
+				}
+				else {
+					
+					//setting attributes from view
+					$paginationSetup = $pagination->setPaginationAttributes(null, $this->request->getParameters()[0]);
+					
+					//check request has set a clientData
+					if (isset($this->request->getParameters()[1])) {
+						
+						$searchData['clientData'] = $this->request->getParameters()[1];
+					}
+				}
+				
+				if (isset($searchData)) {
+					//when searchData is set
+					$data = $transaction->search($searchData, $paginationSetup);
+					
+				}
+				else {
+					
+					//display default all transactions with attributes from pagination
+					$data = $transaction->getTransactionData($paginationSetup);
+				}
+				
 				$view->set('Transactions/admin_search', $data, $layout);
 		
 			}
 			elseif ($this->request->isPost()) {
 				
-				$transaction = new TransactionModel();
 				$searchData = $this->request->getPostData();
-				$data = $transaction->search($searchData);
+				
+				$paginationSetup = $pagination->setPaginationAttributes();
+				$data = $transaction->search($searchData, $paginationSetup);
 				
 				//if data is not empy client matched - search transaction, 
 				//otherwise display warning

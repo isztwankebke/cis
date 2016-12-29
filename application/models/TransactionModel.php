@@ -31,62 +31,52 @@ class TransactionModel extends Model {
 	
 	
 	/**
-	 * OK
-	 * @param unknown $searchData
+	 * 
+	 * return nr of rows in clients_products table
+	 * 
 	 */
-	public function search($searchData) {
-		if (debug) {
-			var_dump($searchData);
-		}
-		//check is recived data is set
-		if (empty($searchData['clientData'])) {
-			return $a = 'nie wpisano danych';
-		}
-		//$client = new ClientModel();
-		//check is client exist via pesel and phone numner
-		if (is_numeric($searchData['clientData'])) {
-			//setting new client model and check is pesel or phone number
-			$sql ="SELECT 
-						clients.id 
-					FROM 
-						clients 
-					WHERE 
-						clients.pesel LIKE '%{$searchData['clientData']}%' 
-					OR 
-						clients.phone_nr LIKE '%{$searchData['clientData']}%'";
-			
-			$result = parent::query($sql);
-			
-		}
-		//check is client exist via surname
-		elseif (is_string($searchData['clientData']) && !is_numeric($searchData['clientData'])) {
-			
-			$sql ="SELECT
-					clients.id
-				FROM
-					clients
-				WHERE
-					clients.surname LIKE '%{$searchData['clientData']}%'";
-			
-			$result = parent::query($sql);
-		}
-		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
+	private function countTransactions() {
 		
-		if (debug) {
-			var_dump($result);
-			var_dump(count($result));
-		}
-		if ($result) {
-			foreach ($result as $row) {
-				$clientsId[] = $row['id'];
-			}
+		$sql = "SELECT
+				  COUNT(*) AS rows
+				FROM
+				  clients_products";
+		
+		$nrOfTransactions = parent::query($sql);
+		
+		if (!$nrOfTransactions) {
 			
-			$clientsId = implode(',', $clientsId);
-			
-			//var_dump($clientsId);
+			throw new Exception("Can not get nr of rows");
 		}
-		else {
-			return false;
+		
+		return $nrOfTransactions[0];
+	}
+	
+	
+	/**
+	 * return list of transactions
+	 * @param unknown $clientId
+	 * @throws Exception
+	 */
+	private function getListOfTransactions($clientId = null, $limit, $offset) {
+		
+		if (!$clientId && !$limit) { //get all of transactions
+			
+			$searchBy = "1";
+		}
+		elseif ($clientId && !$limit) { //search all entry with clientId
+				
+			$searchBy = "clients.id IN ($clientId)";
+			
+		}
+		elseif (!$clientId && $limit) { //to get all entry with pagination
+			
+			$searchBy = "1 LIMIT $limit OFFSET $offset ";
+		}
+		
+		else { //search entry with clientId for pagination
+			
+			$searchBy = "clients.id IN ($clientId) LIMIT $limit OFFSET $offset ";
 		}
 		
 		$sql = "SELECT
@@ -112,14 +102,83 @@ class TransactionModel extends Model {
 				ON
 					products.id = clients_products.product_id
 				WHERE 
-					clients.id IN ({$clientsId})";
-			//AND 
-			//clients.id IN 
-		//var_dump($sql);
-		//`{$key}` LIKE '%{$value}%'";
+					$searchBy ";
+		//var_dump($searchBy);
 		$result = parent::query($sql);
 		
+		if (!$result) {
+			
+			throw new Exception("error while get transactions list");
+		}
+		
 		return $result;
+	}
+	
+	
+	
+	
+	/**
+	 * return [$nrOfRows, $result, $searchData]
+	 * @param unknown $searchData
+	 */
+	public function search($searchData, $paginationSetup) {
+		if (debug) {
+			var_dump($searchData);
+		}
+		//check is recived data is set
+		if (empty($searchData['clientData'])) {
+			return $a = 'nie wpisano danych';
+		}
+		$searchData = $searchData['clientData'];
+		
+		//$client = new ClientModel();
+		//check is client exist via pesel and phone numner or surname
+		if (is_numeric($searchData) || is_string($searchData)) {
+			
+			$sql ="SELECT 
+						clients.id 
+					FROM 
+						clients 
+					WHERE 
+						CONCAT (clients.pesel, clients.phone_nr, clients.surname) 
+					LIKE '%{$searchData}%'"; 
+					
+			$result = parent::query($sql);
+			
+		}
+		
+		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
+		
+		if (debug) {
+			var_dump($result);
+			var_dump(count($result));
+		}
+		if ($result) {
+			foreach ($result as $row) {
+				$clientsId[] = $row['id'];
+			}
+			
+			$clientsId = implode(',', $clientsId);
+			
+			//var_dump($clientsId);
+		}
+		else {
+			return false;
+		}
+		
+		//check how many rows is with this data
+		$result = $this->getListOfTransactions($clientsId, null, $paginationSetup['offset']);
+		
+		//var_dump($result);
+		$nrOfRows = count($result);
+		
+		$totalPages = ceil($nrOfRows / $paginationSetup['limit']);
+		
+		//get rows only with pagination
+		$result = $this->getListOfTransactions($clientsId, $paginationSetup['limit'], $paginationSetup['offset']);
+		
+		
+		return [$paginationSetup, $totalPages, $result, $searchData];
 	}
 	
 	
@@ -148,11 +207,22 @@ class TransactionModel extends Model {
 	
 	
 	/**
-	 * 
+	 * return [$nrOfTransactions, $transactions]
 	 */
-	public function getTransactionData() {
+	public function getTransactionData($pagination) {
 		
-		return $this->transactionData;
+		//count all transactions - to set max page nr
+		$nrTotalTransactions = $this->countTransactions();
+		
+		//var_dump($nrTotalTransactions);
+		//calculate nr of pages
+		$totalPages = ceil($nrTotalTransactions['rows'] / $pagination['limit']);
+		
+		//var_dump($totalPages);
+		$transactions = $this->getListOfTransactions(null, $pagination['limit'], $pagination['offset']);
+		//var_dump($transactions);
+		
+		return [$pagination, $totalPages, $transactions];
 	}
 	
 	
@@ -723,7 +793,7 @@ class TransactionModel extends Model {
 				WHERE
 					clients_products.id = '{$transactionData['id']}'
 				";
-		var_dump($sql);
+		//var_dump($sql);
 		$result = parent::query($sql);
 		
 		if (empty($result)) {
