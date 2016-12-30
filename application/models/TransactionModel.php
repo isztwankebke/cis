@@ -78,7 +78,7 @@ class TransactionModel extends Model {
 			
 			$searchBy = "clients.id IN ($clientId) LIMIT $limit OFFSET $offset ";
 		}
-		
+		//var_dump($searchBy);
 		$sql = "SELECT
 					clients_products.id,
 					clients.name, 
@@ -121,54 +121,27 @@ class TransactionModel extends Model {
 	 * return [$nrOfRows, $result, $searchData]
 	 * @param unknown $searchData
 	 */
-	public function search($searchData, $paginationSetup) {
-		if (debug) {
-			var_dump($searchData);
-		}
-		//check is recived data is set
-		if (empty($searchData['clientData'])) {
-			return $a = 'nie wpisano danych';
-		}
-		$searchData = $searchData['clientData'];
+	public function searchTransactions($searchData, $paginationSetup) {
 		
-		//$client = new ClientModel();
-		//check is client exist via pesel and phone numner or surname
-		if (is_numeric($searchData) || is_string($searchData)) {
-			
-			$sql ="SELECT 
-						clients.id 
-					FROM 
-						clients 
-					WHERE 
-						CONCAT (clients.pesel, clients.phone_nr, clients.surname) 
-					LIKE '%{$searchData}%'"; 
-					
-			$result = parent::query($sql);
-			
-		}
+		$clients = new ClientModel();
 		
-		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
+		$clientsId = $clients->searchClientsId($searchData);
 		
-		if (debug) {
-			var_dump($result);
-			var_dump(count($result));
-		}
-		if ($result) {
-			foreach ($result as $row) {
-				$clientsId[] = $row['id'];
-			}
+		//var_dump($clientsId);
+		
+		if (empty($clientsId)) {
 			
-			$clientsId = implode(',', $clientsId);
-			
-			//var_dump($clientsId);
-		}
-		else {
 			return false;
 		}
 		
 		//check how many rows is with this data
 		$result = $this->getListOfTransactions($clientsId, null, $paginationSetup['offset']);
 		
+		//var_dump($result);
+		if (!$result) {
+			
+			return false;
+		}
 		//var_dump($result);
 		$nrOfRows = count($result);
 		
@@ -696,7 +669,8 @@ class TransactionModel extends Model {
 			clients_products.init_date,
 			clients_products.period,
 			clients_products.credit_value,
-			clients_products.deleyed_payment
+			clients_products.deleyed_payment,
+			clients_products.end_earlier
 		FROM
 			clients_products
 		JOIN

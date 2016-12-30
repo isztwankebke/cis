@@ -41,6 +41,40 @@ class ClientModel extends Model {
 		return $this->clientData;
 	}
 	
+	public function adminSearchClient($clientId = null, $pagination = null) {
+		
+		if (!$clientId && !$pagination) { //get all of clients
+				
+			$searchBy = "1";
+		}
+		elseif ($clientId && !$pagination) { //search all entry with clientId
+		
+			$searchBy = "clients.id IN ($clientId)";
+				
+		}
+		elseif (!$clientId && $pagination) { //to get all entry with pagination
+				
+			$searchBy = "1 LIMIT {$pagination['limit']} OFFSET {$pagination['offset']}";
+		}
+		
+		else { //search entry with clientId for pagination
+				
+			$searchBy = "clients.id IN ($clientId) LIMIT {$pagination['limit']} OFFSET {$pagination['offset']}";
+		}
+		
+		$sql = "SELECT
+					*
+				FROM
+					clients
+				WHERE
+					$searchBy";
+		
+		$result = parent::query($sql);
+		
+		return $result;
+	}
+	
+	
 	public function readClient($parameters) {
 		if (debug) {
 			var_dump($parameters);
@@ -64,18 +98,63 @@ class ClientModel extends Model {
 	
 	
 	/**
-	 * 
+	 * returns all of clients from db
 	 */
-	public function admin_read() {
+	private function readClients() {
 		
-		$sql = "SELECT *
-		FROM
-		`clients`
-		WHERE 1";
+		$sql = "SELECT 
+					*
+				FROM
+					clients
+				WHERE 
+					1";
 		
 		$result = parent::query($sql);
 		
 		return $result;
+	}
+	
+	
+	/**
+	 * return[$pagination, $totalPages, $result]
+	 */
+	public function admin_read($clientId = null, $pagination) {
+		
+		//get total nr of clients from db and count nr of pages 
+		$totalClients = count($this->readClients());
+		
+		//count nr of pages
+		$totalPages = ceil($totalClients / $pagination['limit']);
+		
+		if (!$clientId && !$pagination) { //get all of clients
+			
+			$searchBy = "1";
+		}
+		elseif ($clientId && !$pagination) { //search all entry with clientId
+				
+			$searchBy = "clients.id IN ($clientId)";
+			
+		}
+		elseif (!$clientId && $pagination) { //to get all entry with pagination
+			
+			$searchBy = "1 LIMIT {$pagination['limit']} OFFSET {$pagination['offset']}";
+		}
+		
+		else { //search entry with clientId for pagination
+			
+			$searchBy = "clients.id IN ($clientId) LIMIT {$pagination['limit']} OFFSET {$pagination['offset']}";
+		}
+		
+		$sql = "SELECT 
+					*
+				FROM
+					clients
+				WHERE 
+					$searchBy";
+		
+		$result = parent::query($sql);
+		
+		return [$pagination, $totalPages, $result];
 		
 		
 	}
@@ -140,25 +219,86 @@ class ClientModel extends Model {
 	}
 	
 	
+	
+	
+	public function search($searchData, $pagination) {
+		
+		$clientsId = $this->searchClientsId($searchData);
+		
+		$result = $this->adminSearchClient($clientsId, null);
+		
+		$nrOfRows = count($result);
+		
+		$totalPages = ceil($nrOfRows / $pagination['limit']);
+		
+		//get rows only with pagination
+		$result = $this->adminSearchClient($clientsId, $pagination);
+		
+		
+		return [$pagination, $totalPages, $result, $searchData];
+		
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * 
-	 * @param unknown $searchData
+	 * 
+	 * return clientsId as string as well from searching data
 	 */
-	public function search($searchData) {
+	public function searchClientsId($searchData) {
 		
-		$key = key($searchData);
-		$value = trim($searchData[$key]);
+		if (debug) {
+			var_dump($searchData);
+		}
 		
+		//check is recived data is set
+		if (empty($searchData['clientData'])) {
+			
+			return $a = 'nie wpisano danych';
+		}
 		
-		$sql = "SELECT *
-		FROM
-		`clients`
-		WHERE 
-		`{$key}` LIKE '%{$value}%'";
+		$searchData = $searchData['clientData'];
 		
-		$result = parent::query($sql);
+		//check is client exist via pesel and phone numner or surname
+		if (is_numeric($searchData) || is_string($searchData)) {
+			
+			$sql ="SELECT 
+						clients.id 
+					FROM 
+						clients 
+					WHERE 
+						CONCAT (clients.pesel, clients.phone_nr, clients.surname) 
+					LIKE '%{$searchData}%'"; 
+			//var_dump($sql);		
+			$result = parent::query($sql);
+			//var_dump($result);
+		}
 		
-		return $result;
+		//if number of rows > 1 thats meen, is more than 1 client with this phone number or this surname
+		
+		if (debug) {
+			var_dump($result);
+			var_dump(count($result));
+		}
+		
+		if (!$result) {
+			
+			return false;
+		}
+		foreach ($result as $row) {
+			
+			$clientsId[] = $row['id'];
+		}
+			
+		$clientsId = implode(',', $clientsId);
+			
+			
+		
+		return $clientsId;
 		
 	}
 	

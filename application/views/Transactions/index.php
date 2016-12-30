@@ -11,7 +11,9 @@
 			      class="form-control" 
 			      id="searchClientData" 
 			      placeholder="PESEL, Nazwisko lub nr telefonu"
-			      required="required">
+			      required="required"
+			      tabindex="1"
+			      autofocus="autofocus">
   			</div>
 	  	</div>
   		<div class="form-group">
@@ -19,8 +21,7 @@
 	      	<button 
 	      	type="submit" 
 	      	class="btn btn-default"
-	      	tabindex="9"
-	      	autofocus="autofocus">Szukaj</button>
+	      	tabindex="2">Szukaj</button>
 	    	</div>
 	  	</div>  		
 	</form>

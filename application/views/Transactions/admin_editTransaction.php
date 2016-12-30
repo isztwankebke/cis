@@ -173,7 +173,7 @@
 	      
 	      tabindex="10"
 	      autofocus="autofocus"
-	      <?php echo (empty($this->data[0][0]['end_earlier'])) ? "checked" : "unchecked";?>>
+	      <?php echo (!empty($this->data[0][0]['end_earlier'])) ? "checked" : "unchecked";?>>
 	    </div>
 	  </div>
 	  

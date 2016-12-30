@@ -55,68 +55,82 @@ class ClientsController extends Controller {
 	/**
 	 * 
 	 */
-	public function search() {
-		
-		if ($this->request->isPost()){
-			
-			$client = new ClientModel();
-			$searchData = $this->request->getPostData();
-			var_dump($client->search($searchData));
-			
-		}
-		
-	}
-	public function renderView($viewName, $parameters) {
-		
-		$clients = $parameters;
-		// $parameters['clients'];
-		extract($parameters);
-		
-		
-		///$clients
-		// nazwa widoku, ktory zainclugowac
-		// parametry widoku
-		include '../application/views/Layouts/default.php';
-	}
-	
-	
-	/**
-	 * 
-	 */
 	public function admin_read() {
 		
 		try {
 			
+			//prepare view for both Request Method
 			$layout = parent::isGrant();
+			$view = new View();
+			$client = new ClientModel();
+			$pagination = new PaginationsController();
+			
 			
 			if ($this->request->isGet()) {
-				//$this->autoRender = false;
-				$client = new ClientModel();
-				
+			/*	
 				$clients = $client->admin_read();
 				
-				$view = new View();
 				
-				$view->set('Clients/admin_read', $clients, $layout);
-				
-				$view->render();
-				
-				/*$path = preg_split('/Controller::/', __METHOD__);
-				$this->view = '../application/views/'. $path[0] . '/' . $path[1]. '.php';
-				
-				//$this->clients = $clients;
-				$viewName = $this->view;
-				var_dump($this->view);
-				
-				var_dump(ClientsController::setView());
-				
-				//$this->view->set('clients', $clients);
-				//$this->renderView('Clients/read', ['clients' => $clients]);
 				*/
-				//$this->renderView($viewName, $clients);
-				// jak do layoutu przekazac nazwe widoku i jego parametry?
-				// include 'default layout';
+				if (empty($this->request->getParameters())) {
+						
+					//settings for default attributes
+					$paginationSetup = $pagination->setPaginationAttributes();
+						
+				}
+				else {
+						
+					//setting attributes from view
+					$paginationSetup = $pagination->setPaginationAttributes(null, $this->request->getParameters()[0]);
+						
+					//check request has set a clientData
+					if (isset($this->request->getParameters()[1])) {
+				
+						$searchData['clientData'] = $this->request->getParameters()[1];
+					}
+				}
+				
+				if (isset($searchData)) {
+					//when searchData is set
+					$data = $client->search($searchData, $paginationSetup);
+						
+				}
+				else {
+						
+					//display default all transactions with attributes from pagination
+					$data = $client->admin_read(null, $paginationSetup);
+				}
+				
+				$view->set('Clients/admin_read', $data, $layout);
+				//var_dump($client->getQueryLog());
 			}
+			
+			elseif ($this->request->isPost()) {
+			
+				$searchData = $this->request->getPostData();
+				//var_dump($searchData);
+				$paginationSetup = $pagination->setPaginationAttributes();
+				
+				$data = $client->search($searchData, $paginationSetup);
+				
+				//if data is not empy client matched - search transaction,
+				//otherwise display warning
+				
+				if ($data) {
+						
+					$view->set('Clients/admin_read', $data, $layout);
+						
+				}
+				else {
+					
+					$data = -1;
+					$view->set('Clients/admin_read', $data, $layout);
+				}
+				
+				
+			}
+			
+			$view->render();
 		}
 		catch (Exception $e) {
 			echo "Exception: ", $e->getMessage();

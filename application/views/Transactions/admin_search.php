@@ -1,5 +1,5 @@
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	<h2 class="page-header">Wyszukiwanie transakcji:</h2>
+	<h2 class="page-header">Zarządzanie transakcjami:</h2>
 	<?php //var_dump($this->data);?>
 	<form class="form" action="/Transactions/admin_search" method="post">
   		 <div class="row">
@@ -9,7 +9,7 @@
 		       name="clientData" 
 			   class="form-control" 
 			   id="searchClientData"
-			   value="<?php echo isset($this->data[3])? $this->data[3] : '' ?>" 
+			   value="<?php echo isset($this->data[3]['clientData'])? $this->data[3]['clientData'] : '' ?>" 
 			   placeholder="szukaj po PESEL, Nazwisku lub nr telefonu"
 			   required="required"
 			   tabindex="1"
@@ -80,46 +80,24 @@ else : ?>
 						echo '<td><a class="btn btn-danger" role="button" href="/Transactions/admin_deleteTransaction/'.$data['id'].'">Usuń</a></td>';
 						echo "</tr>";
 					}
-					/**
-					 * $clients = []; // collected from database
-					 * 
-					 * foreach ($clients as $client) {
-					 * 
-					 * echo <tr>
-					 * echo <td> $client['name'];
-					 * echo </tr>
-					 * 
-					 * }
-					 * 
-					 */
+					
 					
 				?>
 			</tbody>
 		</table>
 	</div>
 	<div>
-		<nav aria-label="Page navigation">
-  			<ul class="pager">
-    		<li>
-	      		<a href="#" aria-label="Previous" class="">
-	        		<span aria-hidden="true">&laquo;</span>
-	      		</a>
-    		</li>
+		<nav aria-label="Page navigation" class="pager">
+  			<ul class="pagination">
+    		
 		    <?php //var_dump($this->data[0], $this->data[1]);?>
 		    <?php for ($i = 1; $i <= $this->data[1]; $i++) {
-		    echo '<li><a href="/Transactions/admin_search/'.$i, (isset($this->data[3]) ? '/'.$this->data[3] : '').'">'.$i.'</a></li>';
+		    echo '<li class="'.($this->data[0]['pageNr'] == $i ? 'active' : '').'"><a href="/Transactions/admin_search/'.$i, (isset($this->data[3]['clientData']) ? '/'.$this->data[3]['clientData'] : '').'">'.$i.'</a></li>';
 		    }?>
 		    
-		    <li>
-		      <a href="#" aria-label="Next">
-		        <span aria-hidden="true">&raquo;</span>
-		      </a>
-		    </li>
+		    
 		  </ul>
-		</nav>	
-		
-		
-		
+		</nav>
 	</div>
 
 

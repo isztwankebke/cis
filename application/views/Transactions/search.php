@@ -8,9 +8,12 @@
 			      type="text" 
 		    	  name="clientData" 
 			      class="form-control" 
-			      id="searchClientData" 
+			      id="searchClientData"
+			      value="<?php echo ($this->data[3]) ? $this->data[3]['clientData'] : '';?>" 
 			      placeholder="PESEL, Nazwisko lub nr telefonu"
-			      required="required">
+			      required="required"
+			      tabindex="1"
+			      autofocus="autofocus">
   			</div>
 	  	</div>
   		<div class="form-group">
@@ -18,13 +21,12 @@
 	      	<button 
 	      	type="submit" 
 	      	class="btn btn-default"
-	      	tabindex="9"
-	      	autofocus="autofocus">Szukaj</button>
+	      	tabindex="2">Szukaj</button>
 	    	</div>
 	  	</div>  		
 	</form>
 <?php 
-//echo $_POST['dane'];
+//var_dump($this->data);
 
 if (!$this->data) :?>
 	<div><p class="text-danger">Nie znaleziono klienta</p></div>
@@ -59,7 +61,7 @@ else : ?>
 					//var_dump($this->data);
 					//header('Content-type: text/html; charset=utf-8');
 					//echo $name;
-					foreach ($this->data as $data) {
+					foreach ($this->data[2] as $data) {
 						echo "<tr>";
 						echo "<td>", $data['id'], "</td>";
 						echo "<td>", $data['name'], "</td>";

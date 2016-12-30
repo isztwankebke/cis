@@ -2,7 +2,7 @@
 class Model extends mysqli {
 
 	private static $queryLogs = [];
-	private $rowsPerPage = 10;
+	
 	
 	
 	protected $id = null;
@@ -70,13 +70,13 @@ class Model extends mysqli {
 		return $FirstLetterCapital;
 	}
 	
-	public function getRowsNumber() {
-		return $this->rowsPerPage;
-	}
-	
 	
 		
-	
+	public function getQueryLog() {
+		
+		return self::$queryLogs;
+		
+	}
 	
 	
 	

@@ -207,31 +207,22 @@ class TransactionsController extends Controller {
 	public function search() {
 		
 		$layout = parent::isSupervisor();
+		$transaction = new TransactionModel();
+		$view = new View();
+		$pagination = new PaginationsController();
+		
 		if ($this->request->isPost()){
 			
-			$transaction = new TransactionModel();
+			$paginationSetup = $pagination->setPaginationAttributes();
+			
 			$searchData = $this->request->getPostData();
+			//var_dump($searchData);
+			$data = $transaction->searchTransactions($searchData, $paginationSetup);
 			
-			if (debug) {
-				var_dump($_POST);
-				var_dump($searchData);
-			}
-			
-			$data = $transaction->search($searchData);
-			
-			if (debug) {
-				var_dump($data);
-			}
-			//var_dump($client->search($searchData));
-			
-			$view = new View();
 			$view->set('Transactions/search', $data, $layout);
+			//var_dump($transaction->getQueryLog());
 			$view->render();
-			
-			//$transaction = new TransactionModel();
-			//$transactionData = $this->request->getPostData();
-			//var_dump($transaction->search($searchData));
-				
+					
 		}
 		
 	}
@@ -270,7 +261,7 @@ class TransactionsController extends Controller {
 				
 				if (isset($searchData)) {
 					//when searchData is set
-					$data = $transaction->search($searchData, $paginationSetup);
+					$data = $transaction->searchTransactions($searchData, $paginationSetup);
 					
 				}
 				else {
@@ -282,12 +273,16 @@ class TransactionsController extends Controller {
 				$view->set('Transactions/admin_search', $data, $layout);
 		
 			}
+			
+			
 			elseif ($this->request->isPost()) {
 				
 				$searchData = $this->request->getPostData();
+				//var_dump($searchData);
 				
 				$paginationSetup = $pagination->setPaginationAttributes();
-				$data = $transaction->search($searchData, $paginationSetup);
+				//var_dump($paginationSetup);
+				$data = $transaction->searchTransactions($searchData, $paginationSetup);
 				
 				//if data is not empy client matched - search transaction, 
 				//otherwise display warning
@@ -298,6 +293,7 @@ class TransactionsController extends Controller {
 					
 				}
 				else {
+				
 					$data = -1;
 					$view->set('Transactions/admin_search', $data, $layout);
 				}

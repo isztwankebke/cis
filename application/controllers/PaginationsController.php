@@ -1,7 +1,7 @@
 <?php
 class PaginationsController {
 	
-	private $nrOfRows = 10;
+	private $nrOfRows = 2;
 	private $minPage = 1;
 	private $defaultPage = 1;
 	private $offset;
