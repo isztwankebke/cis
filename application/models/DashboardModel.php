@@ -67,9 +67,129 @@ class DashboardModel extends Model {
 	
 	/**
 	 * 
+	 * @param unknown $parameters
+	 */
+	private function checkDateRange ($parameters) {
+		
+		if (empty($parameters['dateFrom']) || empty($parameters['dateTo'])) {
+		
+			throw new Exception("date not set. Cannot check date range!");
+			return false;
+		}
+		//check start date is older then end date
+		elseif (strtotime($parameters['dateFrom']) > strtotime($parameters['dateTo'])) {
+		
+			throw new Exception("start date must be older than end time");
+			return false;
+		}
+		//settting start and end date for date range
+			
+		$this->startDate = $parameters['dateFrom'];
+		$this->endDate = $parameters['dateTo'];
+			
+		$dateRange = "BETWEEN
+		YEARWEEK('{$this->startDate}')
+		AND
+		YEARWEEK('{$this->endDate}')";
+		
+		return $dateRange;
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $parameters
+	 * return transactions from specyfic date range
+	 */
+	private function monthReport ($parameters) {
+		
+		$dateRange = $this->checkDateRange($parameters);
+		$sql = "SELECT
+				  CONCAT(clients.name, clients.surname) AS clientName,
+				  clients_products.init_date,
+				  products.product_name,
+				  clients.phone_nr
+				FROM
+				  `clients_products`
+				JOIN
+				  clients
+				ON
+				  clients.id = clients_products.client_id
+				JOIN
+				  products
+				ON
+				  products.id = clients_products.product_id
+				WHERE
+				  clients_products.init_date BETWEEN
+				  '{$this->startDate}' AND '{$this->endDate}' ";
+		$result = parent::query($sql);
+			
+		if (debug) {
+			var_dump($result);
+		}
+		
+		return $result;
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param unknown $parameters
+	 * return all transactions
+	 */
+	private function everyTransactions ($parameters) {
+		
+		$sql = "SELECT
+  				  CONCAT(clients.name,clients.surname) AS clientName,
+				  clients_products.init_date,
+				  products.product_name,
+				  clients.phone_nr
+				FROM
+				  `clients_products`
+				JOIN
+				  clients
+				ON
+				  clients.id = clients_products.client_id
+				JOIN
+				  products
+				ON
+				  products.id = clients_products.product_id
+				WHERE
+				  1";
+		
+		$result = parent::query($sql);
+			
+		if (debug) {
+			var_dump($result);
+		}
+		return $result;
+		
+	}
+	
+	
+	
+	/**
+	 * 
 	 * @throws Exception
 	 */
 	public function index($parameters = null) {
+		
+		//var_dump($parameters);
+		if ($parameters['offset'] == 3 && !empty($parameters['offset'])) {
+			
+			$result = $this->monthReport($parameters);
+			return [$result, $parameters['offset'], $this->startDate, $this->endDate];
+		}
+		
+		if ($parameters['offset'] == 4 && !empty($parameters['offset'])) {
+			
+			$result = $this->everyTransactions($parameters);
+			return [$result, $parameters['offset']];
+		}
 		
 		//check is any alerts set
 		$sqlListAlerts = "SELECT * 
@@ -173,27 +293,8 @@ class DashboardModel extends Model {
 					)";
 		}
 		elseif ($offset == 2) {
-			//check start and end date is set
-			if (empty($parameters['dateFrom']) || empty($parameters['dateTo'])) {
-				
-				throw new Exception("date not set. Cannot check date range!");
-				return false;
-			}
-			//check start date is older then end date
-			elseif (strtotime($parameters['dateFrom']) > strtotime($parameters['dateTo'])) {
-				
-				throw new Exception("start date must be older than end time");
-				return false;
-			}
-			//settting start and end date for date range
 			
-			$this->startDate = $parameters['dateFrom'];
-			$this->endDate = $parameters['dateTo'];
-			
-			$dateRange = "BETWEEN
-				YEARWEEK('{$this->startDate}')
-				AND
-				YEARWEEK('{$this->endDate}')";
+			$dateRange = $this->checkDateRange($parameters);
 			
 			//check alerts from date range
 			$isHalfPeriodAlert = "(
@@ -365,7 +466,7 @@ class DashboardModel extends Model {
 	 * @param string $fileName
 	 * @param string $delimiter
 	 */
-	private function arrayToCSV($array, $fileName = "export.csv", $delimiter = ";") {
+	private function arrayToCSV($array, $fileName = "export.csv", $delimiter) {
 		
 		if (count($array) == 0) {
 			
@@ -398,6 +499,46 @@ class DashboardModel extends Model {
 	}
 	
 	
+	
+	
+	/**
+	 *
+	 * @param unknown $array
+	 * @param string $fileName
+	 * @param string $delimiter
+	 */
+	private function singleArrayToCSV($array, $fileName, $delimiter) {
+	
+		if (count($array) == 0) {
+				
+			return false;
+		}
+		//var_dump($array);
+		$file = fopen('php://memory', 'w');
+	
+		//fputcsv($handle, $fields)
+				
+			fputcsv($file, $array, $delimiter);
+				
+		
+	
+		fseek($file, 0);
+		header("Content-Type: application/force-download");
+		header("Content-Type: application/octet-stream");
+		header("Content-Type: application/download");
+	
+		// disposition / encoding on response body
+		header("Content-Disposition: attachment;filename={$fileName}");
+		header("Content-Transfer-Encoding: binary");
+	
+		//header('Content-Type: application/csv');
+		// tell the browser we want to save it instead of displaying it
+		//header('Content-Disposition: attachment; filename="'.$fileName.'";');
+		// make php send the generated csv lines to the browser
+		fpassthru($file);
+	
+	}
+	
 	/**
 	 * 
 	 * @param unknown $parameters
@@ -417,7 +558,25 @@ class DashboardModel extends Model {
 		array_splice($reportData[0], 0,0,$columnName);
 		//var_dump($reportData[0]);
 		//var_dump($columnName);
-		$this->arrayToCSV($reportData[0]);
+		$delimiter = ";";
+		$this->arrayToCSV($reportData[0], "export.csv", $delimiter);
+		die;
+		//return $reportData;
+	}
+	
+	
+	/**
+	 * export phone nr to file
+	 */
+	public function exportPhoneNr($parameters) {
+		
+		
+		$reportData = $this->index($parameters);
+		$phoneNumbers = array_column($reportData[0], 'phone_nr');
+		$delimiter = ",";
+		//var_dump($delimiter);
+		//var_dump($phoneNumbers);
+		$this->singleArrayToCSV($phoneNumbers, "numeryTelefonow.csv", $delimiter);
 		die;
 		//return $reportData;
 	}

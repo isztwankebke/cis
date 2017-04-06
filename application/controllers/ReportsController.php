@@ -45,6 +45,12 @@ class ReportsController extends Controller {
 					$reports = $report->createCSV($parameters);
 					
 				}
+				elseif (isset($parameters['exportPhoneNr'])) {
+					
+					$reports = $report->exportPhoneNr($parameters);
+					
+				}
+				
 				
 				$view->set('Reports/index', $reports, $layout);
 					

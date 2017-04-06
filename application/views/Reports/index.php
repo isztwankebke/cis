@@ -25,32 +25,47 @@
 		    Raport za okres:
 		  </label>
 		</div>
+		<div class="radio">
+		  <label>
+		    <input type="radio" name="offset" id="optionsRadios4" value="3" 
+		    <?php echo ($this->data[1] == 3 && isset($this->data[1])) ? 'checked="checked"' : '';?>>
+		    Raport za dany okres - tylko transakcje
+		  </label>
+		</div>
+		<div class="radio">
+		  <label>
+		    <input type="radio" name="offset" id="optionsRadios5" value="4" 
+		    <?php echo ($this->data[1] == 4 && isset($this->data[1])) ? 'checked="checked"' : '';?>>
+		    Lista wszystkich transakcji
+		  </label>
+		</div>
 		<br>
 		<div class="form-inline">
 		<div class="form-group">
 		  <label class="col-sm-2 control-label" for="dateFrom">Od</label>
 		  <input type="date" class="form-control" id="dateFrom" name="dateFrom"
-		  <?php echo ($this->data[1] == 2 && isset($this->data[1])) ? 'value="'.$this->data[2].'"' : '';?>>
+		  <?php echo (($this->data[1] == 2 || $this->data[1] == 3) && isset($this->data[1])) ? 'value="'.$this->data[2].'"' : '';?>>
 		</div>
 		<div class="form-group">
 		  <label class="col-sm-2 control-label" for="dateTo">Do</label>
 		  <input type="date" class="form-control" id="dateTo" name="dateTo"
-		  <?php echo ($this->data[1] == 2 && isset($this->data[1])) ? 'value="'.$this->data[3].'"' : '';?>>
+		  <?php echo (($this->data[1] == 2 || $this->data[1] == 3)&& isset($this->data[1])) ? 'value="'.$this->data[3].'"' : '';?>>
 		</div>
 		</div>
 		<div class="form">
 		<br>
 		 <button type="submit" class="btn btn-primary" name="generateReport" value="1">Generuj</button>
-		 <?php echo (!empty($this->data[0])) ? 
-		  '<button type="submit" class="btn btn-success" name="createCSV" value="1">Zapisz do pliku</button>' : '';
-		 ?>
+		 <?php if (($this->data[1] >= 0 && $this->data[1] <= 2) && !empty($this->data[0])) : ?> 
+		  <button type="submit" class="btn btn-success" name="createCSV" value="1">Zapisz do pliku</button>
+		 <?php elseif (($this->data[1] >= 3 && $this->data[1] <= 4) && !empty($this->data[0])) : ?>
+		 <button type="submit" class="btn btn-success" name="exportPhoneNr" value="1">zapisz numery</button>
 		 </div>
-		
+		<?php endif;?>
 				
 	</form>
 <div>
 <?php 
-if (!empty($this->data[0])):
+if (($this->data[1] >= 0 && $this->data[1] <= 2) && !empty($this->data[0])):
 ?>
 	
 	
@@ -90,7 +105,41 @@ if (!empty($this->data[0])):
 			</tbody>
 		</table>
 	</div>
+<?php elseif (($this->data[1] >= 3 && $this->data[1] <= 4) && !empty($this->data[0])):?>
+	<div class="table-responsive">
 		
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Imię i Nazwisko</th>
+					<th>Produkt</th>
+					<th>Data zawarcia</th>
+					<th>nr telefonu</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				
+					<?php 
+					//header('Content-type: text/html; charset=utf-8');
+					//echo $name;
+					foreach ($this->data[0] as $alerts) {
+						
+						echo "<td>", $alerts['clientName'], "</td>";
+						echo "<td>", $alerts['product_name'], "</td>";
+						echo "<td>", $alerts['init_date'], "</td>";
+						echo "<td>", $alerts['phone_nr'], "</td>";
+						echo "</tr>";
+					}
+					
+				?>
+			</tbody>
+		</table>
+	</div>
+
+
+
+
 <?php elseif (isset($this->data[0])):?>
 <a>brak danych do raportu za dany okres</a>
 <?php endif;?>
